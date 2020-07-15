@@ -128,11 +128,6 @@ pagehelper:
   # 默认count查询关闭
   defaultCount: false
 ########################################## 日志配置 #####################################################
-#logging:
-#  file: logs/${spring.application.name}/${spring.application.name}-log.log
-#  level:
-#    com.csg: info #debug 是日志的级别，com.george是包名
-#    root: info
 logging:
   file:
     path: logs/${spring.application.name}/${spring.application.name}-log.log
