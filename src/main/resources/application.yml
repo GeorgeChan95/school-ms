@@ -88,6 +88,24 @@ spring:
           enabled: true
           # 指定要应用的版本的路径，多个以逗号分隔，默认为:[/**]
           paths: /**
+  ########################################### Redis相关配置 #######################################################
+  redis:
+    # redis主机ip
+    host: 192.168.204.132
+    # 端口
+    port: 6379
+    # 0号库
+    database: 0
+    jedis:
+      pool:
+        # 连接池中最小连接
+        min-idle: 4
+        # 连接池最大连接数
+        max-idle: 30
+        # 连接池最大连接数
+        max-active: 1000
+        # 连接池最大阻塞等待时间
+        max-wait: 3000
 ######################################mybatis-plus 相关配置##########################################################
 mybatis-plus:
   # xml扫描路径， 表示Mapper文件存放的位置，当Mapper文件跟对应的Mapper接口处于同一位置的时候可以不用指定该属性的值
@@ -151,3 +169,14 @@ management:
     web:
       exposure:
         include: "*"
+############################################# shiro配置 #################################################
+shiro:
+  # 启用Shiro的Spring模块
+  enabled: true
+  web:
+    # 启用Shiro的Spring Web模块
+    enabled: true
+  loginUrl: /login
+  successUrl: /
+  unauthorizedUrl: /403
+
