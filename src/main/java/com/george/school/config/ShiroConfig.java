@@ -36,7 +36,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * <p>
@@ -72,7 +71,7 @@ public class ShiroConfig {
         realm.setAuthorizationCachingEnabled(true);
         //这里主要是缓存key的名字
         realm.setAuthenticationCacheName("redisauthen");
-        realm.setAuthenticationCacheName("redisauthor");
+        realm.setAuthorizationCacheName("redisauthor");
         return realm;
     }
 
