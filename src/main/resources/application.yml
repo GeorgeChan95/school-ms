@@ -10,9 +10,14 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+  # 开启雅停机，默认IMMEDIATE是立即关机
+  shutdown: graceful
 spring:
   application:
     name: school-ms
+  lifecycle:
+    # 设置缓冲期，最大等待时间
+    timeout-per-shutdown-phase: 30s
   main:
     allow-bean-definition-overriding: true
   servlet:
@@ -134,3 +139,15 @@ logging:
   level:
     com.george.school: info
     root: info
+# actuator服务监控，
+management:
+  endpoint:
+    # 允许actuator关机
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
