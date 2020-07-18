@@ -34,7 +34,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 数据库URL
     # serverTimezone=GMT%2B8 (北京时间 == 东八区时间) 之前UTC 差了8小时 （暂改为东8）
-    url: jdbc:mysql://192.168.204.152:3306/shiro_test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://192.168.204.132:3306/school-ms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=GMT%2B8
     # 数据库用户名
     username: root
     # 数据库密码
@@ -139,7 +139,7 @@ logging:
   level:
     com.george.school: info
     root: info
-# actuator服务监控，
+########################################## actuator服务监控 ##############################################
 management:
   endpoint:
     # 允许actuator关机

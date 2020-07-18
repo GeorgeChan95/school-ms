@@ -128,6 +128,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- 模板引擎 -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker.version}</version>
+        </dependency>
         <!--thymeleaf默认使用html5规则标签必须闭合等 使用次此包正常解析-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
