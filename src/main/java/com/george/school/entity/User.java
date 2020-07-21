@@ -12,11 +12,11 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 
+ * 系统用户表
  * </p>
  *
  * @author George Chan
- * @since 2020-07-18
+ * @since 2020-07-21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -29,8 +29,11 @@ public class User implements Serializable {
      * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
+    /**
+     * 登录用户名
+     */
     @TableField("username")
     private String username;
 
@@ -71,7 +74,7 @@ public class User implements Serializable {
     private LocalDate birthday;
 
     /**
-     * 性别
+     * 性别（1-男  2-女）
      */
     @TableField("gender")
     private Integer gender;
@@ -81,12 +84,6 @@ public class User implements Serializable {
      */
     @TableField("avatar")
     private String avatar;
-
-    /**
-     * 超级管理员、管理员、普通用户
-     */
-    @TableField("user_type")
-    private String userType;
 
     /**
      * 注册IP
@@ -119,7 +116,7 @@ public class User implements Serializable {
     private String remark;
 
     /**
-     * 用户状态
+     * 用户状态(0-正常 1-注销)
      */
     @TableField("status")
     private Integer status;
@@ -135,6 +132,12 @@ public class User implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
+
+    /**
+     * 删除标记
+     */
+    @TableField("delete_flag")
+    private Integer deleteFlag;
 
 
 }

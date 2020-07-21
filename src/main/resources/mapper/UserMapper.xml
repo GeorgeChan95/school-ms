@@ -14,7 +14,6 @@
         <result column="birthday" property="birthday" />
         <result column="gender" property="gender" />
         <result column="avatar" property="avatar" />
-        <result column="user_type" property="userType" />
         <result column="reg_ip" property="regIp" />
         <result column="last_login_ip" property="lastLoginIp" />
         <result column="last_login_time" property="lastLoginTime" />
@@ -23,6 +22,7 @@
         <result column="status" property="status" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
+        <result column="delete_flag" property="deleteFlag" />
     </resultMap>
 
 </mapper>

@@ -119,7 +119,7 @@ mybatis-plus:
     banner: false
     db-config:
       #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)",ID_WORKER_STR:"全局唯一ID (字符串类型唯一ID)", UUID:"全局唯一ID UUID";
-      id-type: AUTO
+      id-type: ID_WORKER
       # 表名、是否使用下划线命名
       table-underline: true
       # 逻辑已删除值(默认为 1)

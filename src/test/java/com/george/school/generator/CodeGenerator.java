@@ -94,7 +94,7 @@ public class CodeGenerator {
         // 此处可以修改为您的表前缀
         strategy.setTablePrefix(new String[]{"sys_"});
         // 需要生成的表
-        strategy.setInclude(new String[] {"sys_user"});
+        strategy.setInclude(new String[] {"sys_user", "sys_resources", "sys_role", "sys_role_resources", "sys_user_role"});
         strategy.setSuperEntityColumns(null);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setEntityTableFieldAnnotationEnable(true);
