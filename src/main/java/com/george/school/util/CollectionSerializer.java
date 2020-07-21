@@ -9,6 +9,8 @@ import org.springframework.data.redis.serializer.SerializationException;
 /**
  * <p>
  *     自定义redis序列化类
+ *
+ *     redisTemplate 内置的序列化方式不能满足使用的时候，需要自定义序列化类。
  * </p>
  *
  * @author George Chan

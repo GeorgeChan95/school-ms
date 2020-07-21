@@ -176,7 +176,10 @@ shiro:
   web:
     # 启用Shiro的Spring Web模块
     enabled: true
+  # 登录路径
   loginUrl: /login
+  # 登录成功后跳转的路径
   successUrl: /
+  # 未授权跳转的路径
   unauthorizedUrl: /403
 

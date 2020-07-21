@@ -3,7 +3,6 @@ package com.george.school.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.george.school.realm.CustomRealm;
 import com.george.school.util.CollectionSerializer;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
@@ -63,7 +62,7 @@ public class ShiroConfig {
         CustomRealm realm = new CustomRealm();
         realm.setCachingEnabled(true);
         //设置认证密码算法及迭代复杂度
-        //realm.setCredentialsMatcher(credentialsMatcher());
+        realm.setCredentialsMatcher(credentialsMatcher());
         //认证
         realm.setCacheManager(shiroRedisCacheManager(redisCacheManager));
         realm.setAuthenticationCachingEnabled(true);
@@ -100,6 +99,18 @@ public class ShiroConfig {
         securityManager.setRememberMeManager(rememberMeManager());
         securityManager.setSessionManager(sessionManager(redisTemplate));
         return securityManager;
+    }
+
+    /**
+     * 凭证匹配器
+     * 自定义密码的校验方式，
+     * 判断用户是否锁定
+     * 密码错误输入次数
+     * @return
+     */
+    @Bean(name = "credentialsMatcher")
+    public RetryLimitCredentialsMatcher credentialsMatcher() {
+        return new RetryLimitCredentialsMatcher();
     }
 
     /**

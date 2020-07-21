@@ -1,4 +1,4 @@
-package com.george.school.realm;
+package com.george.school.config;
 
 import com.george.school.entity.User;
 import org.apache.shiro.authc.*;
@@ -22,14 +22,14 @@ import org.apache.shiro.subject.PrincipalCollection;
  */
 public class CustomRealm extends AuthorizingRealm {
     //告诉shiro如何根据获取到的用户信息中的密码和盐值来校验密码
-    {
-        //设置用于匹配密码的CredentialsMatcher
-        HashedCredentialsMatcher hashMatcher = new HashedCredentialsMatcher();
-        hashMatcher.setHashAlgorithmName(Sha256Hash.ALGORITHM_NAME);
-        hashMatcher.setStoredCredentialsHexEncoded(false);
-        hashMatcher.setHashIterations(1024);
-        this.setCredentialsMatcher(hashMatcher);
-    }
+//    {
+//        //设置用于匹配密码的CredentialsMatcher
+//        HashedCredentialsMatcher hashMatcher = new HashedCredentialsMatcher();
+//        hashMatcher.setHashAlgorithmName(Sha256Hash.ALGORITHM_NAME);
+//        hashMatcher.setStoredCredentialsHexEncoded(false);
+//        hashMatcher.setHashIterations(1024);
+//        this.setCredentialsMatcher(hashMatcher);
+//    }
 
     /**
      * 授权

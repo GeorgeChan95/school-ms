@@ -8,7 +8,9 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * <p></p>
+ * <p>
+ *     自定义缓存 将数据存入到redis中
+ * </p>
  *
  * @author George Chan
  * @version 1.0
