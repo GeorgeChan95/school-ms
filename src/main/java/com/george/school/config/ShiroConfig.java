@@ -1,12 +1,10 @@
 package com.george.school.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.george.school.service.IUserService;
+import com.george.school.service.ShiroService;
 import com.george.school.util.CollectionSerializer;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
@@ -17,6 +15,8 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -24,16 +24,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
-import javax.servlet.Filter;
 import java.io.Serializable;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -49,8 +43,16 @@ import java.util.Map;
  */
 @Configuration
 @Order(-1)
+@DependsOn("redisConfig")
+@AutoConfigureAfter(value = ShiroLifecycleBeanPostProcessorConfig.class)
 public class ShiroConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShiroConfig.class);
+    @Autowired
+    private ShiroService shiroService;
+    @Autowired
+    private IUserService userService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 然后呢在只需要吧这个Realm注册到Spring容器中就可以啦
@@ -75,16 +77,6 @@ public class ShiroConfig {
     }
 
     /**
-     * 为了保证实现了Shiro内部lifecycle函数的bean执行 也是shiro的生命周期，注入LifecycleBeanPostProcessor
-     *
-     * @return
-     */
-    @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-        return new LifecycleBeanPostProcessor();
-    }
-
-    /**
      * 紧接着配置安全管理器，
      * SecurityManager是Shiro框架的核心，典型的Facade模式，
      * Shiro通过SecurityManager来管理内部组件实例，并通过它来提供安全管理的各种服务。
@@ -92,7 +84,7 @@ public class ShiroConfig {
      * @return
      */
     @Bean
-    public DefaultWebSecurityManager securityManager(RedisTemplate redisTemplate, RedisCacheManager redisCacheManager) {
+    public DefaultWebSecurityManager securityManager(RedisCacheManager redisCacheManager) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(customRealm(redisCacheManager));
         securityManager.setCacheManager(shiroRedisCacheManager(redisCacheManager));
@@ -112,21 +104,6 @@ public class ShiroConfig {
     public RetryLimitCredentialsMatcher credentialsMatcher() {
         return new RetryLimitCredentialsMatcher();
     }
-
-    /**
-     * 除此之外Shiro是一堆一堆的过滤链，所以要对shiro 的过滤进行设置，
-     * 这里小心踩坑！我在application.yml中设置的context-path: /api/v1
-     * 但经过实际测试，过滤器的过滤路径，是context-path下的路径，无需加上"/api/v1"前缀
-     * @return
-     */
-//    @Bean
-//    public ShiroFilterChainDefinition shiroFilterChainDefinition() {
-//        DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
-//        chainDefinition.addPathDefinition("favicon.ico", "anon");
-//        chainDefinition.addPathDefinition("/login", "anon");
-//        chainDefinition.addPathDefinition("/**", "user");
-//        return chainDefinition;
-//    }
 
     /**
      * 除此之外Shiro是一堆一堆的过滤链，所以要对shiro 的过滤进行设置，
@@ -151,25 +128,22 @@ public class ShiroConfig {
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
-        //拦截器
-        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-        // 添加自己的过滤器并且取名
-        Map<String, Filter> filterMap = new HashMap<>(16);
-//        filterMap.put("my", new MyFilter());
-        shiroFilterFactoryBean.setFilters(filterMap);
-        filterChainDefinitionMap.put("login", "anon");
-        filterChainDefinitionMap.put("/user/test", "anon");
-        //<!-- 过滤链定义，从上向下顺序执行，一般将/**放在最为下边
-        filterChainDefinitionMap.put("/**", "authc");
+        // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
+        shiroFilterFactoryBean.setLoginUrl("/login");
+        // 登录成功后要跳转的链接
+        shiroFilterFactoryBean.setSuccessUrl("/index");
+        // 未授权界面;
+        shiroFilterFactoryBean.setUnauthorizedUrl("/error/403");
+        // 数据库中的权限资源拦截数据加载
+        Map<String, String> filterChainDefinitionMap = shiroService.loadFilterChainDefinitions();
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
 
     /**
-     * setUsePrefix(false)用于解决一个奇怪的bug。在引入spring aop的情况下。
-     * 在@Controller注解的类的方法中加入@RequiresRole等shiro注解，会导致该方法无法映射请求，
-     * 导致返回404。加入这项配置能解决这个bug
-     *
+     * DefaultAdvisorAutoProxyCreator是用来扫描上下文，寻找所有的Advistor(通知器），
+     * 将这些Advisor应用到所有符合切入点的Bean中。所以必须在lifecycleBeanPostProcessor创建之后创建，
+     * 所以用了@DependsOn
      * @return
      */
     @Bean
@@ -189,7 +163,6 @@ public class ShiroConfig {
      */
     @Bean
     public SimpleCookie rememberMeCookie() {
-        //System.out.println("ShiroConfiguration.rememberMeCookie()");
         //这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
         SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
         //<!-- 记住我cookie生效时间30天 ,单位秒;-->
@@ -215,35 +188,35 @@ public class ShiroConfig {
 
     /**
      * redisTemplate
-     *
+     * （这里暂时不用了，redisTemplate 在 RedisConfig配置类中做了初始化）
      * @param connectionFactory
      * @return
      */
-    @Bean
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<Object, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
-        Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(Object.class);
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL);
-        serializer.setObjectMapper(mapper);
-        template.setValueSerializer(serializer);
-        //使用StringRedisSerializer来序列化和反序列化redis的key值
-        template.setKeySerializer(new StringRedisSerializer());
-        template.afterPropertiesSet();
-        return template;
-    }
+//    @Bean
+//    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+//        RedisTemplate<Object, Object> template = new RedisTemplate<>();
+//        template.setConnectionFactory(connectionFactory);
+//        //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
+//        Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(Object.class);
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+//        mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL);
+//        serializer.setObjectMapper(mapper);
+//        template.setValueSerializer(serializer);
+//        //使用StringRedisSerializer来序列化和反序列化redis的key值
+//        template.setKeySerializer(new StringRedisSerializer());
+//        template.afterPropertiesSet();
+//        return template;
+//    }
 
     /**
-     * Spring缓存管理器配置
+     * 采用RedisCacheManager作为缓存管理器
      *
      * @param redisTemplate
      * @return
      */
     @Bean
-    public RedisCacheManager redisCacheManager(RedisTemplate redisTemplate) {
+    public RedisCacheManager redisCacheManager() {
         CollectionSerializer<Serializable> collectionSerializer = CollectionSerializer.getInstance();
         RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(redisTemplate.getConnectionFactory());
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()

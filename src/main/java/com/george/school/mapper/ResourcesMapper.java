@@ -2,6 +2,9 @@ package com.george.school.mapper;
 
 import com.george.school.entity.Resources;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.george.school.model.vo.ResourceVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ResourcesMapper extends BaseMapper<Resources> {
 
+    /**
+     * 获取权限和菜单列表
+     * @return 菜单和权限列表数据集合
+     */
+    List<ResourceVO> selectUrlAndPermision();
 }

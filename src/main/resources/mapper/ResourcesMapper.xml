@@ -19,4 +19,17 @@
         <result column="delete_flag" property="deleteFlag" />
     </resultMap>
 
+    <select id="selectUrlAndPermision" resultType="com.george.school.model.vo.ResourceVO">
+        SELECT
+            url,
+            permission
+        FROM
+            sys_resources
+        WHERE
+            delete_flag = 0
+            AND `status` = 0
+            AND url IS NOT NULL
+        ORDER BY
+            sort ASC
+    </select>
 </mapper>

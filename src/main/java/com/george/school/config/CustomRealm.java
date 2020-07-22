@@ -1,6 +1,9 @@
 package com.george.school.config;
 
 import com.george.school.entity.User;
+import com.george.school.service.IResourcesService;
+import com.george.school.service.IRoleService;
+import com.george.school.service.IUserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationException;
@@ -9,6 +12,8 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * <p>
@@ -30,6 +35,13 @@ public class CustomRealm extends AuthorizingRealm {
 //        hashMatcher.setHashIterations(1024);
 //        this.setCredentialsMatcher(hashMatcher);
 //    }
+    @Autowired
+    private IUserService userService;
+    @Autowired
+    private IRoleService roleService;
+    @Autowired
+    private IResourcesService resourcesService;
+
 
     /**
      * 授权
