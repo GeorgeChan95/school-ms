@@ -2,6 +2,8 @@ package com.george.school.mapper;
 
 import com.george.school.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.george.school.model.dto.LoginUserDto;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +15,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface UserMapper extends BaseMapper<User> {
 
+    /**
+     * 根据用户名获取用户信息
+     * @param username
+     * @return
+     */
+    LoginUserDto selectUserByUserName(@Param("username") String username);
 }

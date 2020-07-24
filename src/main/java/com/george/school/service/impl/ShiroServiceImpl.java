@@ -47,10 +47,11 @@ public class ShiroServiceImpl implements ShiroService {
         // 配置退出过滤器
         filterChainDefinitionMap.put("/logout", "logout");
         // 配置不会被拦截的链接 顺序判断
-        filterChainDefinitionMap.put("/login", "anon");
-        filterChainDefinitionMap.put("/error/**", "anon");
+        filterChainDefinitionMap.put("/index/login", "anon");
+        filterChainDefinitionMap.put("/index/error/**", "anon");
         filterChainDefinitionMap.put("*.html", "anon");
         filterChainDefinitionMap.put("/assets/**", "anon");
+        filterChainDefinitionMap.put("/layui/**", "anon");
         //放开swagger-ui地址
         filterChainDefinitionMap.put("/swagger/**", "anon");
         filterChainDefinitionMap.put("/v1/api-docs", "anon");
@@ -58,15 +59,9 @@ public class ShiroServiceImpl implements ShiroService {
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
         filterChainDefinitionMap.put("/webjars/**", "anon");
         filterChainDefinitionMap.put("/druid/**", "anon");
-        filterChainDefinitionMap.put("/favicon.ico", "anon");
         filterChainDefinitionMap.put("/captcha.jpg", "anon");
         filterChainDefinitionMap.put("/csrf", "anon");
-        filterChainDefinitionMap.put("/images/**", "anon");
-        filterChainDefinitionMap.put("/js/**", "anon");
-        filterChainDefinitionMap.put("/layui/**", "anon");
-        filterChainDefinitionMap.put("/css/**", "anon");
         filterChainDefinitionMap.put("/treetable-lay/**", "anon");
-        filterChainDefinitionMap.put("/user/hello", "anon");
 
         // 加载数据库中配置的菜单权限列表
         List<ResourceVO> resources = resourcesService.findUrlAndPermision();
@@ -79,7 +74,7 @@ public class ShiroServiceImpl implements ShiroService {
         // 如果使用rememberMe功能可以直接访问
         filterChainDefinitionMap.put("/index", "user");
         // 所有资源都必须认证才能操作(这个必须放在最后面)
-        filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/**", "anon");
         return filterChainDefinitionMap;
     }
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.george.school.model.vo.ResourceVO;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -21,4 +22,11 @@ public interface IResourcesService extends IService<Resources> {
      * @return
      */
     List<ResourceVO> findUrlAndPermision();
+
+    /**
+     * 根据用户id获取用户的权限信息集合
+     * @param id
+     * @return
+     */
+    Set<String> getResourcesByUserId(Long id);
 }

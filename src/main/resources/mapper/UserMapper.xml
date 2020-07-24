@@ -25,4 +25,25 @@
         <result column="delete_flag" property="deleteFlag" />
     </resultMap>
 
+    <select id="selectUserByUserName" resultType="com.george.school.model.dto.LoginUserDto">
+        SELECT
+            id,
+            username,
+            password,
+            nickname,
+            mobile,
+            email,
+            gender,
+            avatar,
+            last_login_ip AS lastLoginIp,
+            last_login_time AS lastLoginTime,
+            login_count AS loginCount,
+            status
+        FROM
+            sys_user
+        WHERE
+            username = #{username}
+            AND delete_flag = 0
+            LIMIT 1
+    </select>
 </mapper>

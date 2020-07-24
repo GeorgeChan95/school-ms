@@ -129,11 +129,11 @@ public class ShiroConfig {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
-        shiroFilterFactoryBean.setLoginUrl("/login");
+        shiroFilterFactoryBean.setLoginUrl("/index/login");
         // 登录成功后要跳转的链接
-        shiroFilterFactoryBean.setSuccessUrl("/index");
+        shiroFilterFactoryBean.setSuccessUrl("/index/home");
         // 未授权界面;
-        shiroFilterFactoryBean.setUnauthorizedUrl("/error/403");
+        shiroFilterFactoryBean.setUnauthorizedUrl("/index/403");
         // 数据库中的权限资源拦截数据加载
         Map<String, String> filterChainDefinitionMap = shiroService.loadFilterChainDefinitions();
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
@@ -211,8 +211,6 @@ public class ShiroConfig {
 
     /**
      * 采用RedisCacheManager作为缓存管理器
-     *
-     * @param redisTemplate
      * @return
      */
     @Bean
@@ -253,10 +251,10 @@ public class ShiroConfig {
         //这个name的作用也不大，只是有特色的cookie的名称。
         sessionManager.setSessionDAO(redisSessionDao);
         sessionManager.setDeleteInvalidSessions(true);
-        SimpleCookie cookie = new SimpleCookie();
-        cookie.setName("starrkCookie");
-        sessionManager.setSessionIdCookie(cookie);
+        // 这里需要给注释了，否则在session验证时候会报错
+//        sessionManager.setSessionIdCookie(rememberMeCookie());
         sessionManager.setSessionIdCookieEnabled(true);
+        sessionManager.setSessionIdUrlRewritingEnabled(false);
         return sessionManager;
     }
 }

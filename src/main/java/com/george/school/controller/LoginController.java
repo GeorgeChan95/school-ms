@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * <p>
@@ -48,7 +49,7 @@ public class LoginController {
         } catch (ExcessiveAttemptsException e) {
             log.info("==========您错误的次数太多了吧,封你半小时=======");
 //            return new Result(false, "您错误的次数太多了吧,封你半小时");
-        }catch (AccountException e) {
+        } catch (AccountException e) {
             log.info("==========账号密码错误=======");
         } catch (RuntimeException e) {
             log.info("==========运行异常=======");
