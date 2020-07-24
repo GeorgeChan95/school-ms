@@ -6,11 +6,7 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -23,6 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @since JDK 1.8
  */
 @Slf4j
+@RestController
+@RequestMapping("/api")
 public class LoginController {
     @Autowired
     private RedisTemplate redisTemplate;

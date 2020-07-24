@@ -52,6 +52,7 @@ public class ShiroServiceImpl implements ShiroService {
         filterChainDefinitionMap.put("*.html", "anon");
         filterChainDefinitionMap.put("/assets/**", "anon");
         filterChainDefinitionMap.put("/layui/**", "anon");
+        filterChainDefinitionMap.put("/vue/**", "anon");
         //放开swagger-ui地址
         filterChainDefinitionMap.put("/swagger/**", "anon");
         filterChainDefinitionMap.put("/v1/api-docs", "anon");
@@ -62,6 +63,8 @@ public class ShiroServiceImpl implements ShiroService {
         filterChainDefinitionMap.put("/captcha.jpg", "anon");
         filterChainDefinitionMap.put("/csrf", "anon");
         filterChainDefinitionMap.put("/treetable-lay/**", "anon");
+        // 验证码生成和校验接口
+        filterChainDefinitionMap.put("/api/captcha/**", "anon");
 
         // 加载数据库中配置的菜单权限列表
         List<ResourceVO> resources = resourcesService.findUrlAndPermision();
@@ -72,9 +75,9 @@ public class ShiroServiceImpl implements ShiroService {
                     filterChainDefinitionMap.put(n.getUrl(), permission);
                 });
         // 如果使用rememberMe功能可以直接访问
-        filterChainDefinitionMap.put("/index", "user");
+        filterChainDefinitionMap.put("/index/home", "user");
         // 所有资源都必须认证才能操作(这个必须放在最后面)
-        filterChainDefinitionMap.put("/**", "anon");
+        filterChainDefinitionMap.put("/**", "user");
         return filterChainDefinitionMap;
     }
 }
