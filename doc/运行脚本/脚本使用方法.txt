@@ -1,0 +1,21 @@
+1、确保脚本编码格式为 unix
+
+2、将   【脚本】  与  【项目jar包】   与  【配置文件】   置于同一目录下
+    【school-ms.sh】【school-ms.jar】【application.yml -dev -prod】
+
+3、对脚本进行授权
+    chmod +x school-ms.sh
+
+4、启动项目
+    ./school-ms.sh prod start
+
+5、查看状态
+    ./school-ms.sh prod status
+
+6、停止项目（项目集成了 actutor,建议通过发送请求主动关闭项目）
+    curl -X POST "http://localhost:8080/actuator/shutdown"
+    （8080为项目端口）
+    ./school-ms.sh prod stop
+
+7、重启项目
+    ./school-ms.sh prod restart

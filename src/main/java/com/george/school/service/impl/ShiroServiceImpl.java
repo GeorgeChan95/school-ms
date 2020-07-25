@@ -48,8 +48,6 @@ public class ShiroServiceImpl implements ShiroService {
         filterChainDefinitionMap.put("/logout", "logout");
         // 配置不会被拦截的链接 顺序判断
         filterChainDefinitionMap.put("/index/login", "anon");
-        filterChainDefinitionMap.put("/index/error/**", "anon");
-        filterChainDefinitionMap.put("*.html", "anon");
         filterChainDefinitionMap.put("/assets/**", "anon");
         filterChainDefinitionMap.put("/layui/**", "anon");
         filterChainDefinitionMap.put("/vue/**", "anon");
@@ -59,8 +57,6 @@ public class ShiroServiceImpl implements ShiroService {
         filterChainDefinitionMap.put("/v3/api-docs", "anon");
         filterChainDefinitionMap.put("/swagger-ui/**", "anon");
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
-        filterChainDefinitionMap.put("/webjars/**", "anon");
-        filterChainDefinitionMap.put("/csrf", "anon");
         // 验证码生成和校验接口
         filterChainDefinitionMap.put("/api/captcha/**", "anon");
 

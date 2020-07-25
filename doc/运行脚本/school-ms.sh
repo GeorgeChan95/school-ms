@@ -1,25 +1,10 @@
 #!/bin/bash
+
 #这里可替换为你自己的执行程序，其他代码无需更改
 APP_NAME=school-ms.jar
 
-#根据输入参数，选择执行对应方法，不输入则执行使用说明
-case $2 in
-   "start")
-     start
-     ;;
-   "stop")
-     stop
-     ;;
-   "status")
-     status
-     ;;
-   "restart")	
-     restart
-     ;;
-   *)
-     usage
-     ;;
-esac
+ENV=$1
+ORDER=$2
 
 #使用说明，用来提示输入参数
 # 使用示例：
@@ -33,7 +18,7 @@ usage() {
 }
 
 #检查程序是否在运行
-is_exist() { 
+is_exist() {
     pid=`ps -ef | grep $APP_NAME | grep -v grep | awk '{print $2}' `
     #如果不存在返回1，存在返回0
     if [ -z "${pid}" ]; then
@@ -46,14 +31,15 @@ is_exist() {
 # 检查环境参数是否正确
 is_active() {
 	# 判断用户输入的环境参数是否正确，正确返回 1， 错误返回 0
-	if [ $1 -eq "dev" ]
+	if [ $ENV = "dev" ]
 	then
 			return 1
-	elif [ $1 -eq "prod" ]
+	elif [ $ENV = "prod" ]
 	then
 			return 1
-	else 
+	else
 			echo "环境参数输入异常"
+			echo $ENV
 			usage
 			return 0
 	fi
@@ -62,13 +48,15 @@ is_active() {
 #启动方法
 start() {
    is_exist
-   if [ $? -eq 0 ]; then
-     echo "${APP_NAME} is already running. pid=${pid} ."
+   if [ $? -eq 0 ]
+   then
+		echo "${APP_NAME} is already running. pid=${pid} ."
    else
 	 is_active
 	 if [ $? -eq 1 ]
 	 then
-			nohup java -jar $APP_NAME > appstart.log 2>&1 &
+			nohup java -jar $APP_NAME --spring.profiles.active=$ENV > appstart.log 2>&1 &
+	 fi
    fi
 }
 
@@ -81,6 +69,7 @@ stop(){
 		if [ $? -eq 1 ]
 		then
 				kill -9 $pid
+		fi
    else
      echo "${APP_NAME} is not running"
    fi
@@ -95,6 +84,7 @@ status() {
 		if [ $? -eq 1 ]
 		then
 			echo "${APP_NAME} is running. Pid is ${pid}"
+		fi
    else
      echo "${APP_NAME} is not running."
    fi
@@ -107,4 +97,24 @@ restart() {
 	then
 			stop
 			start
+	fi
 }
+
+#根据输入参数，选择执行对应方法，不输入则执行使用说明
+case $2 in
+   "start")
+     start
+     ;;
+   "stop")
+     stop
+     ;;
+   "status")
+     status
+     ;;
+   "restart")
+     restart
+     ;;
+   *)
+     usage
+     ;;
+esac

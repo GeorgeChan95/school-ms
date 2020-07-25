@@ -5,12 +5,10 @@ import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -43,8 +41,8 @@ public class CaptchaController {
      * @param response 响应
      */
     @ApiOperation("生成图片验证码")
-    @RequestMapping(value = "/drawImage", method = RequestMethod.GET)
-    public void DrawImage(@RequestParam("createTypeFlag") String flag, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @GetMapping(value = "/drawImage")
+    public void DrawImage(@ApiParam("验证码创建标记") @RequestParam("createTypeFlag") String flag, HttpServletRequest request, HttpServletResponse response) throws IOException {
         //1.在内存中创建一张图片
         BufferedImage bi = new BufferedImage(DrawImageUtil.WIDTH, DrawImageUtil.HEIGHT, BufferedImage.TYPE_INT_RGB);
         //2.得到图片
@@ -76,8 +74,8 @@ public class CaptchaController {
      * @return
      */
     @ApiOperation("校验图片验证码")
-    @RequestMapping(value = "/validateCaptcha")
-    public Result validateCaptcha(HttpServletRequest request, @RequestParam("captchaCode") String captchaCode) {
+    @PostMapping(value = "/validateCaptcha")
+    public Result validateCaptcha(HttpServletRequest request, @ApiParam("验证码") @RequestParam("captchaCode") String captchaCode) {
         boolean br = false;
         //从服务器端的session中取出验证码
         String serverCaptchaCode = (String) request.getSession().getAttribute("checkcode");

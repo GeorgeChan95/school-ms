@@ -1,5 +1,6 @@
 package com.george.school.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,9 +25,9 @@ public class IndexController {
      * @param modelAndView
      * @return
      */
-    @RequestMapping(value = "/login")
+    @GetMapping(value = "/login")
     public ModelAndView loginView(ModelAndView modelAndView) {
-        modelAndView.setViewName("/login");
+        modelAndView.setViewName("login");
         return modelAndView;
     }
 }
