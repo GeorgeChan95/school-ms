@@ -23,7 +23,6 @@
         <java.version>1.8</java.version>
         <maven.test.skip>true</maven.test.skip>
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
-        <jedis.version>3.3.0</jedis.version>
         <commons-pool2.version>2.6.2</commons-pool2.version>
         <mysql-connector-java.version>8.0.15</mysql-connector-java.version>
         <mybatis-plus-boot-starter.version>3.3.2</mybatis-plus-boot-starter.version>
@@ -199,17 +198,15 @@
     </dependencies>
 
     <build>
+        <!--配置jar包名称-->
+        <finalName>school-ms</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <fork>true</fork>     <!--fork :  如果没有该项配置，肯呢个devtools不会起作用，即应用不会restart -->
+                    <fork>true</fork>     <!--fork :  如果没有该项配置devtools不会起作用，即应用不会restart -->
                 </configuration>
             </plugin>
         </plugins>
