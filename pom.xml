@@ -32,6 +32,7 @@
         <hutool-all.version>5.3.9</hutool-all.version>
         <pagehelper-spring-boot-starter.version>1.2.13</pagehelper-spring-boot-starter.version>
         <shiro-spring-boot-web-starter.version>1.5.3</shiro-spring-boot-web-starter.version>
+        <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
     </properties>
 
     <dependencies>
@@ -199,7 +200,7 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
+            <version>${springfox-boot-starter.version}</version>
         </dependency>
     </dependencies>
 
