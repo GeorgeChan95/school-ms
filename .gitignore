@@ -1,3 +1,4 @@
 /.idea/
 /school-ms.iml
 *.class
+/src/main/resources/rebel-remote.xml

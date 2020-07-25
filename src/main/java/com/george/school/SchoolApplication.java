@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 
 /**
  * <p>
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @date 2020/7/15 21:56
  * @since JDK 1.8
  */
+@EnableOpenApi // 开启swagger文档支持
 @SpringBootApplication
 @EnableTransactionManagement // 开启事务支持
 public class SchoolApplication {

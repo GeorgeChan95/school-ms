@@ -53,16 +53,14 @@ public class ShiroServiceImpl implements ShiroService {
         filterChainDefinitionMap.put("/assets/**", "anon");
         filterChainDefinitionMap.put("/layui/**", "anon");
         filterChainDefinitionMap.put("/vue/**", "anon");
+        // springboot 监控
+        filterChainDefinitionMap.put("/actuator/**", "anon");
         //放开swagger-ui地址
-        filterChainDefinitionMap.put("/swagger/**", "anon");
-        filterChainDefinitionMap.put("/v1/api-docs", "anon");
-        filterChainDefinitionMap.put("/swagger-ui.html", "anon");
+        filterChainDefinitionMap.put("/v3/api-docs", "anon");
+        filterChainDefinitionMap.put("/swagger-ui/**", "anon");
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
         filterChainDefinitionMap.put("/webjars/**", "anon");
-        filterChainDefinitionMap.put("/druid/**", "anon");
-        filterChainDefinitionMap.put("/captcha.jpg", "anon");
         filterChainDefinitionMap.put("/csrf", "anon");
-        filterChainDefinitionMap.put("/treetable-lay/**", "anon");
         // 验证码生成和校验接口
         filterChainDefinitionMap.put("/api/captcha/**", "anon");
 

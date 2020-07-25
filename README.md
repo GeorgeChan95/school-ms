@@ -23,4 +23,7 @@
 
 使用了springboot actutor 服务监控
 
+整合swagger3.0 
+访问地址：http://localhost:8080/swagger-ui/index.html
+
 

@@ -3,6 +3,8 @@ package com.george.school.controller;
 import com.george.school.util.DrawImageUtil;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +30,7 @@ import java.io.IOException;
  * @since JDK 1.8
  */
 @Slf4j
+@Api(tags="图片验证码")
 @RestController
 @RequestMapping("/api/captcha")
 public class CaptchaController {
@@ -39,6 +42,7 @@ public class CaptchaController {
      * @param request  请求
      * @param response 响应
      */
+    @ApiOperation("生成图片验证码")
     @RequestMapping(value = "/drawImage", method = RequestMethod.GET)
     public void DrawImage(@RequestParam("createTypeFlag") String flag, HttpServletRequest request, HttpServletResponse response) throws IOException {
         //1.在内存中创建一张图片
@@ -71,6 +75,7 @@ public class CaptchaController {
      * @param captchaCode 用户输入的验证码
      * @return
      */
+    @ApiOperation("校验图片验证码")
     @RequestMapping(value = "/validateCaptcha")
     public Result validateCaptcha(HttpServletRequest request, @RequestParam("captchaCode") String captchaCode) {
         boolean br = false;

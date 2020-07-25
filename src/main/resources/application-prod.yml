@@ -156,7 +156,7 @@ pagehelper:
   defaultCount: false
 ########################################## logback日志配置 #####################################################
 logging:
-  config: classpath:/logback/logback-prod.xml
+  config: classpath:logback/logback-prod.xml
 ########################################## actuator服务监控 ##############################################
 management:
   endpoint:
