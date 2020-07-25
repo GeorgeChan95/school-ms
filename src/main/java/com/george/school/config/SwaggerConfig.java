@@ -2,6 +2,8 @@ package com.george.school.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -31,19 +33,26 @@ public class SwaggerConfig {
     /**
      * 配置swagger的docket的bean实例
      *
+     * @param environment 当前环境变量配置
      * @return
      */
     @Bean
-    public Docket docket() {
+    public Docket docket(Environment environment) {
+        // 设置要显示swagger的环境（只在开发和测试环境使用）
+        Profiles profiles = Profiles.of("dev", "test");
+        // 通过 environment.acceptsProfiles 判断当前是否处在设定的环境中
+        boolean flag = environment.acceptsProfiles(profiles);
         return new Docket(DocumentationType.OAS_30).pathMapping("/")
-                // 是否开启swagger，生产环境一般关闭，可从配置文件获取此配置
-                .enable(true)
+                // 是否开启swagger，生产环境一般关闭
+                .enable(flag)
                 .apiInfo(apiInfo())
                 .select()
-                // 选择哪些接口作为swagger的doc发布
+                // 选择哪些接口作为swagger的doc发布(扫描指定的包)
                 .apis(RequestHandlerSelectors.basePackage("com.george.school.controller"))
-//                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
+                // .apis(RequestHandlerSelectors.any()) 扫描所有包
+                // 过滤指定的路径
+                .paths(PathSelectors.ant("/api/**"))
+                // .paths(PathSelectors.any()) 所有路径
                 .build()
                 // 支持的通信协议
                 .protocols(newHashSet("http", "https"))
