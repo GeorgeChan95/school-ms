@@ -5,6 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.george.school.entity.Role">
         <id column="id" property="id" />
+        <result column="code" property="code" />
         <result column="name" property="name" />
         <result column="remark" property="remark" />
         <result column="create_time" property="createTime" />
@@ -12,9 +13,9 @@
         <result column="delete_flag" property="deleteFlag" />
     </resultMap>
 
-    <select id="selectRolesByUserId" resultType="java.util.Set">
-        SELECT
-            r.CODE
+    <select id="selectRolesByUserId" resultType="java.lang.String">
+        SELECT distinct
+            r.code
         FROM
             sys_role r
             INNER JOIN sys_user_role ur ON r.id = ur.role_id

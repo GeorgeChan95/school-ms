@@ -1,7 +1,7 @@
 package com.george.school.service;
 
-import com.george.school.entity.Resources;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.george.school.entity.Resources;
 import com.george.school.model.vo.ResourceVO;
 
 import java.util.List;

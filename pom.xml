@@ -31,8 +31,11 @@
         <guava.version>29.0-jre</guava.version>
         <hutool-all.version>5.3.9</hutool-all.version>
         <pagehelper-spring-boot-starter.version>1.2.13</pagehelper-spring-boot-starter.version>
-        <shiro-spring-boot-web-starter.version>1.5.3</shiro-spring-boot-web-starter.version>
         <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
+        <shiro-spring.version>1.5.3</shiro-spring.version>
+        <shiro-redis.version>3.2.3</shiro-redis.version>
+        <jedis.version>2.9.0</jedis.version>
+        <thymeleaf-extras-shiro.version>2.0.0</thymeleaf-extras-shiro.version>
     </properties>
 
     <dependencies>
@@ -125,27 +128,47 @@
             <artifactId>freemarker</artifactId>
             <version>${freemarker.version}</version>
         </dependency>
+        <!-- shiro-spring -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>${shiro-spring.version}</version>
+        </dependency>
+        <!-- shiro-redis 整合redis需要 -->
+        <dependency>
+            <groupId>org.crazycake</groupId>
+            <artifactId>shiro-redis</artifactId>
+            <version>${shiro-redis.version}</version>
+            <!-- 排除最新3.1.0版本，引用2.9.0版本,https://github.com/alexxiyang/shiro-redis/issues/113 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>redis.clients</groupId>
+                    <artifactId>jedis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 引入2.9.0 版本jedis，为了整合必须 -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+        </dependency>
         <!--thymeleaf默认使用html5规则标签必须闭合等 使用次此包正常解析-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+        <!-- shiro-thymeleaf 模板整合 -->
         <dependency>
             <groupId>com.github.theborakompanioni</groupId>
             <artifactId>thymeleaf-extras-shiro</artifactId>
-            <version>2.0.0</version>
+            <version>${thymeleaf-extras-shiro.version}</version>
         </dependency>
         <!-- html解析类库 -->
         <dependency>
             <groupId>net.sourceforge.nekohtml</groupId>
             <artifactId>nekohtml</artifactId>
             <version>${nekohtml.version}</version>
-        </dependency>
-        <!-- shiro -->
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-spring-boot-web-starter</artifactId>
-            <version>${shiro-spring-boot-web-starter.version}</version>
         </dependency>
         <!-- commons-lang3 -->
         <dependency>

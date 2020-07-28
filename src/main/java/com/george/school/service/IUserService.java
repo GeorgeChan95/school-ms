@@ -1,7 +1,7 @@
 package com.george.school.service;
 
-import com.george.school.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.george.school.entity.User;
 import com.george.school.model.dto.LoginUserDto;
 
 /**
@@ -20,4 +20,11 @@ public interface IUserService extends IService<User> {
      * @return
      */
     LoginUserDto findUserByName(String username);
+
+    /**
+     * 通过用户名查询用户信息
+     * @param username
+     * @return
+     */
+    User findByName(String username);
 }

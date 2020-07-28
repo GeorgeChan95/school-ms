@@ -55,7 +55,7 @@ public class CaptchaController {
         DrawImageUtil.drawRandomLine(g);
         String random = DrawImageUtil.drawRandomNum((Graphics2D) g, flag);//根据客户端传递的createTypeFlag标识生成验证码图片
         //7.将随机数存在session中
-        request.getSession().setAttribute("checkcode", random);
+        request.getSession().setAttribute("captchaCode", random);
         //8.设置响应头通知浏览器以图片的形式打开
         response.setContentType("image/jpeg");//等同于response.setHeader("Content-Type", "image/jpeg");
         //9.设置响应头控制浏览器不要缓存
@@ -75,10 +75,10 @@ public class CaptchaController {
      */
     @ApiOperation("校验图片验证码")
     @PostMapping(value = "/validateCaptcha")
-    public Result validateCaptcha(HttpServletRequest request, @ApiParam("验证码") @RequestParam("captchaCode") String captchaCode) {
+    public Result validateCaptcha(HttpServletRequest request, @ApiParam("验证码") @RequestParam(value = "captchaCode", required = false) String captchaCode) {
         boolean br = false;
         //从服务器端的session中取出验证码
-        String serverCaptchaCode = (String) request.getSession().getAttribute("checkcode");
+        String serverCaptchaCode = (String) request.getSession().getAttribute("captchaCode");
         //将客户端验证码和服务器端验证比较，如果相等，则表示验证通过
         if (StringUtils.equals(captchaCode, serverCaptchaCode)) {
             return new Result(true, StatusCode.OK, "验证码正确");

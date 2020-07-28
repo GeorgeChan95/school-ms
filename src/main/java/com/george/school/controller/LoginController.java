@@ -1,5 +1,8 @@
 package com.george.school.controller;
 
+import com.george.school.util.Md5Util;
+import com.george.school.util.Result;
+import com.george.school.util.StatusCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -27,31 +30,32 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public void login(@RequestParam("username") String userName, @RequestParam("password") String Password, @RequestParam("rememberMe") boolean rememberMe) {
+    public Result login(@RequestParam("username") String userName, @RequestParam("password") String password, @RequestParam(value = "rememberMe", required = false) boolean rememberMe) {
         Subject currentUser = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(userName, Password, rememberMe);
+        password = Md5Util.encrypt(userName.toLowerCase(), password);
+        UsernamePasswordToken token = new UsernamePasswordToken(userName, password, rememberMe);
         // token.setRememberMe(rememberMe);// 默认不记住密码
         try {
             currentUser.login(token); //登录
             log.info("==========登录成功=======");
-//            return new Result(true, "登录成功")
+            return new Result(true, StatusCode.OK, "登录成功");
         } catch (UnknownAccountException e) {
             log.info("==========用户名不存在=======");
-//            return new Result(false, "用户名不存在");
+            return new Result(false, StatusCode.LOGINERROR, "用户名不存在");
         } catch (DisabledAccountException e) {
             log.info("==========您的账户已经被冻结=======");
-//            return new Result(false, "您的账户已经被冻结");
+            return new Result(false, StatusCode.LOGINERROR, "您的账户已经被冻结");
         } catch (IncorrectCredentialsException e) {
             log.info("==========密码错误=======");
-//            return new Result(false, "密码错误");
+            return new Result(false, StatusCode.LOGINERROR, "密码错误");
         } catch (ExcessiveAttemptsException e) {
             log.info("==========您错误的次数太多了吧,封你半小时=======");
-//            return new Result(false, "您错误的次数太多了吧,封你半小时");
+            return new Result(false, StatusCode.LOGINERROR, "您错误的次数太多了吧,封你半小时");
         } catch (AccountException e) {
-            log.info("==========账号密码错误=======");
+            return new Result(false, StatusCode.LOGINERROR, "账号密码错误");
         } catch (RuntimeException e) {
             log.info("==========运行异常=======");
-//            return new Result(false, "运行异常");
+            return new Result(false, StatusCode.LOGINERROR, "运行异常");
         }
     }
 

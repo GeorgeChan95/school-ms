@@ -1,7 +1,7 @@
 package com.george.school.mapper;
 
-import com.george.school.entity.Resources;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.george.school.entity.Resources;
 import com.george.school.model.vo.ResourceVO;
 import org.apache.ibatis.annotations.Param;
 

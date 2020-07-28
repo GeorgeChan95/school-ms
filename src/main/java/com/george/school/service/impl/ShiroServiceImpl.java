@@ -59,6 +59,8 @@ public class ShiroServiceImpl implements ShiroService {
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
         // 验证码生成和校验接口
         filterChainDefinitionMap.put("/api/captcha/**", "anon");
+        // 后端登录
+        filterChainDefinitionMap.put("/api/login", "anon");
 
         // 加载数据库中配置的菜单权限列表
         List<ResourceVO> resources = resourcesService.findUrlAndPermision();

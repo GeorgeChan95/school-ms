@@ -46,4 +46,27 @@
             AND delete_flag = 0
             LIMIT 1
     </select>
+
+    <select id="getByUserName" resultMap="BaseResultMap">
+        SELECT
+            id,
+            username,
+            password,
+            nickname,
+            mobile,
+            email,
+            gender,
+            avatar,
+            last_login_ip,
+            last_login_time,
+            login_count,
+            status
+        FROM
+            sys_user
+        WHERE
+            username = #{username}
+            AND delete_flag = 0
+            LIMIT 1
+    </select>
+
 </mapper>

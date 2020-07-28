@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum UserStatusEnum {
     NORMAL(0, "正常"),
-    DISABLE(1, "禁用");
+    DISABLE(1, "锁定");
 
     @Getter
     private Integer code;

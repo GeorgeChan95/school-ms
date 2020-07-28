@@ -1,9 +1,9 @@
 package com.george.school.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.george.school.entity.UserRole;
 import com.george.school.mapper.UserRoleMapper;
 import com.george.school.service.IUserRoleService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

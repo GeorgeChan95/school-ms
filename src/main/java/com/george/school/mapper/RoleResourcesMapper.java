@@ -1,7 +1,7 @@
 package com.george.school.mapper;
 
-import com.george.school.entity.RoleResources;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.george.school.entity.RoleResources;
 
 /**
  * <p>

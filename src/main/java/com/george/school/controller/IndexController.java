@@ -30,4 +30,16 @@ public class IndexController {
         modelAndView.setViewName("login");
         return modelAndView;
     }
+
+    /**
+     * 跳转到首页
+     *
+     * @param modelAndView
+     * @return
+     */
+    @GetMapping(value = "/home")
+    public ModelAndView homeView(ModelAndView modelAndView) {
+        modelAndView.setViewName("home");
+        return modelAndView;
+    }
 }

@@ -1,10 +1,10 @@
 package com.george.school.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.george.school.entity.User;
 import com.george.school.mapper.UserMapper;
 import com.george.school.model.dto.LoginUserDto;
 import com.george.school.service.IUserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,6 +21,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public LoginUserDto findUserByName(String username) {
         LoginUserDto user = this.baseMapper.selectUserByUserName(username);
+        return user;
+    }
+
+    @Override
+    public User findByName(String username) {
+        User user = this.baseMapper.getByUserName(username);
         return user;
     }
 }

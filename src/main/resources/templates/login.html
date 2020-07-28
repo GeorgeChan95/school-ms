@@ -32,6 +32,15 @@
         color: lightgray;
         font-size: initial;
     }
+
+    input[disabled]:hover {
+        cursor: not-allowed !important;
+    }
+
+    .layui-layer-loading .layui-layer-loading1 {
+        width: 70px !important;
+        height: 90px !important;
+    }
 </style>
 <body class="login">
 <div id="app">
@@ -46,7 +55,7 @@
                 <div class="layui-form-item">
                     <label class="layadmin-user-login-icon layui-icon layui-icon-username"
                            for="LAY-user-login-username"></label>
-                    <input type="text" v-model="username" name="username" id="LAY-user-login-username"
+                    <input type="text" name="username" id="LAY-user-login-username"
                            lay-verify="required"
                            placeholder="用户名"
                            class="layui-input">
@@ -62,24 +71,26 @@
                         <div class="layui-col-xs7">
                             <label class="layadmin-user-login-icon layui-icon layui-icon-vercode"
                                    for="LAY-user-login-vercode"></label>
-                            <input type="text" name="vercode" v-model="captchaCode" id="LAY-user-login-vercode"
+                            <input type="text" name="captcha" autocomplete="off"
+                                   id="LAY-user-login-vercode"
                                    lay-verify="required"
                                    placeholder="图形验证码" class="layui-input">
                         </div>
                         <div class="layui-col-xs5">
                             <div style="margin-left: 10px;">
-                                <img src="/api/captcha/drawImage?createTypeFlag=n" class="layadmin-user-login-codeimg"
-                                     id="LAY-user-get-vercode" @click="refreshCaptcha">
+                                <img src="/api/captcha/drawImage?createTypeFlag=n"
+                                     class="layadmin-user-login-codeimg"
+                                     id="LAY-user-get-vercode" onclick="refreshCaptcha()">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="layui-form-item" style="margin-bottom: 20px;">
-                    <input type="checkbox" name="remember" lay-skin="primary" title="记住密码">
+                    <input type="checkbox" name="rememberMe" lay-skin="primary" title="记住密码">
                     <a lay-href="/user/forget" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">忘记密码？</a>
                 </div>
                 <div class="layui-form-item">
-                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
+                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登入</button>
                 </div>
                 <div class="layui-trans layui-form-item layadmin-user-login-other">
                     <a lay-href="/user/reg" class="layadmin-user-jump-change layadmin-link">注册帐号</a>
@@ -98,40 +109,97 @@
 </div>
 <script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
 <script type="text/javascript" th:src="@{/assets/js/core.util.js}"></script>
-<script th:src="@{/vue/vue.js}"></script>
 <script>
     var layer = layui.layer;
     var $ = jQuery = layui.jquery;
+    var loading;
+    var varifyFlag = false;
+    layui.use('form', function () {
+
+        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+
+        //监听提交
+        form.on('submit(LAY-user-login-submit)', function (data) {
+            loading = layer.load(1, {
+                shade: [0.1, '#fff'], //0.1透明度的白色背景
+                content: '正在登录...'
+            });
+            layer.close(loading);
+            // 1、判断验证码是否正确
+            var data = data.field;
+            validateCaptcha(data.captcha);
+            // 2、登录
+            if (!varifyFlag) {
+                layer.msg('验证码错误！', {icon: 5, time: 1500});
+                return ;
+            } else {
+                // 执行登录方法
+                loginSubject(data);
+            }
+            return false;
+        });
+
+    });
+
     $(function () {
 
     })
-    new Vue({
-        el: '#app',
-        data: {
-            captchaCode: "",
-            username: "George1"
-        },
-        methods: {
-            refreshCaptcha: function () {// 刷新验证码
-                $("#LAY-user-get-vercode").attr("src", "/api/captcha/drawImage?createTypeFlag=n")
+
+    /**
+     * 刷新验证码
+     */
+    function refreshCaptcha() {
+        $("#LAY-user-get-vercode").attr("src", "/api/captcha/drawImage?createTypeFlag=n&t=" + new Date().getTime())
+    }
+
+    /**
+     * 校验校验码
+     * @param captcha 图片校验码
+     */
+    function validateCaptcha(captcha) {
+        $.ajax({
+            type: "post",
+            url: "/api/captcha/validateCaptcha",
+            data: {captchaCode: captcha},
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                varifyFlag = data.flag;
+                return varifyFlag;
+            },
+            error: function (data) {
+                varifyFlag = false;
+                return varifyFlag;
             }
-        },
-        // 侦听器侦听的是已经存在的属性
-        watch: {
-            captchaCode: function (val) {
-                if (val.length == 4) {
-                    console.log("当前验证码===》 " + val)
+        });
+    }
+
+    /**
+     * 执行登录方法
+     * @param data 登录数据
+     */
+    function loginSubject(data) {
+        $.ajax({
+            type: "post",
+            url: "/api/login",
+            data: {username: data.username, password: data.password, rememberMe: data.rememberMe},
+            dataType: "json",
+            async: false,
+            // contentType: "application/json",
+            success: function (data) {
+                console.log(data);
+                if (data.flag) {
+                    window.location.href = "/index/home";
+                } else {
+                    layer.msg(data.message, {icon: 5, time: 1500});
+                    return;
                 }
+            },
+            error: function (data) {
+                console.log(data);
             }
-        },
-        computed: {// 计算属性
-            // reverseString: function () {
-            //     console.log('执行了计算属性');
-            //     this.captchaCode = this.username.split('').reverse().join('');
-            //     return this.captchaCode;
-            // }
-        },
-    })
+        });
+    }
 </script>
 </body>
 

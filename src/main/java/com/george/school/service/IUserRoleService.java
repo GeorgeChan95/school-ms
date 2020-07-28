@@ -1,7 +1,7 @@
 package com.george.school.service;
 
-import com.george.school.entity.UserRole;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.george.school.entity.UserRole;
 
 /**
  * <p>

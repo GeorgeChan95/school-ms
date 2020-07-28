@@ -1,13 +1,12 @@
 package com.george.school;
 
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.george.school.entity.User;
 import com.george.school.service.IUserService;
-import com.george.school.util.PasswordUtil;
+import com.george.school.util.Md5Util;
 import com.george.school.util.StringPool;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -35,7 +34,7 @@ public class UserTest {
 
         String password = StringPool.EMPTY;
         try {
-            password = PasswordUtil.encrypt("admin", "admin");
+            password = Md5Util.encrypt("admin", "admin");
         } catch (Exception e) {
             e.printStackTrace();
         }

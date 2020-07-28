@@ -1,7 +1,7 @@
 package com.george.school.mapper;
 
-import com.george.school.entity.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.george.school.entity.Role;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Set;

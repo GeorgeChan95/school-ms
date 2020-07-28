@@ -1,14 +1,15 @@
 package com.george.school.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.george.school.entity.Resources;
 import com.george.school.mapper.ResourcesMapper;
 import com.george.school.model.vo.ResourceVO;
 import com.george.school.service.IResourcesService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Set;
 
