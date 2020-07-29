@@ -3,13 +3,19 @@ package com.george.school.controller;
 import com.george.school.util.Md5Util;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
+import com.george.school.util.ValidateCodeService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * <p>
@@ -24,17 +30,36 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class LoginController {
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
+    private final ValidateCodeService validateCodeService;
 
+    /**
+     * 用户登录
+     * @param userName 用户名
+     * @param password 密码
+     * @param captchCode 验证码
+     * @param rememberMe 是否记住我
+     * @param request 请求
+     * @return
+     */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public Result login(@RequestParam("username") String userName, @RequestParam("password") String password, @RequestParam(value = "rememberMe", required = false) boolean rememberMe) {
-        Subject currentUser = SecurityUtils.getSubject();
+    public Result login(
+            @RequestParam("username") String userName,
+            @RequestParam("password") String password,
+            @RequestParam("captchCode") String captchCode,
+            @RequestParam(value = "rememberMe", required = false) boolean rememberMe,
+            HttpServletRequest request) {
+        // 获取登录session
+        HttpSession session = request.getSession();
+        // 校验验证码
+        validateCodeService.check(session.getId(), captchCode);
+        // 将密码进行md5加密，目的为了在登录时与数据库密码比对（md5加密不可逆）
         password = Md5Util.encrypt(userName.toLowerCase(), password);
         UsernamePasswordToken token = new UsernamePasswordToken(userName, password, rememberMe);
-        // token.setRememberMe(rememberMe);// 默认不记住密码
+        Subject currentUser = SecurityUtils.getSubject();
         try {
             currentUser.login(token); //登录
             log.info("==========登录成功=======");
@@ -64,5 +89,15 @@ public class LoginController {
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
         return "index";
+    }
+
+    /**
+     * 获取图片验证码
+     * @param request 请求
+     * @param response 响应
+     */
+    @GetMapping("/image/captcha")
+    public void createCaptcha(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        validateCodeService.create(request, response);
     }
 }

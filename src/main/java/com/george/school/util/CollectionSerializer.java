@@ -1,10 +1,10 @@
 package com.george.school.util;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.SerializationException;
 
 import java.io.Serializable;
-import org.apache.commons.lang3.SerializationUtils;
-import org.springframework.data.redis.serializer.SerializationException;
 
 /**
  * <p>

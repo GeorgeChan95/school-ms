@@ -43,80 +43,80 @@
     }
 </style>
 <body class="login">
-<div id="app">
-    <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+<div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
 
-        <div class="layadmin-user-login-main">
-            <div class="layadmin-user-login-box layadmin-user-login-header">
-                <h2>layuiAdmin</h2>
-                <p>layui 官方出品的单页面后台管理模板系统</p>
+    <div class="layadmin-user-login-main">
+        <div class="layadmin-user-login-box layadmin-user-login-header">
+            <h2>layuiAdmin</h2>
+            <p>layui 官方出品的单页面后台管理模板系统</p>
+        </div>
+        <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-username"
+                       for="LAY-user-login-username"></label>
+                <input type="text" name="username" id="LAY-user-login-username"
+                       lay-verify="required"
+                       placeholder="用户名"
+                       class="layui-input">
             </div>
-            <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
-                <div class="layui-form-item">
-                    <label class="layadmin-user-login-icon layui-icon layui-icon-username"
-                           for="LAY-user-login-username"></label>
-                    <input type="text" name="username" id="LAY-user-login-username"
-                           lay-verify="required"
-                           placeholder="用户名"
-                           class="layui-input">
-                </div>
-                <div class="layui-form-item">
-                    <label class="layadmin-user-login-icon layui-icon layui-icon-password"
-                           for="LAY-user-login-password"></label>
-                    <input type="password" name="password" id="LAY-user-login-password" lay-verify="required"
-                           placeholder="密码" class="layui-input">
-                </div>
-                <div class="layui-form-item">
-                    <div class="layui-row">
-                        <div class="layui-col-xs7">
-                            <label class="layadmin-user-login-icon layui-icon layui-icon-vercode"
-                                   for="LAY-user-login-vercode"></label>
-                            <input type="text" name="captcha" autocomplete="off"
-                                   id="LAY-user-login-vercode"
-                                   lay-verify="required"
-                                   placeholder="图形验证码" class="layui-input">
-                        </div>
-                        <div class="layui-col-xs5">
-                            <div style="margin-left: 10px;">
-                                <img src="/api/captcha/drawImage?createTypeFlag=n"
-                                     class="layadmin-user-login-codeimg"
-                                     id="LAY-user-get-vercode" onclick="refreshCaptcha()">
-                            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password"
+                       for="LAY-user-login-password"></label>
+                <input type="password" name="password" id="LAY-user-login-password" lay-verify="required"
+                       placeholder="密码" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-row">
+                    <div class="layui-col-xs7">
+                        <label class="layadmin-user-login-icon layui-icon layui-icon-vercode"
+                               for="LAY-user-login-vercode"></label>
+                        <input type="text" name="captchCode" autocomplete="off"
+                               id="LAY-user-login-vercode"
+                               lay-verify="required"
+                               placeholder="图形验证码" class="layui-input">
+                    </div>
+                    <div class="layui-col-xs5">
+                        <div style="margin-left: 10px;">
+                            <img src="" class="layadmin-user-login-codeimg" id="LAY-user-get-vercode">
                         </div>
                     </div>
                 </div>
-                <div class="layui-form-item" style="margin-bottom: 20px;">
-                    <input type="checkbox" name="rememberMe" lay-skin="primary" title="记住密码">
-                    <a lay-href="/user/forget" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">忘记密码？</a>
-                </div>
-                <div class="layui-form-item">
-                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登入</button>
-                </div>
-                <div class="layui-trans layui-form-item layadmin-user-login-other">
-                    <a lay-href="/user/reg" class="layadmin-user-jump-change layadmin-link">注册帐号</a>
-                </div>
+            </div>
+            <div class="layui-form-item" style="margin-bottom: 20px;">
+                <input type="checkbox" name="rememberMe" lay-skin="primary" title="记住密码">
+                <a lay-href="/user/forget" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">忘记密码？</a>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登入</button>
+            </div>
+            <div class="layui-trans layui-form-item layadmin-user-login-other">
+                <a lay-href="/user/reg" class="layadmin-user-jump-change layadmin-link">注册帐号</a>
             </div>
         </div>
+    </div>
 
-        <div class="layui-trans layadmin-user-login-footer">
-            <p class="copyright-p">© 2020 <a href="#" class="copyright-a">Geroge.Chan</a>. All Rights Reserved.</p>
-            <p>
+    <div class="layui-trans layadmin-user-login-footer">
+        <p class="copyright-p">© 2020 <a href="#" class="copyright-a">Geroge.Chan</a>. All Rights Reserved.</p>
+        <p>
             <span><a href="https://github.com/GeorgeChan95/school-ms" target="_blank"
                      class="copyright-a">查看源码</a></span>
-            </p>
-        </div>
+        </p>
     </div>
 </div>
 <script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
 <script type="text/javascript" th:src="@{/assets/js/core.util.js}"></script>
-<script>
+<script th:inline="javascript">
     var layer = layui.layer;
     var $ = jQuery = layui.jquery;
     var loading;
-    var varifyFlag = false;
     layui.use('form', function () {
 
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        // 初始化验证码
+        initCode();
+        $("#LAY-user-get-vercode").on('click', function () {
+            initCode();
+        });
 
         //监听提交
         form.on('submit(LAY-user-login-submit)', function (data) {
@@ -124,54 +124,19 @@
                 shade: [0.1, '#fff'], //0.1透明度的白色背景
                 content: '正在登录...'
             });
-            layer.close(loading);
-            // 1、判断验证码是否正确
+
+            // 表单数据
             var data = data.field;
-            validateCaptcha(data.captcha);
-            // 2、登录
-            if (!varifyFlag) {
-                layer.msg('验证码错误！', {icon: 5, time: 1500});
-                return ;
-            } else {
-                // 执行登录方法
-                loginSubject(data);
-            }
-            return false;
+            loginSubject(data);
         });
 
     });
 
-    $(function () {
-
-    })
-
     /**
-     * 刷新验证码
+     * 初始化验证码
      */
-    function refreshCaptcha() {
-        $("#LAY-user-get-vercode").attr("src", "/api/captcha/drawImage?createTypeFlag=n&t=" + new Date().getTime())
-    }
-
-    /**
-     * 校验校验码
-     * @param captcha 图片校验码
-     */
-    function validateCaptcha(captcha) {
-        $.ajax({
-            type: "post",
-            url: "/api/captcha/validateCaptcha",
-            data: {captchaCode: captcha},
-            dataType: "json",
-            async: false,
-            success: function (data) {
-                varifyFlag = data.flag;
-                return varifyFlag;
-            },
-            error: function (data) {
-                varifyFlag = false;
-                return varifyFlag;
-            }
-        });
+    function initCode() {
+        $("#LAY-user-get-vercode").attr("src", "/api/image/captcha?data=" + new Date().getTime())
     }
 
     /**
@@ -182,11 +147,16 @@
         $.ajax({
             type: "post",
             url: "/api/login",
-            data: {username: data.username, password: data.password, rememberMe: data.rememberMe},
+            data: {
+                username: data.username,
+                password: data.password,
+                rememberMe: data.rememberMe,
+                captchCode: data.captchCode
+            },
             dataType: "json",
             async: false,
-            // contentType: "application/json",
             success: function (data) {
+                layer.close(loading);
                 console.log(data);
                 if (data.flag) {
                     window.location.href = "/index/home";
@@ -196,6 +166,7 @@
                 }
             },
             error: function (data) {
+                layer.close(loading);
                 console.log(data);
             }
         });

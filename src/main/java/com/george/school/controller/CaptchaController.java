@@ -1,6 +1,7 @@
 package com.george.school.controller;
 
 import com.george.school.util.DrawImageUtil;
+import com.george.school.util.RedisService;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
 import io.swagger.annotations.Api;
@@ -8,8 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +33,13 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/captcha")
 public class CaptchaController {
+
+    private final RedisService redisService;
+
+    @Autowired
+    public CaptchaController(RedisService redisService) {
+        this.redisService = redisService;
+    }
 
     /**
      * 生成图片验证码

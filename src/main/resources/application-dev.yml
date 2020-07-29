@@ -180,7 +180,7 @@ shiro:
   # rememberMe cookie有效时长，单位为秒
   cookieTimeout: 864000
   # 免认证的路径配置，如静态资源等
-  anonUrl: /index/login,/assets/**,/layui/**,/vue/**,/actuator/**,/v3/api-docs,/swagger-ui/**,/swagger-resources/**,/api/captcha/**,/api/login
+  anonUrl: /index/login,/assets/**,/layui/**,/vue/**,/actuator/**,/v3/api-docs,/swagger-ui/**,/swagger-resources/**,/api/image/captcha,/api/login
   # 登录 url
   loginUrl: /index/login
   # 首页 url

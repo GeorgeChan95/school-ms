@@ -30,7 +30,7 @@ public class ConfigProperties {
     /**
      * 验证码有效时间，单位秒
      */
-    private int codeTime;
+    private long codeTime;
     /**
      * 验证码图片格式，png
      */
