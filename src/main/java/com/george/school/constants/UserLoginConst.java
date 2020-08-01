@@ -10,9 +10,9 @@ package com.george.school.constants;
  * @date 2020/7/21 17:10
  * @since JDK 1.8
  */
-public class UserSessionConst {
+public class UserLoginConst {
     /**
      * User 的 session key;k
      */
-    public static final String USER_SESSION_KEY = "user";
+    public static final String USER_LOGIN_KEY = "_last_login";
 }

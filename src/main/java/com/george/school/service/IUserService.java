@@ -27,4 +27,10 @@ public interface IUserService extends IService<User> {
      * @return
      */
     User findByName(String username);
+
+    /**
+     * 更新用户登录数据
+     * @param user 用户当前信息
+     */
+    void updateUserLoginInfo(User user);
 }

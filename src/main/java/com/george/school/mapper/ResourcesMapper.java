@@ -2,6 +2,7 @@ package com.george.school.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.george.school.entity.Resources;
+import com.george.school.model.vo.HomeResouceVO;
 import com.george.school.model.vo.ResourceVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,7 +23,7 @@ public interface ResourcesMapper extends BaseMapper<Resources> {
      * 获取权限和菜单列表
      * @return 菜单和权限列表数据集合
      */
-    List<ResourceVO> selectUrlAndPermision();
+    List<HomeResouceVO> selectUrlAndPermision(@Param("userId") Long userId);
 
     /**
      * 根据用户id获取用户的权限集合

@@ -19,18 +19,28 @@
         <result column="delete_flag" property="deleteFlag" />
     </resultMap>
 
-    <select id="selectUrlAndPermision" resultType="com.george.school.model.vo.ResourceVO">
+    <select id="selectUrlAndPermision" resultType="com.george.school.model.vo.HomeResouceVO">
         SELECT
-            url,
-            permission
+            re.id,
+            re.`name` AS resourceName,
+            re.type AS resourceType,
+            re.url AS resourceUrl,
+            re.permission,
+            re.parent_id AS parentId,
+            re.icon
         FROM
-            sys_resources
+            sys_resources re
+            INNER JOIN sys_role_resources rr ON re.id = rr.resources_id
+            INNER JOIN sys_role ro ON ro.id = rr.role_id
+            AND ro.delete_flag = 0
+            INNER JOIN sys_user_role ur ON ur.role_id = ro.id
         WHERE
-            delete_flag = 0
-            AND `status` = 0
-            AND url IS NOT NULL
+            re.delete_flag = 0
+            AND re.`status` = 0
+            AND re.type = 1
+            AND ur.user_id = #{userId}
         ORDER BY
-            sort ASC
+            re.sort ASC
     </select>
 
     <select id="selectResourcesByUserId" resultType="java.lang.String">

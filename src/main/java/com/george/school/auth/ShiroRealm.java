@@ -1,6 +1,7 @@
 package com.george.school.auth;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.george.school.constants.UserLoginConst;
 import com.george.school.entity.User;
 import com.george.school.enums.UserStatusEnum;
 import com.george.school.service.IResourcesService;
@@ -14,6 +15,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -33,6 +35,7 @@ public class ShiroRealm extends AuthorizingRealm {
     private IUserService userService;
     private IRoleService roleService;
     private IResourcesService resourcesService;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     public void setUserService(IUserService userService) {
@@ -47,6 +50,11 @@ public class ShiroRealm extends AuthorizingRealm {
     @Autowired
     public void setResourcesService(IResourcesService resourcesService) {
         this.resourcesService = resourcesService;
+    }
+
+    @Autowired
+    public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 
     /**
@@ -97,6 +105,9 @@ public class ShiroRealm extends AuthorizingRealm {
         if (UserStatusEnum.DISABLE.getCode().equals(user.getStatus())) {
             throw new LockedAccountException("账号已被锁定,请联系管理员！");
         }
+        // 获取用户上次的登录信息，存入redis，并更新本次登录信息
+        redisTemplate.opsForValue().set(user.getUsername() + UserLoginConst.USER_LOGIN_KEY, user);
+        userService.updateUserLoginInfo(user);
         return new SimpleAuthenticationInfo(user, password, getName());
     }
 }

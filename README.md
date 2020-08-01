@@ -39,7 +39,7 @@
 - Git 2.25.1.windows.1
 - TortoiseGit 2.9.0.0
 
-### 涉及技术点
+### 技术选型
 - spring boot 2.3.1
 - logback 
 - swagger2
@@ -49,10 +49,17 @@
 - mysql
 - mybatis-plus
 - fastjson
+- lombok
 - thymeleaf
 - layui
 - redis 5.0.8
 - hikari
 - pagehelper
 - actuator
+
+### 支持的浏览器
+- Chrome
+- FireFox
+- Edge
+- Internet Explorer11 (部分功能不支持)
 

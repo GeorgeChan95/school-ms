@@ -21,6 +21,8 @@ import java.io.IOException;
 /**
  * <p>
  * 生成/校验图片验证码前端控制器
+ *
+ * 已作废
  * </p>
  *
  * @author George Chan

@@ -4,6 +4,8 @@ import com.george.school.util.Md5Util;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
 import com.george.school.util.ValidateCodeService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -44,13 +46,12 @@ public class LoginController {
      * @param request 请求
      * @return
      */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ResponseBody
+    @PostMapping(value = "/login")
     public Result login(
-            @RequestParam("username") String userName,
-            @RequestParam("password") String password,
-            @RequestParam("captchCode") String captchCode,
-            @RequestParam(value = "rememberMe", required = false) boolean rememberMe,
+            @ApiParam("登录用户名") @RequestParam("username") String userName,
+            @ApiParam("登录密码") @RequestParam("password") String password,
+            @ApiParam("图片校验码") @RequestParam("captchCode") String captchCode,
+            @ApiParam("是否记住密码") @RequestParam(value = "rememberMe", required = false) boolean rememberMe,
             HttpServletRequest request) {
         // 获取登录session
         HttpSession session = request.getSession();
@@ -84,20 +85,25 @@ public class LoginController {
         }
     }
 
-    @RequestMapping("/logout")
-    public String logOut() {
-        Subject subject = SecurityUtils.getSubject();
-        subject.logout();
-        return "index";
-    }
-
     /**
      * 获取图片验证码
      * @param request 请求
      * @param response 响应
      */
+    @ApiOperation("创建图片验证码")
     @GetMapping("/image/captcha")
     public void createCaptcha(HttpServletRequest request, HttpServletResponse response) throws IOException {
         validateCodeService.create(request, response);
+    }
+
+    /**
+     * 退出登录-shiro配置退出登录的url，此接口可以不写。
+     * @return
+     */
+    @GetMapping("/logout")
+    public String logOut() {
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        return "redirect:/index/login";
     }
 }
