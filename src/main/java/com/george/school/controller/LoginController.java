@@ -35,8 +35,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class LoginController {
     private final RedisTemplate redisTemplate;
-    private final ValidateCodeService validateCodeService;
-
     /**
      * 用户登录
      * @param userName 用户名
@@ -46,6 +44,7 @@ public class LoginController {
      * @param request 请求
      * @return
      */
+    @ApiOperation("用户登录")
     @PostMapping(value = "/login")
     public Result login(
             @ApiParam("登录用户名") @RequestParam("username") String userName,
@@ -84,6 +83,8 @@ public class LoginController {
             return new Result(false, StatusCode.LOGINERROR, "运行异常");
         }
     }
+
+    private final ValidateCodeService validateCodeService;
 
     /**
      * 获取图片验证码

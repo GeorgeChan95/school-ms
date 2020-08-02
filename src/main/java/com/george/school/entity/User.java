@@ -88,6 +88,12 @@ public class User implements Serializable {
     private String avatar;
 
     /**
+     * 用户类型（0-学生 1-老师 3-管理员 4-系统管理员）
+     */
+    @TableField("user_type")
+    private Integer userType;
+
+    /**
      * 注册IP
      */
     @TableField("reg_ip")

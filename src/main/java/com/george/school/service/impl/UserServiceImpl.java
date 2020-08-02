@@ -4,13 +4,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.george.school.entity.User;
 import com.george.school.mapper.UserMapper;
 import com.george.school.model.dto.LoginUserDto;
+import com.george.school.model.query.UserListQuery;
 import com.george.school.service.IUserService;
 import com.george.school.util.HttpContextUtil;
 import com.george.school.util.IpUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -42,5 +46,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setLastLoginTime(LocalDateTime.now());
         user.setLoginCount(user.getLoginCount() + 1);
         this.baseMapper.updateById(user);
+    }
+
+    @Override
+    public PageInfo<User> pageUserList(UserListQuery query) {
+        int pageNum = query.getPageNum() > 0 ? query.getPageNum() : 1;
+        int pageSize = query.getPageSize() > 0 ? query.getPageSize() : 10;
+        PageHelper.startPage(pageNum, pageSize, Boolean.TRUE);
+        List<User> list = this.baseMapper.getUserPageList(query);
+        PageInfo<User> pageInfo = new PageInfo<>(list);
+        return pageInfo;
     }
 }

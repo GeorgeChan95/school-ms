@@ -61,6 +61,15 @@ public class IndexController {
     }
 
     /**
+     * 系统设置，用户管理页面
+     * @return
+     */
+    @GetMapping("/index/sys/user")
+    public String userView() {
+        return "user/user_list";
+    }
+
+    /**
      * 未授权的页面
      *
      * @return

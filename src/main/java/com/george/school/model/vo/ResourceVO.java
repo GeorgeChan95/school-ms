@@ -3,6 +3,8 @@ package com.george.school.model.vo;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * <p>
  *     菜单和权限页面展示对象
@@ -15,7 +17,8 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class ResourceVO {
+public class ResourceVO implements Serializable {
+    private static final long serialVersionUID = 1L;
     /**
      * 菜单url
      */

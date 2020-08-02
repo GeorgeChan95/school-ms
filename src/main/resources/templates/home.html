@@ -126,10 +126,7 @@
         });
 
         // 加载loading
-        loading = layer.load(1, {
-            shade: [0.1, '#fff'], //0.1透明度的白色背景
-            content: '数据加载中...'
-        });
+        loading = top.layer.msg('数据加载中...',{icon: 16,time:false,shade:0.8});
         // 设置iframe高度与宽度
         frameResize();
 
@@ -172,22 +169,7 @@
                 $.get("/api/logout", function (data, status) {
                     console.log("退出成功！")
                     top.location.href="/index/login";
-                })
-                // $.ajax({
-                //     type: "get",
-                //     url: "/api/logout",
-                //     data: {},
-                //     dataType: "json",
-                //     async: false,
-                //     success: function (res) {
-                //         console.log(res);
-                //         debugger;
-                //         top.window.location.href="/index/login";
-                //     },
-                //     error: function (res) {
-                //         console.log(res)
-                //     }
-                // })
+                });
             }
         });
     }
@@ -289,10 +271,10 @@
                 } else {
                     $("#navBarId").empty();
                 }
-                layer.close(loading);
+                top.layer.close(loading);
             },
             error: function (data) {
-                layer.close(loading);
+                top.layer.close(loading);
                 console.log(data);
             }
         });

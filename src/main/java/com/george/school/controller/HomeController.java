@@ -1,6 +1,5 @@
 package com.george.school.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.george.school.constants.UserLoginConst;
 import com.george.school.entity.User;
 import com.george.school.model.vo.HomeInfoVO;
@@ -68,7 +67,7 @@ public class HomeController {
 
         HomeInfoVO infoVO = HomeInfoVO.builder()
                                         .username(principal.getUsername())
-                                        .nickName(principal.getNickname())
+                                        .nickname(principal.getNickname())
                                         .email(principal.getEmail())
                                         .mobile(principal.getMobile())
                                         .lastLoginIp(lastUser.getLastLoginIp())

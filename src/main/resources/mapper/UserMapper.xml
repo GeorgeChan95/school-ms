@@ -14,6 +14,7 @@
         <result column="birthday" property="birthday" />
         <result column="gender" property="gender" />
         <result column="avatar" property="avatar" />
+        <result column="user_type" property="userType"/>
         <result column="reg_ip" property="regIp" />
         <result column="last_login_ip" property="lastLoginIp" />
         <result column="last_login_time" property="lastLoginTime" />
@@ -69,4 +70,28 @@
             LIMIT 1
     </select>
 
+    <select id="getUserPageList" resultMap="BaseResultMap">
+        SELECT
+            su.*
+        FROM
+            sys_user su
+        WHERE su.delete_flag = 0
+            <if test="query != null">
+                <if test="query.username != null and query.username != '' ">
+                    AND su.username LIKE #{query.userNameLike}
+                </if>
+                <if test="query.nickName != null and query.nickName != '' ">
+                    AND su.nickname LIKE #{query.nickNameLike}
+                </if>
+                <if test="query.userType != null">
+                    AND su.user_type = #{query.userType}
+                </if>
+                <if test="query.status != null ">
+                    AND su.status = #{query.status}
+                </if>
+                <if test="query.startTime != null and query.endTime != null">
+                    AND su.create_time BETWEEN #{query.startTime} AND #{query.endTime}
+                </if>
+            </if>
+    </select>
 </mapper>

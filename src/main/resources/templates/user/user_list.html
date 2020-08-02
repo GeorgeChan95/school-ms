@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <title>Shiro后台管理系统</title>
+    <link rel="icon" th:href="@{/assets/ico/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <style>
+        .layui-badge {
+            font-size: 15px;
+        }
+        .panel-heading{
+            padding:10px 10px;
+            border-bottom:1px solid transparent;
+            border-radius:2px 2px 0 0;
+            font-size:14px;
+            background: #eeeeee
+        }
+        .panel{
+            margin-bottom:20px;
+            background-color:#fff;
+            border:1px solid transparent;
+            border-radius:4px;
+            -webkit-box-shadow:0 1px 1px rgba(0,0,0,.05);
+            box-shadow:0 1px 1px rgba(0,0,0,.05)
+        }
+        .panel-default{
+            border-color:#ddd;
+        }
+
+        .layui-input, .layui-textarea {
+            display: block;
+            width: 96%;
+            padding-left: 10px;
+        }
+
+        .layui-form-pane .layui-form-label {
+            width: 130px;
+            padding: 8px 15px;
+            height: 38px;
+            line-height: 20px;
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 2px 0 0 2px;
+            text-align: center;
+            background-color: #FBFBFB;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<!-- 用户添加面板 开始-->
+<div class="panel panel-default operation_user" hidden>
+    <div class="panel-heading title"></div>
+    <div class="layui-card-body">
+        <form class="layui-form " action="" lay-filter="deptInfo" style="margin-top: 10px">
+            <div class="layui-row layui-col-space5">
+                <div class="layui-col-md4">
+<!--                    <div class="grid-demo grid-demo-bg1">1/3</div>-->
+                    <input name="id" hidden/>
+                    <input name="deptId" hidden/>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">账号</label>
+                        <div class="layui-input-block">
+                            <input type="username" name="username" placeholder="请输入账号" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md4">
+<!--                    <div class="grid-demo">1/3</div>-->
+                    <div class="layui-form-item">
+                        <div class="layui-form-label ">密码</div>
+                        <div class="layui-input-block">
+                            <input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-form-label ">手机号</div>
+                        <div class="layui-input-block">
+                            <input type="phone" name="phone" placeholder="请输入手机号" autocomplete="off" class="layui-input" >
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md4">
+<!--                    <div class="grid-demo grid-demo-bg1">1/3</div>-->
+                    <div class="layui-form-item">
+                        <div class="layui-form-label ">所属部门</div>
+                        <div class="layui-input-block">
+                            <input type="deptName" name="deptName" placeholder="请选择所属部门" autocomplete="off" class="layui-input" readonly="readonly" style="background:#eeeeee!important">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-block">
+                            <input type="checkbox" name="status" lay-skin="switch" lay-filter="switch" lay-text="启用|禁用" checked>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 45% !important;">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">保存</button>
+                    <button  class="layui-btn layui-btn-primary" id="btn_cancel">返回</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- 用户添加面板 结束-->
+
+<div class="user_table_div">
+    <!-- 搜索区域 -->
+    <div id="searchParam">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" id="nickname" class="layui-input" autocomplete="off" placeholder="请输入姓名">
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" id="username" class="layui-input" autocomplete="off" placeholder="请输入学号/工号">
+            </div>
+            <div class="layui-input-inline layui-form">
+                <select id="userType">
+                    <option value="" selected="">请选择用户类型</option>
+                    <option value="0">学生</option>
+                    <option value="1">老师</option>
+                    <option value="2">管理员</option>
+                    <option value="3">超级管理员</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="createTime" placeholder="创建时间">
+            </div>
+            <div class="layui-input-inline layui-form">
+                <select id="status">
+                    <option value="" selected="">请选择用户状态</option>
+                    <option value="0">正常</option>
+                    <option value="1">锁定</option>
+                </select>
+            </div>
+            <div class="layui-input-inline ">
+                <button class="layui-btn" id="search">
+                    <i class="layui-icon layui-icon-search"></i>
+                </button>
+                <button class="layui-btn layui-btn-normal" id="reset">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <table class="layui-hide" id="user_table" lay-filter="user_table"></table>
+    <!-- 头部工具栏 -->
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-group">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius" lay-event="addNewUser">
+                <i class="layui-icon layui-icon-add-circle"></i>
+            </button>
+        </div>
+        <div class="layui-btn-group">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger"
+                    lay-event="batchDeleted">
+                <i class="layui-icon layui-icon-delete"></i>
+            </button>
+        </div>
+    </script>
+    <!-- 行工具栏 -->
+    <script type="text/html" id="bar">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+</div>
+
+<script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
+<script th:inline="javascript">
+    var table = layui.table;
+    var laypage = layui.laypage
+    var form = layui.form;
+    var layer = layui.layer;
+    var $ = jQuery = layui.jquery;
+    var laydate = layui.laydate;
+    var tree = layui.tree;
+    var transfer = layui.transfer;
+    var searchParam;
+    layui.use(['table', 'laypage', 'layer', 'laydate', 'tree', 'transfer'], function () {
+        searchParam = {
+            username: null,
+            status: null,
+            startTime: null,
+            endTime: null,
+            nickName: null,
+            userType: null,
+            pageNum: 1,
+            pageSize: 10
+        }
+
+        laydate.render({
+            elem: '#createTime'
+            , type: 'datetime'
+            , range: '~'
+            , done: function (value, date, endDate) {
+                if (value != null && value != undefined && value != "") {
+                    searchParam.startTime = value.split("~")[0];
+                    searchParam.endTime = value.split("~")[1];
+                } else {
+                    searchParam.startTime = null;
+                    searchParam.endTime = null;
+                }
+            }
+        });
+
+        _initTableData();
+
+        // 点击查询
+        $("#search").click(function () {
+            searchParam.nickname = $("#nickname").val();
+            searchParam.userType = $("#userType").val();
+            searchParam.username = $("#username").val();
+            searchParam.status = $("#status").val();
+            searchParam.pageNum = 1;
+            _initTableData();
+        });
+
+        // 重置搜索
+        $("#reset").click(function () {
+            // 清空搜索条件内容
+            $("#createTime").val("");
+            $("#nickname").val("");
+            $("#username").val("");
+            $("#userType option:first").prop("selected", 'selected');
+            $("#status option:first").prop("selected", 'selected');
+            // 重置页面渲染内容（layui需要的）
+            form.render();
+
+            // 清空搜索条件，重新触发表格查询和渲染
+            searchParam.nickname = null;
+            searchParam.userType = null;
+            searchParam.username = null;
+            searchParam.status = null;
+            searchParam.startTime = null;
+            searchParam.endTime = null;
+            searchParam.pageNum = 1;
+            _initTableData();
+        });
+
+        // 取消用户保存
+        $("#btn_cancel").click(function() {
+            $(".user_table_div").show();
+            $(".operation_user").hide();
+            return false;
+        });
+
+        table.on('toolbar(user_table)', function(obj){
+
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'batchDeleted':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if(data.length==0){
+                        layer.msg("请选择要批量删除的用户");
+                    }else {
+                        var userIds = [];
+                        $(data).each(function (index,item) {
+                            userIds.push(item.id);
+                        });
+                        tipDialog(userIds,"选中的");
+                    }
+                    break;
+                case 'addNewUser':
+                    $(".title").html("新增用户");
+                    $(".user_table_div").hide();
+                    $(".operation_user").show();
+                    $(".operation_user input[name=id]").val("");
+                    $(".operation_user input[name=pid]").val("");
+                    $(".operation_user input[name=username]").val("");
+                    $(".operation_user input[name=password]").val("");
+                    $(".operation_user input[name=phone]").val("");
+                    $(".operation_user input[name=deptName]").val("");
+                    $(".operation_user input[name=status]").attr('checked', 'checked');
+                    $(".operation_user input[name=status]").attr('type', 'hidden').val(1);
+                    var x = document.getElementsByClassName("layui-unselect layui-form-switch");
+                    x[0].setAttribute("class", "layui-unselect layui-form-switch layui-form-onswitch");
+                    var d = document.getElementsByTagName('em')[0];
+                    d.firstChild.nodeValue = '启用';
+                    form.render(); //更新全部
+                    _initTree("");
+                    break;
+            };
+        });
+    });
+
+    /**
+     * 初始化表格数据
+     * @private
+     */
+    function _initTableData() {
+        table.render({
+            elem: '#user_table'
+            , url: '/api/user/list'
+            , method: 'post'
+            , where: searchParam //设定异步数据接口的额外参数
+            , contentType: 'application/json'
+            , toolbar: '#toolbar' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports', 'print']
+            , title: '用户数据表'
+            , height: 'full-80'
+            , cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                , {field: 'id', title: 'ID', width: 80, fixed: 'left', hide: true}
+                , {field: 'nickname', title: '姓名', align: 'center', width: 120}
+                , {field: 'username', title: '账号', align: 'center', width: 120}
+                , {field: 'mobile', title: '手机号', align: 'center', width: 120}
+                , {field: 'email', title: '邮箱', align: 'center', width: 180}
+                , {
+                    field: 'userType', title: '用户类型', align: 'center', width: 120, templet: function (res) {
+                        // return res.userType;
+                        if (res.userType == 0) {
+                            return '<span class="layui-badge layui-bg-green">学生</span>';
+                        } else if (res.userType == 1) {
+                            return '<span class="layui-badge layui-bg-blue">老师</span>';
+                        } else if (res.userType == 2) {
+                            return '<span class="layui-badge">管理员</span>';
+                        } else if (res.userType == 3) {
+                            return '<span class="layui-badge layui-bg-black">系统管理员</span>';
+                        }
+                    }
+                }
+                , {
+                    field: 'gender', title: '性别', align: 'center', width: 80, templet: function (res) {
+                        if (res.gender == 1) {
+                            return "男";
+                        } else if (res.gender == 2) {
+                            return "女";
+                        } else {
+                            return "";
+                        }
+                    }
+                }
+                , {
+                    field: 'avatar', title: '头像', align: 'center', width: 100, templet: function (res) {
+                        if (res.avatar != null && res.avatar != undefined) {
+                            return res.avatar
+                            console.log(res.avatar)
+                        } else {
+                            return "";
+                        }
+                    }
+                }
+                , {
+                    field: 'status', title: '用户状态', align: 'center', width: 120, templet: function (res) {
+                        if (res.status == 0) {
+                            return '<span class="layui-badge layui-bg-blue">正常</span>';
+                        } else {
+                            return '<span class="layui-badge layui-bg-gray"锁定</span>';
+                        }
+                    }
+                }
+                , {
+                    field: 'createTime', title: '创建时间', align: 'center', width: 180, templet: function (res) {
+                        if (res.createTime != undefined && res.createTime != null) {
+                            var timeArr = res.createTime.split("T");
+                            return timeArr[0] + " " + timeArr[1]
+                        } else {
+                            return "";
+                        }
+                    }
+                }
+                , {
+                    field: 'lastLoginTime', title: '上次登录时间', align: 'center', width: 180, templet: function (res) {
+                        if (res.lastLoginTime != undefined && res.lastLoginTime != null) {
+                            var timeArr = res.lastLoginTime.split("T");
+                            return timeArr[0] + " " + timeArr[1]
+                        } else {
+                            return "";
+                        }
+                    }
+                }
+                , {field: 'lastLoginIp', title: '上次登录IP', align: 'center', width: 160}
+                , {field: 'remark', title: '用户备注', align: 'center', width: 180}
+                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar', width: 150}
+            ]]
+            , page: true
+            , parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.message, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            }
+            , request: {
+                pageName: 'pageNum' //页码的参数名称，默认：page
+                , limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            , response: {
+                statusName: 'code' //规定数据状态的字段名称，默认：code
+                , statusCode: 20000 //规定成功的状态码，默认：0
+                , msgName: 'message' //规定状态信息的字段名称，默认：msg
+                , countName: 'count' //规定数据总数的字段名称，默认：count
+                , dataName: 'data' //规定数据列表的字段名称，默认：data
+            }
+        });
+    }
+
+    /**
+     * 初始化部门树
+     * @param id 部门id
+     * @private
+     */
+    function _initTree(id) {
+
+    }
+</script>
+</body>
+</html>

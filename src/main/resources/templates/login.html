@@ -120,10 +120,7 @@
 
         //监听提交
         form.on('submit(LAY-user-login-submit)', function (data) {
-            loading = layer.load(1, {
-                shade: [0.1, '#fff'], //0.1透明度的白色背景
-                content: '正在登录...'
-            });
+            loading = top.layer.msg('数据加载中...',{icon: 16,time:false,shade:0.8});
 
             // 表单数据
             var data = data.field;
@@ -156,7 +153,7 @@
             dataType: "json",
             async: false,
             success: function (data) {
-                layer.close(loading);
+                top.layer.close(loading);
                 console.log(data);
                 if (data.flag) {
                     window.location.href = "/index/home";
@@ -166,7 +163,7 @@
                 }
             },
             error: function (data) {
-                layer.close(loading);
+                top.layer.close(loading);
                 console.log(data);
             }
         });
