@@ -94,4 +94,12 @@
                 </if>
             </if>
     </select>
+
+    <select id="findUserByMobile" resultType="java.lang.Integer">
+        SELECT count(1) FROM sys_user WHERE mobile = #{mobile} AND delete_flag = 0
+    </select>
+
+    <select id="findByUserName" resultType="java.lang.Integer">
+        SELECT count(1) FROM sys_user WHERE username = #{username} AND delete_flag = 0
+    </select>
 </mapper>

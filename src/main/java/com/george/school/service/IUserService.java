@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.george.school.entity.User;
 import com.george.school.model.dto.LoginUserDto;
 import com.george.school.model.query.UserListQuery;
+import com.george.school.util.Result;
 import com.github.pagehelper.PageInfo;
 
 /**
@@ -42,4 +43,11 @@ public interface IUserService extends IService<User> {
      * @return
      */
     PageInfo<User> pageUserList(UserListQuery query);
+
+    /**
+     * 用户数据保存
+     * @param user
+     * @return
+     */
+    Result saveUserData(User user);
 }

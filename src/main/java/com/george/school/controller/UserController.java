@@ -1,6 +1,7 @@
 package com.george.school.controller;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import com.george.school.entity.User;
 import com.george.school.model.query.UserListQuery;
 import com.george.school.service.IUserService;
@@ -54,4 +55,13 @@ public class UserController {
         return new Result(Boolean.TRUE, StatusCode.OK, "操作成功！", (int) pageInfo.getTotal(), pageInfo.getList());
     }
 
+    @ApiOperation("用户保存")
+    @PostMapping("/save")
+    public Result userSave(@RequestBody User user) {
+        if (ObjectUtil.isNull(user)) {
+            return new Result(false, StatusCode.ERROR, "参数异常，用户保存失败");
+        }
+        Result result = userService.saveUserData(user);
+        return result;
+    }
 }

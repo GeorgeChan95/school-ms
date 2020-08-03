@@ -38,4 +38,18 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     List<User> getUserPageList(@Param("query") UserListQuery query);
+
+    /**
+     * 根据手机号判断用户是否存在
+     * @param mobile
+     * @return
+     */
+    int findUserByMobile(@Param("mobile") String mobile);
+
+    /**
+     * 根据用户登陆账户判断用户是否已存在
+     * @param username
+     * @return
+     */
+    int findByUserName(@Param("username") String username);
 }
