@@ -152,7 +152,7 @@
                         <div class="layui-upload">
                             <button type="button" class="layui-btn" id="user_image">上传头像</button>
                             <div class="layui-upload-list">
-                                <img class="layui-upload-img" id="img_head">
+                                <img class="layui-upload-img" id="img_head" th:src="@{/assets/images/head_default.jpg}">
                                 <p id="headText"></p>
                             </div>
                         </div>
@@ -245,6 +245,7 @@
     var tree = layui.tree;
     var transfer = layui.transfer;
     var searchParam;
+    var uploadInst;
     var loading;
     layui.use(['table', 'laypage', 'layer', 'laydate', 'tree', 'transfer', 'upload'], function () {
         searchParam = {
@@ -279,7 +280,7 @@
         });
 
         //普通图片上传
-        var uploadInst = upload.render({
+        uploadInst = upload.render({
             elem: '#user_image'
             ,url: '/api/user/upload' //改成您自己的上传接口
             ,before: function(obj){
@@ -390,7 +391,8 @@
                         ,"id": ""
                         ,"avatar": ""
                     });
-                    $("#img_head").attr("src", "");
+                    $("#img_head").attr("src", "/assets/images/head_default.jpg");
+                    // uploadInst.reload();
 
                     // 更新组织树
                     _initTree("");
