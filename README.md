@@ -46,16 +46,18 @@
 - junit 5
 - shiro 1.5.3
 - shell
-- mysql
+- mysql 8.0.21
 - mybatis-plus
 - fastjson
 - lombok
 - thymeleaf
-- layui
+- layui 2.5.6
 - redis 5.0.8
 - hikari
 - pagehelper
 - actuator
+- docker 19.03
+- nginx 1.16.1
 
 ### 支持的浏览器
 - Chrome
