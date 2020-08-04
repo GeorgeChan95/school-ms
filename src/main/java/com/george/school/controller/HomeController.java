@@ -62,6 +62,7 @@ public class HomeController {
         // 获取用户上次的登录信息
         User lastUser = (User) redisTemplate.opsForValue().get(principal.getUsername() + UserLoginConst.USER_LOGIN_KEY);
 
+
         // 加载用户的权限数据
         List<HomeResouceVO> resouceVOList = resourcesService.findUrlAndPermision(principal.getId());
 
@@ -71,7 +72,7 @@ public class HomeController {
                                         .email(principal.getEmail())
                                         .mobile(principal.getMobile())
                                         .lastLoginIp(lastUser.getLastLoginIp())
-                                        .lastLoginTime(lastUser.getLastLoginTime().format(DateTimeFormatter.ISO_DATE_TIME))
+                                        .lastLoginTime(lastUser.getLastLoginTime() == null ? null : lastUser.getLastLoginTime().format(DateTimeFormatter.ISO_DATE_TIME))
                                         .loginCount(principal.getLoginCount())
                                         .resouceVOList(resouceVOList)
                                         .build();

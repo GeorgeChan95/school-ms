@@ -51,4 +51,16 @@ public class ConfigProperties {
      * 验证码类型：1. 数字+字母；2. 纯数字；3. 纯字母
      */
     private int codeCharType;
+    /**
+     * 文件服务器IP
+     */
+    private String fileServerAddr;
+    /**
+     * 用户头像上传路径
+     */
+    private String headImagePath;
+    /**
+     * 用户头像访问路径前缀
+     */
+    private String headUrlPrefix;
 }

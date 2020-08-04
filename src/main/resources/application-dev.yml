@@ -34,7 +34,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 数据库URL
     # serverTimezone=GMT%2B8 (北京时间 == 东八区时间) 之前UTC 差了8小时 （暂改为东8）
-    url: jdbc:mysql://192.168.204.132:3306/school-ms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://192.168.46.129:3306/school-ms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=GMT%2B8
     # 数据库用户名
     username: root
     # 数据库密码
@@ -91,13 +91,15 @@ spring:
   ########################################### Redis相关配置 #######################################################
   redis:
     # redis服务器地址
-    host: 192.168.204.132
+    host: 192.168.46.129
     # redis服务器连接端口
     port: 6379
     # redis默认有16个分片，默认使用0号分片
     database: 0
     # 连接超时时间（毫秒）
     timeout: 2000
+    # redis密码
+    password: 123456
     # 配置文件中添加 lettuce.pool 相关配置，则会使用到lettuce连接池
     lettuce:
       pool:
@@ -209,3 +211,9 @@ config:
   codeLength: 4
   # 验证码类型：1. 数字+字母；2. 纯数字；3. 纯字母
   codeCharType: 2
+  # 文件服务器ip
+  fileServerAddr: 192.168.46.129:80
+  # 用户头像上传路径
+  headImagePath: /home/data/nginx/html/images
+  # 用户头像访问前缀
+  headUrlPrefix: /images
