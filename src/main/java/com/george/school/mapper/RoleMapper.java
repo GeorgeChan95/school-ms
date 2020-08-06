@@ -21,5 +21,5 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @param userId 用户id
      * @return
      */
-    Set<String> selectRolesByUserId(@Param("userId") Long userId);
+    Set<String> selectRolesByUserId(@Param("userId") String userId);
 }

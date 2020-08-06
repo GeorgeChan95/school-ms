@@ -28,19 +28,19 @@ public class RoleResources implements Serializable {
      * 主键ID
      */
     @TableId(value = "id")
-    private Long id;
+    private String id;
 
     /**
      * 角色表主键
      */
     @TableField("role_id")
-    private Long roleId;
+    private String roleId;
 
     /**
      * 资源表主键
      */
     @TableField("resources_id")
-    private Long resourcesId;
+    private String resourcesId;
 
     /**
      * 添加时间

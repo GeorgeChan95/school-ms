@@ -1,7 +1,7 @@
 package com.george.school.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.george.school.config.ConfigProperties;
 import com.george.school.entity.User;
 import com.george.school.mapper.UserMapper;
 import com.george.school.model.dto.LoginUserDto;
@@ -11,6 +11,7 @@ import com.george.school.util.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,12 @@ import java.util.List;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+    private final ConfigProperties configProperties;
+
+    @Autowired
+    public UserServiceImpl(ConfigProperties configProperties) {
+        this.configProperties = configProperties;
+    }
 
     @Override
     public LoginUserDto findUserByName(String username) {
@@ -56,6 +63,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         PageHelper.startPage(pageNum, pageSize, Boolean.TRUE);
         List<User> list = this.baseMapper.getUserPageList(query);
         PageInfo<User> pageInfo = new PageInfo<>(list);
+
+        list.stream().forEach(n -> {
+            String avatar = n.getAvatar();
+            if (StringUtils.isNotEmpty(avatar)) {
+                avatar = configProperties.getFileServerAddr() + avatar;
+                n.setAvatar(avatar);
+            }
+        });
         return pageInfo;
     }
 
@@ -64,29 +79,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 校验，用户名、手机号是否存在
         if (StringUtils.isNotEmpty(user.getMobile())) {
             int count = this.baseMapper.findUserByMobile(user.getMobile());
-            if (count > 0) {
+            if (count > 0 && StringUtils.isEmpty(user.getId())) {
                 return new Result(false, StatusCode.ERROR, "该用户手机号已存在");
             }
 
             count = this.baseMapper.findByUserName(user.getUsername());
-            if (count > 0) {
+            if (count > 0 && StringUtils.isEmpty(user.getId())) {
                 return new Result(false, StatusCode.ERROR, "该用户账号已存在");
             }
         }
-        // 给用户设置密码
-        String password = Md5Util.encrypt(user.getUsername(), user.getUsername());
-        user.setPassword(password);
 
-        // 设置注册ip
-        HttpServletRequest request = HttpContextUtil.getHttpServletRequest();
-        String registerIp = IpUtil.getIpAddr(request);
-        user.setRegIp(registerIp);
+        if (StringUtils.isEmpty(user.getId())) {
+            // 给用户设置密码
+            String password = Md5Util.encrypt(user.getUsername(), user.getUsername());
+            user.setPassword(password);
+            // 设置注册ip
+            HttpServletRequest request = HttpContextUtil.getHttpServletRequest();
+            String registerIp = IpUtil.getIpAddr(request);
+            user.setRegIp(registerIp);
+            // 设置登录次数为0
+            user.setLoginCount(0);
+        }
 
-        // 设置登录次数为0
-        user.setLoginCount(0);
+        // 处理默认头像的问题
+        if (StringUtils.contains(user.getAvatar(), "head_default.jpg")) {
+            user.setAvatar(StringPool.EMPTY);
+        }
+
+
         // 设置组织关系
 
-        int insert = this.baseMapper.insert(user);
-        return insert > 0 ? new Result(true, StatusCode.OK, "保存成功") : new Result(false, StatusCode.ERROR, "操作失败");
+//        int res;
+//        if (StringUtils.isEmpty(user.getId())) {
+//            res = this.baseMapper.updateById(user);
+//        } else {
+//            res = this.baseMapper.insert(user);
+//        }
+//        return res > 0 ? new Result(true, StatusCode.OK, "保存成功") : new Result(false, StatusCode.ERROR, "操作失败");
+        this.saveOrUpdate(user);
+        return new Result(true, StatusCode.OK, "保存成功");
     }
 }

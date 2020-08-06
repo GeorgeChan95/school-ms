@@ -28,7 +28,7 @@ public class Resources implements Serializable {
      * 主键ID
      */
     @TableId(value = "id")
-    private Long id;
+    private String id;
 
     /**
      * 资源名称
@@ -58,7 +58,7 @@ public class Resources implements Serializable {
      * 父节点id
      */
     @TableField("parent_id")
-    private Long parentId;
+    private String parentId;
 
     /**
      * 排序

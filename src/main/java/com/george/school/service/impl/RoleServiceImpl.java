@@ -22,7 +22,7 @@ import java.util.Set;
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IRoleService {
 
     @Override
-    public Set<String> getRolesByUserId(Long id) {
+    public Set<String> getRolesByUserId(String id) {
         Set<String> roles = this.baseMapper.selectRolesByUserId(id);
         if (CollectionUtils.isEmpty(roles)) {
             roles = Sets.newHashSet();

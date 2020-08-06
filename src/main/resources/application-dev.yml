@@ -125,7 +125,7 @@ mybatis-plus:
     banner: false
     db-config:
       #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)",ID_WORKER_STR:"全局唯一ID (字符串类型唯一ID)", UUID:"全局唯一ID UUID";
-      id-type: ID_WORKER
+      id-type: ID_WORKER_STR
       # 表名、是否使用下划线命名
       table-underline: true
       # 逻辑已删除值(默认为 1)
@@ -212,7 +212,7 @@ config:
   # 验证码类型：1. 数字+字母；2. 纯数字；3. 纯字母
   codeCharType: 2
   # 文件服务器ip
-  fileServerAddr: 106.14.137.255:80
+  fileServerAddr: http://192.168.46.129:80
   # 用户头像上传路径
   headImagePath: /home/data/nginx/html/images
   # 用户头像访问前缀

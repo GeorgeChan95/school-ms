@@ -20,5 +20,5 @@ public interface IRoleService extends IService<Role> {
      * @param id 用户id
      * @return
      */
-    Set<String> getRolesByUserId(Long id);
+    Set<String> getRolesByUserId(String id);
 }

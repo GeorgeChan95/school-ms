@@ -400,6 +400,43 @@
                     break;
             };
         });
+
+        table.on('tool(user_table)',function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case'del':
+                    var userIds=[];
+                    userIds.push(data.id);
+                    // tipDialog(userIds,data.username);
+                    break;
+                case 'edit':
+                    $(".user_table_div").hide();
+                    $(".operation_user").show();
+                    $(".title").html("编辑用户");
+                    let avatar = data.avatar;
+                    if (avatar == null || avatar == undefined || avatar =='') {
+                        avatar = "/assets/images/head_default.jpg";
+                    }
+                    form.val('userInfo', {
+                        "username": data.username
+                        ,"nickname": data.nickname
+                        ,"deptName": ""
+                        ,"mobile": data.mobile
+                        ,"email": data.email
+                        ,"qq": data.qq
+                        ,"gender": data.gender
+                        ,"birthday": data.birthday
+                        ,"userType": data.userType
+                        ,"remark": data.remark
+                        ,"status": data.status
+                        ,"deptId": ""
+                        ,"id": data.id + ''
+                        ,"avatar": avatar
+                    });
+                    $("#img_head").attr("src", avatar);
+                    break;
+            }
+        });
     });
 
     form.on('submit(submit)', function(data){
@@ -416,11 +453,11 @@
                     _initTableData();
                     $(".user_table_div").show();
                     $(".operation_user").hide();
-                    top.layer.close(loading);
                     layer.msg(data.message, {icon: 1});
                 } else {
                     layer.msg(data.message, {icon: 5, time: 2000});
                 }
+                top.layer.close(loading);
             },
             error: function (data) {
                 top.layer.close(loading);
@@ -480,9 +517,10 @@
                 }
                 , {
                     field: 'avatar', title: '头像', align: 'center', width: 100, templet: function (res) {
-                        if (res.avatar != null && res.avatar != undefined) {
-                            return res.avatar
-                            console.log(res.avatar)
+                        if (res.avatar != null && res.avatar != undefined && res.avatar != '') {
+                            let img = '<img style="display: inline-block; width: 50%; height: 100%;" src="'+ res.avatar+'">';
+                            console.log(img)
+                            return img
                         } else {
                             return "";
                         }

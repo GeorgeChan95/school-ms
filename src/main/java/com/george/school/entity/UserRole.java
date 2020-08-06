@@ -28,19 +28,19 @@ public class UserRole implements Serializable {
      * 主键ID
      */
     @TableId(value = "id")
-    private Long id;
+    private String id;
 
     /**
      * 用户表主键
      */
     @TableField("user_id")
-    private Long userId;
+    private String userId;
 
     /**
      * 角色表主键
      */
     @TableField("role_id")
-    private Long roleId;
+    private String roleId;
 
     /**
      * 添加时间

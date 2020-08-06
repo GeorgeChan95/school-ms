@@ -23,12 +23,12 @@ public interface ResourcesMapper extends BaseMapper<Resources> {
      * 获取权限和菜单列表
      * @return 菜单和权限列表数据集合
      */
-    List<HomeResouceVO> selectUrlAndPermision(@Param("userId") Long userId);
+    List<HomeResouceVO> selectUrlAndPermision(@Param("userId") String userId);
 
     /**
      * 根据用户id获取用户的权限集合
      * @param userId 用户id
      * @return
      */
-    Set<String> selectResourcesByUserId(@Param("userId") Long userId);
+    Set<String> selectResourcesByUserId(@Param("userId") String userId);
 }

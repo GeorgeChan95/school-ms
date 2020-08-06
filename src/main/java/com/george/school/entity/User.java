@@ -31,7 +31,7 @@ public class User implements Serializable {
      * 主键
      */
     @TableId(value = "id")
-    private Long id;
+    private String id;
 
     /**
      * 登录用户名

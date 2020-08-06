@@ -26,7 +26,7 @@ import java.util.Set;
 public class ResourcesServiceImpl extends ServiceImpl<ResourcesMapper, Resources> implements IResourcesService {
 
     @Override
-    public List<HomeResouceVO> findUrlAndPermision(Long userId) {
+    public List<HomeResouceVO> findUrlAndPermision(String userId) {
         List<HomeResouceVO> resources = this.baseMapper.selectUrlAndPermision(userId);
         if (CollectionUtils.isEmpty(resources)) {
             resources = Lists.newArrayList();
@@ -87,7 +87,7 @@ public class ResourcesServiceImpl extends ServiceImpl<ResourcesMapper, Resources
 
 
     @Override
-    public Set<String> getResourcesByUserId(Long id) {
+    public Set<String> getResourcesByUserId(String id) {
         Set<String> perms = this.baseMapper.selectResourcesByUserId(id);
         if (CollectionUtils.isEmpty(perms)) {
             perms = Sets.newHashSet();

@@ -22,12 +22,12 @@ public interface IResourcesService extends IService<Resources> {
      * 获取数据库中的菜单和权限列表
      * @return
      */
-    List<HomeResouceVO> findUrlAndPermision(Long userId);
+    List<HomeResouceVO> findUrlAndPermision(String userId);
 
     /**
      * 根据用户id获取用户的权限信息集合
      * @param id
      * @return
      */
-    Set<String> getResourcesByUserId(Long id);
+    Set<String> getResourcesByUserId(String id);
 }
