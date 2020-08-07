@@ -212,7 +212,7 @@ config:
   # 验证码类型：1. 数字+字母；2. 纯数字；3. 纯字母
   codeCharType: 2
   # 文件服务器ip
-  fileServerAddr: http://192.168.46.129:80
+  fileServerAddr: http://106.14.137.255:80
   # 用户头像上传路径
   headImagePath: /home/data/nginx/html/images
   # 用户头像访问前缀

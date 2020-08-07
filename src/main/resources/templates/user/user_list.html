@@ -229,24 +229,29 @@
     <!-- 行工具栏 -->
     <script type="text/html" id="bar">
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        {{# if(d.avatar != undefined && d.avatar != '' && d.avatar != null){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="picture" disabled="">查看图片</a>
+        {{# } else { }}
+        <a class="layui-btn layui-btn-xs layui-btn-disabled" lay-event="picture">查看图片</a>
+        {{# } }}
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
 </div>
 
 <script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
 <script th:inline="javascript">
-    var table = layui.table;
-    var laypage = layui.laypage
-    var form = layui.form;
-    var layer = layui.layer;
-    var $ = jQuery = layui.jquery;
-    var laydate = layui.laydate;
-    var upload = layui.upload
-    var tree = layui.tree;
-    var transfer = layui.transfer;
-    var searchParam;
-    var uploadInst;
-    var loading;
+    let table = layui.table;
+    let laypage = layui.laypage
+    let form = layui.form;
+    let layer = layui.layer;
+    let $ = jQuery = layui.jquery;
+    let laydate = layui.laydate;
+    let upload = layui.upload
+    let tree = layui.tree;
+    let transfer = layui.transfer;
+    let searchParam;
+    let uploadInst;
+    let loading;
     layui.use(['table', 'laypage', 'layer', 'laydate', 'tree', 'transfer', 'upload'], function () {
         searchParam = {
             username: null,
@@ -354,20 +359,17 @@
         });
 
         table.on('toolbar(user_table)', function(obj){
-
-            var checkStatus = table.checkStatus(obj.config.id);
             switch(obj.event){
                 case 'batchDeleted':
-                    var checkStatus = table.checkStatus(obj.config.id);
-                    var data = checkStatus.data;
-                    if(data.length==0){
-                        layer.msg("请选择要批量删除的用户");
+                    let checkData = table.checkStatus('user_table').data;
+                    if(checkData.length==0){
+                        layer.msg("请选择要删除的用户");
                     }else {
-                        var userIds = [];
-                        $(data).each(function (index,item) {
+                        let userIds = [];
+                        $(checkData).each(function (index,item) {
                             userIds.push(item.id);
                         });
-                        tipDialog(userIds,"选中的");
+                        deleteUser(userIds);
                     }
                     break;
                 case 'addNewUser':
@@ -405,9 +407,9 @@
             var data = obj.data;
             switch (obj.event) {
                 case'del':
-                    var userIds=[];
+                    let userIds=[];
                     userIds.push(data.id);
-                    // tipDialog(userIds,data.username);
+                    deleteUser(userIds);
                     break;
                 case 'edit':
                     $(".user_table_div").hide();
@@ -434,6 +436,28 @@
                         ,"avatar": avatar
                     });
                     $("#img_head").attr("src", avatar);
+                    break;
+                case 'picture':
+                    let picture = data.avatar;
+                    if (picture != null && picture != undefined && picture != '') {
+                        let json = {
+                            "title": "用户头像", //相册标题
+                            "id": 'user_head_img', //相册id
+                            "start": 0, //初始显示的图片序号，默认0
+                            "data": [   //相册包含的图片，数组格式
+                                {
+                                    "alt": "用户头像",
+                                    "pid": data.id, //图片id
+                                    "src": picture, //原图地址
+                                    "thumb": picture //缩略图地址
+                                }
+                            ]
+                        };
+                        layer.photos({
+                            photos: json
+                            ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                        });
+                    }
                     break;
             }
         });
@@ -481,6 +505,22 @@
             , contentType: 'application/json'
             , toolbar: '#toolbar' //开启头部工具栏，并为其绑定左侧模板
             , defaultToolbar: ['filter', 'exports', 'print']
+            , page: true
+            , parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.message, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            }
+            , response: {
+                statusName: 'code' //规定数据状态的字段名称，默认：code
+                , statusCode: 20000 //规定成功的状态码，默认：0
+                , msgName: 'message' //规定状态信息的字段名称，默认：msg
+                , countName: 'count' //规定数据总数的字段名称，默认：count
+                , dataName: 'data' //规定数据列表的字段名称，默认：data
+            }
             , title: '用户数据表'
             , height: 'full-80'
             , cols: [[
@@ -555,30 +595,10 @@
                         }
                     }
                 }
-                , {field: 'lastLoginIp', title: '上次登录IP', align: 'center', width: 160}
+                , {field: 'lastLoginIp', title: '上次登录IP', align: 'center', width: 120}
                 , {field: 'remark', title: '用户备注', align: 'center', width: 180}
-                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar', width: 150}
+                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar', width: 190}
             ]]
-            , page: true
-            , parseData: function (res) { //res 即为原始返回的数据
-                return {
-                    "code": res.code, //解析接口状态
-                    "msg": res.message, //解析提示文本
-                    "count": res.count, //解析数据长度
-                    "data": res.data //解析数据列表
-                };
-            }
-            , request: {
-                pageName: 'pageNum' //页码的参数名称，默认：page
-                , limitName: 'pageSize' //每页数据量的参数名，默认：limit
-            }
-            , response: {
-                statusName: 'code' //规定数据状态的字段名称，默认：code
-                , statusCode: 20000 //规定成功的状态码，默认：0
-                , msgName: 'message' //规定状态信息的字段名称，默认：msg
-                , countName: 'count' //规定数据总数的字段名称，默认：count
-                , dataName: 'data' //规定数据列表的字段名称，默认：data
-            }
         });
     }
 
@@ -589,6 +609,37 @@
      */
     function _initTree(id) {
 
+    }
+
+    /**
+     * 删除用户
+     * @param userIds 用户id集合
+     */
+    function deleteUser(userIds) {
+        layer.confirm('确认删除用户数据么？', function(index){
+            loading = top.layer.msg('请稍等...',{icon: 16,time:false,shade:0.8});
+            $.ajax({
+                type: "post",
+                url: "/api/user/delUser",
+                data: {userIds: userIds},
+                traditional: true,
+                success: function (data) {
+                    if (data.flag) {
+                        _initTableData();
+                        layer.msg(data.message, {icon: 1});
+                    } else {
+                        layer.msg(data.message, {icon: 5, time: 2000});
+                    }
+                    top.layer.close(loading);
+                },
+                error: function (data) {
+                    top.layer.close(loading);
+                    console.log(data);
+                }
+            });
+
+            layer.close(index);
+        });
     }
 </script>
 </body>

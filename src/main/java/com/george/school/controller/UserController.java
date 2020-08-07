@@ -1,6 +1,5 @@
 package com.george.school.controller;
 
-
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -13,6 +12,7 @@ import com.george.school.util.StatusCode;
 import com.george.school.util.StringPool;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 
 /**
  * <p>
@@ -49,21 +50,9 @@ public class UserController {
         this.configProperties = configProperties;
     }
 
-    @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    public String hello() {
-        return "hello";
-    }
-
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public String test() {
-        redisTemplate.opsForValue().set("test", 111);
-        redisTemplate.opsForValue().set("123", "123");
-        return "test";
-    }
-
     @ApiOperation("用户列表")
     @PostMapping("/list")
-    public Result userList(@RequestBody UserListQuery query, @RequestParam(required = false) Integer pageNum, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer limit) {
+    public Result userList(@RequestBody UserListQuery query) {
         PageInfo<User> pageInfo = userService.pageUserList(query);
         return new Result(Boolean.TRUE, StatusCode.OK, "操作成功！", (int) pageInfo.getTotal(), pageInfo.getList());
     }
@@ -101,5 +90,20 @@ public class UserController {
             return new Result(false, StatusCode.ERROR, "上传失败");
         }
         return new Result(true, StatusCode.OK, "上传成功", imageUrl);
+    }
+
+    /**
+     * 用户删除
+     * @param userIds 用户id集合
+     * @return
+     */
+    @ApiOperation("用户删除")
+    @PostMapping("/delUser")
+    public Result delUser(@ApiParam("用户id数组") @RequestParam(value = "userIds", required = false) String[] userIds) {
+        if (userIds == null || userIds.length == 0) {
+            return new Result(false, StatusCode.ERROR, "参数异常！");
+        }
+        userService.removeByIds(Arrays.asList(userIds));
+        return new Result(true, StatusCode.OK, "删除成功");
     }
 }

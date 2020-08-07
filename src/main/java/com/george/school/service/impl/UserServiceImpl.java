@@ -58,8 +58,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public PageInfo<User> pageUserList(UserListQuery query) {
-        int pageNum = query.getPageNum() > 0 ? query.getPageNum() : 1;
-        int pageSize = query.getPageSize() > 0 ? query.getPageSize() : 10;
+        int pageNum = query.getPage() > 0 ? query.getPage() : 1;
+        int pageSize = query.getLimit() > 0 ? query.getLimit() : 10;
         PageHelper.startPage(pageNum, pageSize, Boolean.TRUE);
         List<User> list = this.baseMapper.getUserPageList(query);
         PageInfo<User> pageInfo = new PageInfo<>(list);

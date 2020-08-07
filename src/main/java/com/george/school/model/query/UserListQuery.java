@@ -44,10 +44,10 @@ public class UserListQuery implements Serializable {
     private String endTime;
 
     @ApiModelProperty(value = "页码")
-    private int pageNum;
+    private int page;
 
     @ApiModelProperty(value = "页大小")
-    private int pageSize;
+    private int limit;
 
     /**
      * 在sql查询时，传入此参数，并在参数前后加 % ，用以模糊搜索
