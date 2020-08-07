@@ -92,6 +92,14 @@
                 <if test="query.startTime != null and query.endTime != null">
                     AND su.create_time BETWEEN #{query.startTime} AND #{query.endTime}
                 </if>
+                <if test="query.field != null ">
+                    <if test="query.field != null and query.field == 'createTime' ">
+                        ORDER BY su.create_time ${query.order}
+                    </if>
+                    <if test="query.field != null and query.field == 'nickname' ">
+                        ORDER BY su.nickname ${query.order}
+                    </if>
+                </if>
             </if>
     </select>
 

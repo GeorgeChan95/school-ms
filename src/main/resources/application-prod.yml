@@ -34,7 +34,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 数据库URL
     # serverTimezone=GMT%2B8 (北京时间 == 东八区时间) 之前UTC 差了8小时 （暂改为东8）
-    url: jdbc:mysql://192.168.204.132:3306/school-ms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://106.14.137.255:3306/school-ms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=GMT%2B8
     # 数据库用户名
     username: root
     # 数据库密码
@@ -91,7 +91,7 @@ spring:
   ########################################### Redis相关配置 #######################################################
   redis:
     # redis服务器地址
-    host: 192.168.204.132
+    host: 106.14.137.255
     # redis服务器连接端口
     port: 6379
     # redis默认有16个分片，默认使用0号分片
@@ -169,17 +169,46 @@ management:
     web:
       exposure:
         include: "*"
-############################################# shiro配置 #################################################
+############################################# shiro配置（自定义） #################################################
 shiro:
-  # 启用Shiro的Spring模块
-  enabled: true
-  web:
-    # 启用Shiro的Spring Web模块
-    enabled: true
-  # 登录路径
+  # session 超时时间，单位为秒
+  sessionTimeout: 3600
+  # rememberMe cookie有效时长，单位为秒
+  cookieTimeout: 864000
+  # 免认证的路径配置，如静态资源等
+  anonUrl: /index/login,/assets/**,/layui/**,/vue/**,/actuator/**,/v3/api-docs,/swagger-ui/**,/swagger-resources/**,/api/image/captcha,/api/login
+  # 登录 url
   loginUrl: /index/login
-  # 登录成功后跳转的路径
+  # 首页 url
   successUrl: /index/home
-  # 未授权跳转的路径
-  unauthorizedUrl: /index/403
+  # 登出 url
+  logoutUrl: /api/logout
+  # 未授权跳转 url
+  unauthorizedUrl: /index/unauthorized
+  # rememberMe cookie 加密的密钥
+  encryptKey: george_shiro_key
+############################################# 其它自定义配置 #################################################
+config:
+  # 项目启动后是否使用系统默认浏览器打开登录页，默认开启
+  autoOpenBrowser: true
+  # Excel单次导入最大数据量，如 300个数据一次commit
+  maxBatchInsertNum: 300
+  # 验证码有效时间，单位秒
+  codeTime: 120
+  # 验证码图片格式，png
+  codeType: png
+  # 验证码图片宽度，px
+  codeWidth: 120
+  # 验证码图片高度，px
+  codeHeight: 40
+  # 验证码位数
+  codeLength: 4
+  # 验证码类型：1. 数字+字母；2. 纯数字；3. 纯字母
+  codeCharType: 2
+  # 文件服务器ip
+  fileServerAddr: http://106.14.137.255:80
+  # 用户头像上传路径
+  headImagePath: /home/data/nginx/html/images
+  # 用户头像访问前缀
+  headUrlPrefix: /images
 

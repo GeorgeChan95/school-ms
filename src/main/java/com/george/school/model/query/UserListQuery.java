@@ -49,6 +49,12 @@ public class UserListQuery implements Serializable {
     @ApiModelProperty(value = "页大小")
     private int limit;
 
+    @ApiModelProperty(value = "排序字段")
+    private String field;
+
+    @ApiModelProperty(value = "排序类型")
+    private String order;
+
     /**
      * 在sql查询时，传入此参数，并在参数前后加 % ，用以模糊搜索
      * @return
