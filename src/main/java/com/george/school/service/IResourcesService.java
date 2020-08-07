@@ -30,4 +30,11 @@ public interface IResourcesService extends IService<Resources> {
      * @return
      */
     Set<String> getResourcesByUserId(String id);
+
+    /**
+     * 获取菜单权限列表
+     * @param userId 当前登录用户id
+     * @return
+     */
+    List<Resources> findResourceTableData(String userId);
 }

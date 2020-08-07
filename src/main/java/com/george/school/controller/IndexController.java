@@ -70,6 +70,15 @@ public class IndexController {
     }
 
     /**
+     * 系统设置，资源管理页面
+     * @return
+     */
+    @GetMapping("/index/sys/menu")
+    public String menuView() {
+        return "menu/menu_list";
+    }
+
+    /**
      * 未授权的页面
      *
      * @return

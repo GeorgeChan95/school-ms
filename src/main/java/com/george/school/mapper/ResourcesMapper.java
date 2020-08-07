@@ -31,4 +31,11 @@ public interface ResourcesMapper extends BaseMapper<Resources> {
      * @return
      */
     Set<String> selectResourcesByUserId(@Param("userId") String userId);
+
+    /**
+     * 获取用户的菜单资源数据集合
+     * @param userId 当前登录的用户id
+     * @return
+     */
+    List<Resources> listResourceTableData(@Param("userId") String userId);
 }

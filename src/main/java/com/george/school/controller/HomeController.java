@@ -9,6 +9,7 @@ import com.george.school.service.IUserService;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
@@ -53,6 +54,7 @@ public class HomeController {
         this.redisTemplate = redisTemplate;
     }
 
+    @ApiOperation("首页信息")
     @GetMapping("/info")
     public Result getHomeInfo() {
         Subject subject = SecurityUtils.getSubject();

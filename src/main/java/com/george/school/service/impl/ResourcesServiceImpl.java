@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -93,5 +94,14 @@ public class ResourcesServiceImpl extends ServiceImpl<ResourcesMapper, Resources
             perms = Sets.newHashSet();
         }
         return perms;
+    }
+
+    @Override
+    public List<Resources> findResourceTableData(String userId) {
+        List<Resources> resources = this.baseMapper.listResourceTableData(userId);
+        if (CollectionUtils.isEmpty(resources)) {
+            resources = Collections.EMPTY_LIST;
+        }
+        return resources;
     }
 }
