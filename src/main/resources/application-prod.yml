@@ -98,6 +98,8 @@ spring:
     database: 0
     # 连接超时时间（毫秒）
     timeout: 2000
+    # redis密码
+    password: 123456
     # 配置文件中添加 lettuce.pool 相关配置，则会使用到lettuce连接池
     lettuce:
       pool:
