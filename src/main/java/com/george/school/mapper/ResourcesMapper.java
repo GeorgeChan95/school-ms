@@ -3,7 +3,8 @@ package com.george.school.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.george.school.entity.Resources;
 import com.george.school.model.vo.HomeResouceVO;
-import com.george.school.model.vo.ResourceVO;
+import com.george.school.model.vo.MenuTreeVO;
+import com.george.school.model.vo.MenuVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -34,8 +35,13 @@ public interface ResourcesMapper extends BaseMapper<Resources> {
 
     /**
      * 获取用户的菜单资源数据集合
-     * @param userId 当前登录的用户id
      * @return
      */
-    List<Resources> listResourceTableData(@Param("userId") String userId);
+    List<MenuVO> listResourceTableData();
+
+    /**
+     * 获取所有菜单资源
+     * @return
+     */
+    List<MenuTreeVO> findAllMenu();
 }

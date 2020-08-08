@@ -107,8 +107,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put(shiroProperties.getLogoutUrl(), "logout");
 
         // 除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
-//        filterChainDefinitionMap.put("/**", "user");
-        filterChainDefinitionMap.put("/**", "anon");
+        filterChainDefinitionMap.put("/**", "user");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;

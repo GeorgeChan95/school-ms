@@ -1,9 +1,9 @@
 package com.george.school.model.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MenuVO {
     /**
      * 主键ID
@@ -48,7 +50,12 @@ public class MenuVO {
     /**
      * 父节点id
      */
-    private String parentId;
+    private String pid;
+
+    /**
+     * 父节点名称
+     */
+    private String parentName;
 
     /**
      * 排序
@@ -69,4 +76,9 @@ public class MenuVO {
      * 菜单图标
      */
     private String icon;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
 }

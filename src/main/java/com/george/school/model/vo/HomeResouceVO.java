@@ -23,7 +23,7 @@ public class HomeResouceVO implements Serializable {
     /**
      * 资源id
      */
-    private Long id;
+    private String id;
     /**
      * 资源名称
      */
@@ -43,7 +43,7 @@ public class HomeResouceVO implements Serializable {
     /**
      * 父节点ID
      */
-    private Long parentId;
+    private String parentId;
 
     private String icon;
 

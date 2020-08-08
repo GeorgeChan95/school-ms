@@ -4,14 +4,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.george.school.entity.Resources;
 import com.george.school.mapper.ResourcesMapper;
 import com.george.school.model.vo.HomeResouceVO;
-import com.george.school.model.vo.ResourceVO;
+import com.george.school.model.vo.MenuTreeVO;
+import com.george.school.model.vo.MenuVO;
 import com.george.school.service.IResourcesService;
+import com.george.school.util.Result;
+import com.george.school.util.StatusCode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -41,6 +46,7 @@ public class ResourcesServiceImpl extends ServiceImpl<ResourcesMapper, Resources
 
     /**
      * 组建菜单资源树形结构
+     *
      * @param resources
      * @return
      */
@@ -55,6 +61,7 @@ public class ResourcesServiceImpl extends ServiceImpl<ResourcesMapper, Resources
 
     /**
      * 为某个跟节点，找到它的子节点
+     *
      * @param rootNode
      * @param resources
      * @return
@@ -73,13 +80,14 @@ public class ResourcesServiceImpl extends ServiceImpl<ResourcesMapper, Resources
 
     /**
      * 获取跟节点数据集合
+     *
      * @param resources 菜单资源数据集合
      * @return
      */
     private List<HomeResouceVO> getRootNode(List<HomeResouceVO> resources) {
         List<HomeResouceVO> resouceVOS = Lists.newArrayList();
         resources.stream().forEach(r -> {
-            if (r.getParentId() == 0) {
+            if (StringUtils.equals(r.getParentId(), "0")) {
                 resouceVOS.add(r);
             }
         });
@@ -97,11 +105,93 @@ public class ResourcesServiceImpl extends ServiceImpl<ResourcesMapper, Resources
     }
 
     @Override
-    public List<Resources> findResourceTableData(String userId) {
-        List<Resources> resources = this.baseMapper.listResourceTableData(userId);
+    public List<MenuVO> findResourceTableData(String userId) {
+        List<MenuVO> resources = this.baseMapper.listResourceTableData();
         if (CollectionUtils.isEmpty(resources)) {
             resources = Collections.EMPTY_LIST;
         }
         return resources;
+    }
+
+    @Override
+    public List<MenuTreeVO> findMenuTree(String resourceId) {
+        List<MenuTreeVO> resources = this.baseMapper.findAllMenu();
+        if (CollectionUtils.isEmpty(resources)) {
+            resources = Lists.newArrayList();
+        }
+
+        // 将当前资源从集合中剔除
+        if (StringUtils.isNotEmpty(resourceId)) {
+            Iterator<MenuTreeVO> iterator = resources.iterator();
+            while (iterator.hasNext()) {
+                MenuTreeVO resouceVO = iterator.next();
+                if (StringUtils.equals(resouceVO.getId(), resourceId)) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        // 返回的菜单树
+        List<MenuTreeVO> resouceVOTree = buildMenuTree(resources);
+
+        return resouceVOTree;
+    }
+
+    /**
+     * 组建菜单资源树形结构
+     *
+     * @param resources
+     * @return
+     */
+    private List<MenuTreeVO> buildMenuTree(List<MenuTreeVO> resources) {
+        List<MenuTreeVO> trees = Lists.newArrayList();
+        for (MenuTreeVO rootNode : getRobotMenuNode(resources)) {
+            rootNode = buildChildMenuTree(rootNode, resources);
+            trees.add(rootNode);
+        }
+        return trees;
+    }
+
+    /**
+     * 获取跟节点数据集合
+     *
+     * @param resources 菜单资源数据集合
+     * @return
+     */
+    private List<MenuTreeVO> getRobotMenuNode(List<MenuTreeVO> resources) {
+        List<MenuTreeVO> resouceVOS = Lists.newArrayList();
+        resources.stream().forEach(r -> {
+            if (StringUtils.equals(r.getParentId(), "0")) {
+                resouceVOS.add(r);
+            }
+        });
+        return resouceVOS;
+    }
+
+    /**
+     * 为某个跟节点，找到它的子节点
+     *
+     * @param rootNode
+     * @param resources
+     * @return
+     */
+    private MenuTreeVO buildChildMenuTree(MenuTreeVO rootNode, List<MenuTreeVO> resources) {
+        List<MenuTreeVO> childTrees = Lists.newArrayList();
+        resources.stream().forEach(r -> {
+            if (r.getParentId().equals(rootNode.getId())) {
+                childTrees.add(buildChildMenuTree(r, resources));
+            }
+        });
+        rootNode.setChildren(childTrees);
+        return rootNode;
+    }
+
+    @Override
+    public Result saveMenuData(Resources resources) {
+        boolean res = this.saveOrUpdate(resources);
+        if (!res) {
+            return new Result(false, StatusCode.ERROR, "保存失败");
+        }
+        return new Result(true, StatusCode.OK, "保存成功");
     }
 }

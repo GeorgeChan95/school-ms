@@ -3,7 +3,9 @@ package com.george.school.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.george.school.entity.Resources;
 import com.george.school.model.vo.HomeResouceVO;
-import com.george.school.model.vo.ResourceVO;
+import com.george.school.model.vo.MenuTreeVO;
+import com.george.school.model.vo.MenuVO;
+import com.george.school.util.Result;
 
 import java.util.List;
 import java.util.Set;
@@ -36,5 +38,19 @@ public interface IResourcesService extends IService<Resources> {
      * @param userId 当前登录用户id
      * @return
      */
-    List<Resources> findResourceTableData(String userId);
+    List<MenuVO> findResourceTableData(String userId);
+
+    /**
+     * 获取要选择的菜单树
+     * @param resourceId 当前菜单id
+     * @return
+     */
+    List<MenuTreeVO> findMenuTree(String resourceId);
+
+    /**
+     * 保存菜单资源
+     * @param resources
+     * @return
+     */
+    Result saveMenuData(Resources resources);
 }
