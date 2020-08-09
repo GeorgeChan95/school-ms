@@ -40,4 +40,12 @@
             </if>
         </if>
     </select>
+
+    <select id="listUserRoleIds" resultType="java.lang.String">
+        SELECT role_id FROM sys_user_role WHERE user_id = #{id}
+    </select>
+
+    <delete id="deleteUserRoles">
+        DELETE FROM sys_user_role WHERE user_id = #{userId}
+    </delete>
 </mapper>

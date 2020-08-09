@@ -3,6 +3,7 @@ package com.george.school.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.george.school.entity.User;
 import com.george.school.model.dto.LoginUserDto;
+import com.george.school.model.dto.UserRoleDTO;
 import com.george.school.model.query.UserListQuery;
 import com.george.school.util.Result;
 import com.github.pagehelper.PageInfo;
@@ -50,4 +51,18 @@ public interface IUserService extends IService<User> {
      * @return
      */
     Result saveUserData(User user);
+
+    /**
+     * 获取用户的角色数据信息
+     * @param id 用户id
+     * @return
+     */
+    UserRoleDTO getUserRoleData(String id);
+
+    /**
+     * 保存用户角色信息
+     * @param roleIds
+     * @return
+     */
+    boolean saveUserRoles(String[] roleIds, String userId);
 }

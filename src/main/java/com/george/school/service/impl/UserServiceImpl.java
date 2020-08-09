@@ -2,17 +2,25 @@ package com.george.school.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.george.school.config.ConfigProperties;
+import com.george.school.entity.Role;
 import com.george.school.entity.User;
+import com.george.school.entity.UserRole;
 import com.george.school.mapper.UserMapper;
 import com.george.school.model.dto.LoginUserDto;
+import com.george.school.model.dto.UserRoleDTO;
 import com.george.school.model.query.UserListQuery;
+import com.george.school.service.IRoleService;
+import com.george.school.service.IUserRoleService;
 import com.george.school.service.IUserService;
 import com.george.school.util.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -29,10 +37,14 @@ import java.util.List;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     private final ConfigProperties configProperties;
+    private final IRoleService roleService;
+    private final IUserRoleService userRoleService;
 
     @Autowired
-    public UserServiceImpl(ConfigProperties configProperties) {
+    public UserServiceImpl(ConfigProperties configProperties, IRoleService roleService, IUserRoleService userRoleService) {
         this.configProperties = configProperties;
+        this.roleService = roleService;
+        this.userRoleService = userRoleService;
     }
 
     @Override
@@ -118,5 +130,46 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 //        return res > 0 ? new Result(true, StatusCode.OK, "保存成功") : new Result(false, StatusCode.ERROR, "操作失败");
         this.saveOrUpdate(user);
         return new Result(true, StatusCode.OK, "保存成功");
+    }
+
+    @Override
+    public UserRoleDTO getUserRoleData(String id) {
+        // 所有角色
+        List<Role> roles = roleService.list();
+
+        // 当前用户具有的角色id
+        List<String> ids = roleService.findUserRoleIds(id);
+
+        UserRoleDTO userRoleDTO = new UserRoleDTO();
+        userRoleDTO.setAllRole(roles);
+        userRoleDTO.setOwnRoles(ids);
+        return userRoleDTO;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean saveUserRoles(String[] roleIds, String userId) {
+        // 删除原有的用户角色关联
+        boolean res = roleService.deleteUserRoles(userId);
+        if (!res) {
+            throw new RuntimeException("保存用户角色失败");
+        }
+
+        // 保存新的角色
+        List<UserRole> list = Lists.newArrayList();
+        for (int i = 0; i < roleIds.length; i++) {
+            UserRole userRole = new UserRole();
+            userRole.setUserId(userId);
+            userRole.setRoleId(roleIds[i]);
+            list.add(userRole);
+        }
+        if (CollectionUtils.isNotEmpty(list)) {
+            res = userRoleService.saveBatch(list);
+            if (!res) {
+                throw new RuntimeException("保存用户角色失败");
+            }
+        }
+
+        return true;
     }
 }

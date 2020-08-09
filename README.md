@@ -65,3 +65,6 @@
 - Edge
 - Internet Explorer11 (部分功能不支持)
 
+使用了数据库事务
+
+

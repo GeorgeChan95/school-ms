@@ -7,6 +7,7 @@ import com.george.school.model.query.RoleListQuery;
 import com.george.school.util.Result;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -45,4 +46,18 @@ public interface IRoleService extends IService<Role> {
      * @param ids
      */
     void deleteResourceRole(String[] ids);
+
+    /**
+     * 获取用户的额角色id集合
+     * @param id 用户id
+     * @return
+     */
+    List<String> findUserRoleIds(String id);
+
+    /**
+     * 删除用户角色关联
+     * @param userId
+     * @return
+     */
+    boolean deleteUserRoles(String userId);
 }

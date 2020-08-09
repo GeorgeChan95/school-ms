@@ -47,6 +47,8 @@ public class HomeResouceVO implements Serializable {
 
     private String icon;
 
+    private String sort;
+
     /**
      * 子节点
      */

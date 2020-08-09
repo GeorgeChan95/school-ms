@@ -31,4 +31,18 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @return
      */
     List<Role> getRolePageList(@Param("query") RoleListQuery query);
+
+    /**
+     * 获取用户的角色id数据集合
+     * @param id
+     * @return
+     */
+    List<String> listUserRoleIds(@Param("id") String id);
+
+    /**
+     * 删除用户角色关联
+     * @param userId 用户id
+     * @return
+     */
+    int deleteUserRoles(@Param("userId") String userId);
 }

@@ -182,7 +182,8 @@
     <!-- 头部工具栏 -->
     <script type="text/html" id="toolbar">
         <div class="layui-btn-group">
-            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius" lay-event="addNewUser" shiro:hasPermission="sys:user:add">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius" lay-event="addNewUser"
+                    shiro:hasPermission="sys:user:add">
                 <i class="layui-icon layui-icon-add-circle"></i>
             </button>
         </div>
@@ -196,6 +197,7 @@
     <!-- 行工具栏 -->
     <script type="text/html" id="bar">
         <a class="layui-btn layui-btn-xs" lay-event="edit" shiro:hasPermission="sys:user:edit">编辑</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="role">分配角色</a>
         {{# if(d.avatar != undefined && d.avatar != '' && d.avatar != null){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="picture" disabled="">查看图片</a>
         {{# } else { }}
@@ -205,9 +207,10 @@
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="sys:user:del">删除</a>
     </script>
 </div>
-
+<div id="deptTree" style="display: none"></div>
+<div id="roles" class="demo-transfer" style="display: none"></div>
 <script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
-<script type="text/javascript"  th:inline="none">
+<script type="text/javascript" th:inline="none">
     let table = layui.table;
     let laypage = layui.laypage
     let form = layui.form;
@@ -329,7 +332,7 @@
         /**
          * 重置用户密码
          */
-        let resetUser = function(id) {
+        let resetUser = function (id) {
             layer.confirm('确认重置用户密码么？', function (index) {
                 loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
                 $.ajax({
@@ -353,6 +356,23 @@
 
                 layer.close(index);
             });
+        }
+
+        let initTransfer = function (data) {
+            transfer.render({
+                elem: '#roles'
+                , data: data.allRole
+                , title: ['赋予角色', '拥有角色']
+                , showSearch: true
+                , value: data.ownRoles
+                , id: 'ownData'
+                , parseData: function (res) {
+                    return {
+                        "value": res.id //数据值
+                        , "title": res.name //数据标题
+                    }
+                }
+            })
         }
 
         // 监听表格头部工具栏
@@ -461,6 +481,68 @@
                     break;
                 case 'reset':
                     resetUser(data.id);
+                    break;
+                case 'role':
+                    // 分配角色
+                    $.ajax({
+                        type: "get",
+                        url: "/api/user/roles/" + data.id,
+                        success: function (res) {
+                            if (res.flag) {
+                                initTransfer(res.data);
+                                layer.open({
+                                    type: 1,
+                                    offset: '50px',
+                                    skin: 'layui-layer-molv',
+                                    title: "赋予角色",
+                                    area: ['500px', '550px'],
+                                    shade: 0,
+                                    shadeClose: false,
+                                    content: jQuery("#roles"),
+                                    btn: ['确定', '取消'],
+                                    yes: function (index) {
+                                        //获得右侧数据
+                                        var roleIds = [];
+                                        var getData = transfer.getData('ownData');
+                                        if (getData.length == 0) {
+                                            layer.msg("请选择要赋予用户的角色");
+                                        } else {
+                                            $(getData).each(function (index, item) {
+                                                roleIds.push(item.value);
+                                            });
+                                        }
+                                        $.ajax({
+                                            type: "post",
+                                            url: "/api/user/roles/" + data.id,
+                                            data: {roleIds: roleIds},
+                                            traditional: true,
+                                            success: function (data) {
+                                                if (data.flag) {
+                                                    _initTableData();
+                                                    layer.msg(data.message, {icon: 1});
+                                                } else {
+                                                    layer.msg(data.message, {icon: 5, time: 2000});
+                                                }
+                                                top.layer.close(loading);
+                                            },
+                                            error: function (data) {
+                                                top.layer.close(loading);
+                                                console.log(data);
+                                            }
+                                        });
+
+
+                                        layer.close(index);
+                                    }
+                                });
+                            } else {
+                                layer.msg(data.message, {icon: 5, time: 2000});
+                            }
+                        },
+                        error: function (data) {
+                            console.log(data);
+                        }
+                    });
                     break;
             }
         });
@@ -623,7 +705,7 @@
                 }
                 , {field: 'lastLoginIp', title: '上次登录IP', align: 'center', width: 120}
                 , {field: 'remark', title: '用户备注', align: 'center', width: 180}
-                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar', width: 270}
+                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar', width: 340}
             ]]
         });
     }

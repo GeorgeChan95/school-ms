@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.george.school.config.ConfigProperties;
 import com.george.school.entity.User;
+import com.george.school.model.dto.UserRoleDTO;
 import com.george.school.model.query.UserListQuery;
 import com.george.school.service.IUserService;
 import com.george.school.util.Md5Util;
@@ -15,6 +16,7 @@ import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -123,4 +125,30 @@ public class UserController {
         userService.updateById(user);
         return new Result(true, StatusCode.OK, "重置用户密码成功");
     }
+
+    @ApiOperation("用户重置密码")
+    @GetMapping("/roles/{id}")
+    public Result userRoles(@ApiParam("用户id") @PathVariable(value = "id")String id) {
+        if (StringUtils.isEmpty(id)) {
+            return new Result(false, StatusCode.ERROR, "参数异常");
+        }
+        UserRoleDTO roleDTO = userService.getUserRoleData(id);
+        return new Result(true, StatusCode.OK, "获取成功", roleDTO);
+    }
+
+    /**
+     * 保存用户角色数据
+     * @param roleIds
+     * @return
+     */
+    @ApiOperation("报错用户角色数据信息")
+    @PostMapping("/roles/{userId}")
+    public Result saveRoles(@ApiParam("用户角色id数组") @RequestParam(value = "roleIds", required = false) String[] roleIds, @ApiParam("用户id") @PathVariable(value = "userId")String userId) {
+        boolean res = userService.saveUserRoles(roleIds, userId);
+        if (!res) {
+            return new Result(false, StatusCode.ERROR, "操作失败");
+        }
+        return new Result(true, StatusCode.OK, "操作成功");
+    }
+
 }

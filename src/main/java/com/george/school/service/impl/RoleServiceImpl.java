@@ -104,4 +104,19 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
             roleResourcesService.deleteByRoleId(ids[i]);
         }
     }
+
+    @Override
+    public List<String> findUserRoleIds(String id) {
+        List<String> roleIds = this.baseMapper.listUserRoleIds(id);
+        if(CollectionUtils.isEmpty(roleIds)) {
+            roleIds = Lists.newArrayList();
+        }
+        return roleIds;
+    }
+
+    @Override
+    public boolean deleteUserRoles(String userId) {
+        int res = this.baseMapper.deleteUserRoles(userId);
+        return res >= 0;
+    }
 }
