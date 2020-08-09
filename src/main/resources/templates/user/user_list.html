@@ -182,26 +182,27 @@
     <!-- 头部工具栏 -->
     <script type="text/html" id="toolbar">
         <div class="layui-btn-group">
-            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius" lay-event="addNewUser">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius" lay-event="addNewUser" shiro:hasPermission="sys:user:add">
                 <i class="layui-icon layui-icon-add-circle"></i>
             </button>
         </div>
         <div class="layui-btn-group">
             <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger"
-                    lay-event="batchDeleted">
+                    lay-event="batchDeleted" shiro:hasPermission="sys:user:del">
                 <i class="layui-icon layui-icon-delete"></i>
             </button>
         </div>
     </script>
     <!-- 行工具栏 -->
     <script type="text/html" id="bar">
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit" shiro:hasPermission="sys:user:edit">编辑</a>
         {{# if(d.avatar != undefined && d.avatar != '' && d.avatar != null){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="picture" disabled="">查看图片</a>
         {{# } else { }}
         <a class="layui-btn layui-btn-xs layui-btn-disabled" lay-event="picture">查看图片</a>
         {{# } }}
-        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="reset">重置密码</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="sys:user:del">删除</a>
     </script>
 </div>
 
@@ -325,6 +326,35 @@
             return false;
         });
 
+        /**
+         * 重置用户密码
+         */
+        let resetUser = function(id) {
+            layer.confirm('确认重置用户密码么？', function (index) {
+                loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+                $.ajax({
+                    type: "post",
+                    url: "/api/user/reset",
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.flag) {
+                            _initTableData();
+                            layer.msg(data.message, {icon: 1});
+                        } else {
+                            layer.msg(data.message, {icon: 5, time: 2000});
+                        }
+                        top.layer.close(loading);
+                    },
+                    error: function (data) {
+                        top.layer.close(loading);
+                        console.log(data);
+                    }
+                });
+
+                layer.close(index);
+            });
+        }
+
         // 监听表格头部工具栏
         table.on('toolbar(user_table)', function (obj) {
             switch (obj.event) {
@@ -428,6 +458,9 @@
                             , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
                         });
                     }
+                    break;
+                case 'reset':
+                    resetUser(data.id);
                     break;
             }
         });
@@ -590,7 +623,7 @@
                 }
                 , {field: 'lastLoginIp', title: '上次登录IP', align: 'center', width: 120}
                 , {field: 'remark', title: '用户备注', align: 'center', width: 180}
-                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar', width: 190}
+                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar', width: 270}
             ]]
         });
     }

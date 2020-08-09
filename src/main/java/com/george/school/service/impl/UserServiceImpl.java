@@ -91,7 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         if (StringUtils.isEmpty(user.getId())) {
             // 给用户设置密码
-            String password = Md5Util.encrypt(user.getUsername(), user.getUsername());
+            String password = Md5Util.encrypt(user.getUsername().toLowerCase(), user.getUsername());
             user.setPassword(password);
             // 设置注册ip
             HttpServletRequest request = HttpContextUtil.getHttpServletRequest();

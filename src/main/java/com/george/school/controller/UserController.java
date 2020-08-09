@@ -7,6 +7,7 @@ import com.george.school.config.ConfigProperties;
 import com.george.school.entity.User;
 import com.george.school.model.query.UserListQuery;
 import com.george.school.service.IUserService;
+import com.george.school.util.Md5Util;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
 import com.george.school.util.StringPool;
@@ -14,6 +15,7 @@ import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +54,7 @@ public class UserController {
 
     @ApiOperation("用户列表")
     @PostMapping("/list")
+    @RequiresPermissions("sys:user")
     public Result userList(@RequestBody UserListQuery query) {
         PageInfo<User> pageInfo = userService.pageUserList(query);
         return new Result(Boolean.TRUE, StatusCode.OK, "操作成功！", (int) pageInfo.getTotal(), pageInfo.getList());
@@ -105,5 +108,19 @@ public class UserController {
         }
         userService.removeByIds(Arrays.asList(userIds));
         return new Result(true, StatusCode.OK, "删除成功");
+    }
+
+    @ApiOperation("用户重置密码")
+    @PostMapping("/reset")
+    public Result resetUser(@ApiParam("用户id") @RequestParam(value = "id") String id) {
+        User user = userService.getById(id);
+        if (ObjectUtil.isNull(user)) {
+            log.error("系统未找到该用户信息");
+            return new Result(false, StatusCode.ERROR, "操作失败");
+        }
+        String password = Md5Util.encrypt(user.getUsername().toLowerCase(), user.getUsername());
+        user.setPassword(password);
+        userService.updateById(user);
+        return new Result(true, StatusCode.OK, "重置用户密码成功");
     }
 }
