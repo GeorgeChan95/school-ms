@@ -23,4 +23,21 @@
         WHERE
             ur.user_id = #{userId}
     </select>
+
+    <select id="getRolePageList" resultMap="BaseResultMap">
+        SELECT
+            *
+        FROM
+            sys_role
+        WHERE
+            delete_flag = 0
+        <if test="query != null">
+            <if test="query.name != null and query.name != '' ">
+                AND ( `name` LIKE #{query.nameLike} OR `code` LIKE #{query.nameLike} )
+            </if>
+            <if test="query.startTime != null and query.startTime != '' ">
+                AND create_time BETWEEN #{query.startTime} AND #{query.endTime}
+            </if>
+        </if>
+    </select>
 </mapper>

@@ -3,6 +3,7 @@ package com.george.school.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
  * @since 2020-07-21
  */
 @Data
+@Builder
 @EqualsAndHashCode(callSuper = false)
 @TableName("sys_role")
 public class Role implements Serializable {

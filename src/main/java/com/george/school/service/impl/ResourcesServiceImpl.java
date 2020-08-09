@@ -6,6 +6,7 @@ import com.george.school.mapper.ResourcesMapper;
 import com.george.school.model.vo.HomeResouceVO;
 import com.george.school.model.vo.MenuTreeVO;
 import com.george.school.model.vo.MenuVO;
+import com.george.school.model.vo.RoleTreeVO;
 import com.george.school.service.IResourcesService;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
@@ -193,5 +194,81 @@ public class ResourcesServiceImpl extends ServiceImpl<ResourcesMapper, Resources
             return new Result(false, StatusCode.ERROR, "保存失败");
         }
         return new Result(true, StatusCode.OK, "保存成功");
+    }
+
+    @Override
+    public List<RoleTreeVO> findRolePermission(String roleId) {
+
+        List<RoleTreeVO> roleTreeLists = Lists.newArrayList();
+        if (StringUtils.isNotEmpty(roleId)) {
+            roleTreeLists = this.baseMapper.findRoleMenu(roleId);
+        }
+
+        // 获取所有资源树
+        List<RoleTreeVO> allTree = this.baseMapper.findAllRoleTree();
+        for (RoleTreeVO roleTreeVO : allTree) {
+            for (RoleTreeVO treeVO : roleTreeLists) {
+                if (StringUtils.equals(roleTreeVO.getId(), treeVO.getId())) {
+                    roleTreeVO.setChecked(true);
+                }
+            }
+        }
+
+        // 返回的菜单树
+        List<RoleTreeVO> resouceVOTree = buildRoleTree(allTree);
+        return resouceVOTree;
+    }
+
+    /**
+     * 组建菜单资源树形结构
+     *
+     * @param resources
+     * @return
+     */
+    private List<RoleTreeVO> buildRoleTree(List<RoleTreeVO> resources) {
+        List<RoleTreeVO> trees = Lists.newArrayList();
+        for (RoleTreeVO rootNode : getRobotRoleNode(resources)) {
+            rootNode = buildChildRoleTree(rootNode, resources);
+            rootNode.setChecked(false);
+            trees.add(rootNode);
+        }
+        return trees;
+    }
+
+    /**
+     * 获取跟节点数据集合
+     *
+     * @param resources 菜单资源数据集合
+     * @return
+     */
+    private List<RoleTreeVO> getRobotRoleNode(List<RoleTreeVO> resources) {
+        List<RoleTreeVO> resouceVOS = Lists.newArrayList();
+        resources.stream().forEach(r -> {
+            if (StringUtils.equals(r.getParentId(), "0")) {
+                resouceVOS.add(r);
+            }
+        });
+        return resouceVOS;
+    }
+
+    /**
+     * 为某个跟节点，找到它的子节点
+     *
+     * @param rootNode
+     * @param resources
+     * @return
+     */
+    private RoleTreeVO buildChildRoleTree(RoleTreeVO rootNode, List<RoleTreeVO> resources) {
+        List<RoleTreeVO> childTrees = Lists.newArrayList();
+        resources.stream().forEach(r -> {
+            if (CollectionUtils.isNotEmpty(r.getChildren())) {
+                r.setChecked(false);
+            }
+            if (r.getParentId().equals(rootNode.getId())) {
+                childTrees.add(buildChildRoleTree(r, resources));
+            }
+        });
+        rootNode.setChildren(childTrees);
+        return rootNode;
     }
 }

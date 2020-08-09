@@ -2,6 +2,7 @@ package com.george.school.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.george.school.entity.RoleResources;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.george.school.entity.RoleResources;
  */
 public interface RoleResourcesMapper extends BaseMapper<RoleResources> {
 
+    int deleteByRoleId(@Param("roleId") String roleId);
 }

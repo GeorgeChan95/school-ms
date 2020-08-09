@@ -17,4 +17,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleResourcesServiceImpl extends ServiceImpl<RoleResourcesMapper, RoleResources> implements IRoleResourcesService {
 
+    @Override
+    public boolean deleteByRoleId(String roleId) {
+        int res = this.baseMapper.deleteByRoleId(roleId);
+        return res >= 0;
+    }
 }

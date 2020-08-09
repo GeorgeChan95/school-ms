@@ -11,4 +11,7 @@
         <result column="update_time" property="updateTime" />
     </resultMap>
 
+    <delete id="deleteByRoleId">
+        DELETE FROM sys_role_resources WHERE role_id = #{roleId}
+    </delete>
 </mapper>

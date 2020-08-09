@@ -79,6 +79,15 @@ public class IndexController {
     }
 
     /**
+     * 系统设置，角色管理页面
+     * @return
+     */
+    @GetMapping("/index/sys/role")
+    public String roleView() {
+        return "role/role_list";
+    }
+
+    /**
      * 未授权的页面
      *
      * @return

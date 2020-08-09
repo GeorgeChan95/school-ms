@@ -206,7 +206,7 @@
 </div>
 
 <script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
-<script th:inline="javascript">
+<script type="text/javascript"  th:inline="none">
     let table = layui.table;
     let laypage = layui.laypage
     let form = layui.form;
@@ -227,10 +227,10 @@
             endTime: null,
             nickName: null,
             userType: null,
-            pageNum: 1,
-            pageSize: 10
+            page: 1,
+            limit: 10
         }
-        // 初始化时间床架时间选择框
+        // 初始化创建时间选择框
         laydate.render({
             elem: '#createTime'
             , type: 'datetime'
@@ -292,7 +292,7 @@
             searchParam.userType = $("#userType").val();
             searchParam.username = $("#username").val();
             searchParam.status = $("#status").val();
-            searchParam.pageNum = 1;
+            searchParam.page = 1;
             _initTableData();
         });
 
@@ -314,7 +314,7 @@
             searchParam.status = null;
             searchParam.startTime = null;
             searchParam.endTime = null;
-            searchParam.pageNum = 1;
+            searchParam.page = 1;
             _initTableData();
         });
 

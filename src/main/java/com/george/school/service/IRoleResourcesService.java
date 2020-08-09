@@ -1,6 +1,7 @@
 package com.george.school.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.george.school.entity.Role;
 import com.george.school.entity.RoleResources;
 
 /**
@@ -13,4 +14,9 @@ import com.george.school.entity.RoleResources;
  */
 public interface IRoleResourcesService extends IService<RoleResources> {
 
+    /**
+     * 根据角色id删除关系数据
+     * @param roleId
+     */
+    boolean deleteByRoleId(String roleId);
 }

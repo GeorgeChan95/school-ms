@@ -76,6 +76,41 @@
             re.id ASC
     </select>
 
+    <select id="findRoleMenu" resultType="com.george.school.model.vo.RoleTreeVO">
+        SELECT DISTINCT
+            re.id,
+            re.`name` AS title,
+            re.type AS resourceType,
+            re.url AS resourceUrl,
+            re.permission,
+            re.parent_id AS parentId,
+            re.icon
+        FROM
+            sys_resources re
+            INNER JOIN sys_role_resources srr ON srr.resources_id = re.id
+        WHERE
+            re.delete_flag = 0
+            <if test="roleId != null and roleId != '' ">
+                AND srr.role_id = #{roleId}
+            </if>
+        ORDER BY
+            re.id ASC
+    </select>
+
+    <select id="findAllRoleTree" resultType="com.george.school.model.vo.RoleTreeVO">
+        SELECT
+        re.id,
+        re.`name` AS title,
+        re.type AS resourceType,
+        re.url AS resourceUrl,
+        re.permission,
+        re.parent_id AS parentId,
+        re.icon
+        FROM sys_resources re
+        WHERE re.delete_flag = 0
+        ORDER BY re.id ASC
+    </select>
+
     <select id="selectResourcesByUserId" resultType="java.lang.String">
         SELECT distinct
             r.permission

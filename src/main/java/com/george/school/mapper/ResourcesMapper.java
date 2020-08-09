@@ -5,6 +5,7 @@ import com.george.school.entity.Resources;
 import com.george.school.model.vo.HomeResouceVO;
 import com.george.school.model.vo.MenuTreeVO;
 import com.george.school.model.vo.MenuVO;
+import com.george.school.model.vo.RoleTreeVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -44,4 +45,17 @@ public interface ResourcesMapper extends BaseMapper<Resources> {
      * @return
      */
     List<MenuTreeVO> findAllMenu();
+
+    /**
+     * 获取角色具有的权限资源
+     * @param roleId 角色ID
+     * @return
+     */
+    List<RoleTreeVO> findRoleMenu(@Param("roleId") String roleId);
+
+    /**
+     * 获取所有的资源树
+     * @return
+     */
+    List<RoleTreeVO> findAllRoleTree();
 }

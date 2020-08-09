@@ -5,6 +5,7 @@ import com.george.school.entity.Resources;
 import com.george.school.model.vo.HomeResouceVO;
 import com.george.school.model.vo.MenuTreeVO;
 import com.george.school.model.vo.MenuVO;
+import com.george.school.model.vo.RoleTreeVO;
 import com.george.school.util.Result;
 
 import java.util.List;
@@ -53,4 +54,11 @@ public interface IResourcesService extends IService<Resources> {
      * @return
      */
     Result saveMenuData(Resources resources);
+
+    /**
+     * 获取角色具有的权限资源树
+     * @param roleId
+     * @return
+     */
+    List<RoleTreeVO> findRolePermission(String roleId);
 }
