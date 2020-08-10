@@ -49,7 +49,7 @@ public class CodeGenerator {
         //达梦数据库的配置
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setDbType(DbType.MYSQL);
-        dsc.setUrl("jdbc:mysql://192.168.204.132:3306/school-ms?useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=UTC");
+        dsc.setUrl("jdbc:mysql://192.168.46.129:3306/school-ms?useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=UTC");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
         dsc.setPassword("root");
@@ -94,7 +94,7 @@ public class CodeGenerator {
         // 此处可以修改为您的表前缀
         strategy.setTablePrefix(new String[]{"sys_"});
         // 需要生成的表
-        strategy.setInclude(new String[] {"sys_user", "sys_resources", "sys_role", "sys_role_resources", "sys_user_role"});
+        strategy.setInclude(new String[] {"sys_organization"});
         strategy.setSuperEntityColumns(null);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setEntityTableFieldAnnotationEnable(true);

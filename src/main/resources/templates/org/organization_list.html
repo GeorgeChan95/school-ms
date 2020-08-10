@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <title>Shiro后台管理系统</title>
+    <link rel="icon" th:href="@{/assets/ico/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/custome.css}"/>
+    <style>
+    </style>
+</head>
+<body>
+<!-- 组织添加面板 开始-->
+<div class="panel panel-default operation_menu" hidden>
+    <div class="panel-heading title"></div>
+    <div class="layui-card-body">
+        <form class="layui-form " action="" lay-filter="orgInfo" style="width: 700px;margin-top: 10px">
+            <input name="id" hidden/>
+            <input name="parentId" hidden/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">级别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="type" value="1" title="院" lay-filter="radio-type" checked="">
+                    <input type="radio" name="type" value="2" title="系" lay-filter="radio-type">
+                    <input type="radio" name="type" value="3" title="专业" lay-filter="radio-type">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                    <input type="name" name="name" lay-verify="required" lay-reqtext="名称不能为空" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">代号</label>
+                <div class="layui-input-block">
+                    <input type="code" name="code" lay-verify="required" lay-reqtext="代号不能为空" placeholder="请输入代号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item org-select">
+                <div class="layui-form-label ">所属院系</div>
+                <div class="layui-input-block">
+                    <input type="parentName" name="parentName" placeholder="请选择所属院系" autocomplete="off"
+                           class="layui-input" readonly="readonly" style="background:#eeeeee!important">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-form-label">排序</div>
+                <div class="layui-input-block">
+                    <input type="text" name="sort" lay-verify="number" onkeyup="value=sortNum(this.value)"
+                           placeholder="请输入排序码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">保存</button>
+                    <button class="layui-btn layui-btn-primary" id="btn_cancel">返回</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- 组织添加面板 结束-->
+
+<div class="org-table">
+    <table class="layui-table" id="orgTable" lay-filter="orgTable"></table>
+</div>
+<div id="orgTree" style="display: none"></div>
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-group">
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-radius" lay-event="add">
+            <i class="layui-icon">&#xe608;</i>
+            添加
+        </button>
+    </div>
+</script>
+<script type="text/html" id="tool">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
+<script type="text/javascript" th:inline="none">
+    let layer = layui.layer;
+    let $ = jQuery = layui.jquery;
+    let form = layui.form;
+    let element = layui.element;
+    let table = layui.table;
+    let tree = layui.tree;
+    let treetable;
+    let selectNode = null;
+    let loading;
+
+    layui.config({
+        base: '/'
+    }).extend({
+        treetable: 'treetable-lay/treetable'
+    }).use(['treetable', 'table', 'tree'], function () {
+        treetable = layui.treetable;
+
+        loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+        /**
+         * 获取表格数据的方法
+         */
+        let reloadTreeTable = function () {
+            $.ajax({
+                type: "post",
+                url: "/api/org/list",
+                async: false,
+                success: function (res) {
+                    console.log(res.data)
+                    renderTable(res.data);
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+
+        };
+
+        /**
+         * 定义加载树形表格的方法
+         * @param data 表格数据
+         */
+        let renderTable = function (data) {
+            treetable.render({
+                // 渲染表格
+                data: data,
+                treeColIndex: 1, // 树形图标显示在第几列
+                treeSpid: '0', // 最上级的父级id
+                treeIdName: 'id', // id字段的名称
+                treePidName: 'parentId', // pid字段的名称
+                treeDefaultClose: false, // 是否默认折叠
+                defaultToolbar: [],
+                treeLinkage: false, // 父级展开时是否自动展开所有子级
+                elem: '#orgTable', // 表格id
+                page: false, // 树形表格一般是没有分页的
+                toolbar: '#toolbar',
+                cols: [
+                    [
+                        {type: 'numbers'},
+                        {field: 'name', title: '名称'},
+                        {field: 'code', title: '代号'},
+                        {
+                            field: 'type', title: '级别', templet: function (item) {
+                                if (item.type === 1) {
+                                    return '<a class="layui-btn layui-btn-xs layui-btn-normal" >院</a>';
+                                }
+                                if (item.type === 2) {
+                                    return '<a class="layui-btn layui-btn-xs layui-btn-warm " >系</a>';
+                                }
+                                if (item.type === 3) {
+                                    return '<a class="layui-btn layui-btn-xs" >专业</a>';
+                                }
+                            }
+                        },
+                        {field: 'sort', title: '排序'},
+                        {
+                            field: 'createTime', title: '创建时间', minWidth: 120, templet: function (res) {
+                                if (res.createTime != undefined && res.createTime != null) {
+                                    let timeArr = res.createTime.split("T");
+                                    return timeArr[0] + " " + timeArr[1]
+                                } else {
+                                    return "";
+                                }
+                            }
+                        },
+                        {fixed: 'right', title: '操作', width: 180, toolbar: '#tool'}
+                    ]
+                ]
+            });
+            top.layer.close(loading);
+        };
+
+        // 加载树形表格
+        reloadTreeTable();
+
+
+        table.on('toolbar(orgTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'add':
+                    selectNode = null;
+                    $(".org-table").hide();
+                    $(".operation_menu").show();
+                    $(".title").html("新增组织");
+
+                    form.val('orgInfo', {
+                        "name": ''
+                        , "code": ''
+                        , "type": 1
+                        , "parentName": ''
+                        , "parentId": '0'
+                        , "sort": 0
+                        , "id": ''
+                    });
+                    $(".org-select").hide();
+                    form.render(); //更新全部
+                    initTree("");
+                    break;
+            }
+        });
+
+        // 监听table的行工具栏
+        table.on('tool(orgTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case'del':
+                    let ids = [];
+                    ids.push(data.id);
+                    deleteOrg(ids);
+                    break;
+                case 'edit':
+                    selectNode = null;
+                    $(".org-table").hide();
+                    $(".operation_menu").show();
+                    $(".title").html("编辑组织");
+                    form.val('orgInfo', {
+                        "name": data.name
+                        , "code": data.code
+                        , "type": data.type
+                        , "parentId": data.parentId
+                        , "parentName": data.parentName
+                        , "sort": data.sort
+                        , "id": data.id
+                    });
+                    let type = $("input[name='type']:checked").val()
+                    if (type == 1) {
+                        $(".org-select").hide();
+                    }
+                    form.render(); //更新全部
+                    initTree(data.id);
+                    break;
+            }
+        });
+
+        // 初始化菜单选择树
+        var initTree = function (id) {
+            var param = {orgId: id}
+
+            $.ajax({
+                type: "post",
+                url: "/api/org/tree",
+                data: param,
+                async: false,
+                success: function (res) {
+                    console.log(res.data)
+                    loadOrgTree(res.data);
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        };
+
+        /**
+         * 删除菜单资源
+         * @param menuIds 菜单id集合
+         */
+        let deleteOrg = function (ids) {
+            layer.confirm('确认删除数据么？', function (index) {
+                loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+                $.ajax({
+                    type: "delete",
+                    url: "/api/org/del",
+                    data: {ids: ids},
+                    traditional: true,
+                    success: function (data) {
+                        if (data.flag) {
+                            reloadTreeTable();
+                            layer.msg(data.message, {icon: 1});
+                        } else {
+                            layer.msg(data.message, {icon: 5, time: 2000});
+                        }
+                        top.layer.close(loading);
+                    },
+                    error: function (data) {
+                        top.layer.close(loading);
+                        console.log(data);
+                    }
+                });
+
+                layer.close(index);
+            });
+        }
+
+        // 表单提交按钮点击
+        form.on('submit(submit)', function (data) {
+            loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+            $.ajax({
+                type: "post",
+                url: "/api/org/save",
+                data: JSON.stringify(data.field),
+                dataType: "json",
+                contentType: 'application/json;charset=utf-8',
+                async: false,
+                success: function (data) {
+                    if (data.flag) {
+                        reloadTreeTable();
+                        $(".org-table").show();
+                        $(".operation_menu").hide();
+                        layer.msg(data.message, {icon: 1});
+                    } else {
+                        layer.msg(data.message, {icon: 5, time: 2000});
+                    }
+                    top.layer.close(loading);
+                },
+                error: function (data) {
+                    top.layer.close(loading);
+                    console.log(data);
+                }
+            });
+            return false;
+        });
+
+    });
+
+    /**
+     * 排序输入的正则校验
+     * @param value
+     * @returns {number}
+     */
+    function sortNum(value) {
+        value = value.replace(/[^\d]/g, '');
+        if ('' != value) {
+            value = parseInt(value);
+        }
+        return value;
+    }
+
+    /**
+     * 加载菜单树
+     * @param data
+     */
+    var loadOrgTree = function (data) {
+        tree.render({
+            elem: '#orgTree'
+            , data: data
+            , onlyIconControl: true  //是否仅允许节点左侧图标控制展开收缩
+            , click: function (obj) {
+                selectNode = obj;
+                layer.msg(JSON.stringify(selectNode.data.title));
+            }
+        });
+    };
+
+    form.on('radio(radio-type)', function(data){
+        if(data.value == '1'){
+            $(".org-select").hide();
+        } else {
+            $(".org-select").show();
+        }
+    });
+
+    // 新增面板点击选择父级菜单
+    $(".operation_menu input[name=parentName]").click(function () {
+        let type = $("input[name='type']:checked").val()
+        layer.open({
+            type: 1,
+            offset: '50px',
+            skin: 'layui-layer-molv',
+            title: "选择父级组织",
+            area: ['400px', '550px'],
+            shade: 0,
+            shadeClose: false,
+            content: jQuery("#orgTree"),
+            btn: ['确定', '取消'],
+            yes: function (index) {
+                if (selectNode.data != null) {
+                    if (type == selectNode.data.type) {
+                        layer.msg("请重新选择组织关系！", {icon: 5});
+                        return;
+                    }
+                    form.val('orgInfo', {
+                        "parentId": selectNode.data.id
+                        , "parentName": selectNode.data.title
+                    });
+                }
+                layer.close(index);
+            }
+        });
+    });
+
+    // 新增面板，返回按钮点击
+    $("#btn_cancel").click(function () {
+        $(".org-table").show();
+        $(".operation_menu").hide();
+        return false;
+    });
+
+
+</script>
+</body>
+</html>

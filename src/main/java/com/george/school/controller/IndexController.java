@@ -88,6 +88,15 @@ public class IndexController {
     }
 
     /**
+     * 系统设置，组织管理页面
+     * @return
+     */
+    @GetMapping("/index/sys/organization")
+    public String organizationView() {
+        return "org/organization_list";
+    }
+
+    /**
      * 未授权的页面
      *
      * @return
