@@ -9,6 +9,8 @@ import com.george.school.mapper.UserMapper;
 import com.george.school.model.dto.LoginUserDto;
 import com.george.school.model.dto.UserRoleDTO;
 import com.george.school.model.query.UserListQuery;
+import com.george.school.model.vo.MenuTreeVO;
+import com.george.school.model.vo.TeacherTreeVo;
 import com.george.school.service.IRoleService;
 import com.george.school.service.IUserRoleService;
 import com.george.school.service.IUserService;
@@ -24,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -171,5 +175,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
 
         return true;
+    }
+
+    @Override
+    public List<TeacherTreeVo> findTeacherTreeVo(String id) {
+        List<TeacherTreeVo> allTeachers = this.baseMapper.findAllTeacherData();
+        if (CollectionUtils.isEmpty(allTeachers)) {
+            allTeachers = Lists.newArrayList();
+        }
+
+        // 将当前id从集合中剔除
+        if (StringUtils.isNotEmpty(id)) {
+            Iterator<TeacherTreeVo> iterator = allTeachers.iterator();
+            while (iterator.hasNext()) {
+                TeacherTreeVo vo = iterator.next();
+                if (StringUtils.equals(vo.getId(), id)) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        TeacherTreeVo rootVo = TeacherTreeVo.builder()
+                .id("0")
+                .title("所有教师")
+                .spread(true)
+                .children(allTeachers)
+                .build();
+        List<TeacherTreeVo> list = new ArrayList<>();
+        list.add(rootVo);
+        return list;
     }
 }

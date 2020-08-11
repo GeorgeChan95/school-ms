@@ -53,6 +53,7 @@
             id,
             username,
             password,
+            user_type,
             nickname,
             mobile,
             email,
@@ -109,5 +110,9 @@
 
     <select id="findByUserName" resultType="java.lang.Integer">
         SELECT count(1) FROM sys_user WHERE username = #{username} AND delete_flag = 0
+    </select>
+
+    <select id="findAllTeacherData" resultType="com.george.school.model.vo.TeacherTreeVo">
+        SELECT id, nickname AS title, '0' AS parentId FROM sys_user WHERE user_type = 1 AND delete_flag = 0
     </select>
 </mapper>

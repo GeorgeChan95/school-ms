@@ -6,12 +6,16 @@ import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
 import com.george.school.util.WebUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -57,7 +61,19 @@ public class GlobalExceptionInterceptor {
             modelAndView.setViewName("error/500");
             return modelAndView;
         }
+    }
 
-
+    /**
+     * 处理validation 框架异常
+     * @throws
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    <T> Result methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+        log.error("methodArgumentNotValidExceptionHandler bindingResult.allErrors():{},exception:{}", e.getBindingResult().getAllErrors(), e);
+        List<ObjectError> errors = e.getBindingResult().getAllErrors();
+        if (CollectionUtils.isEmpty(errors)) {
+            return new Result(false, StatusCode.ERROR, "参数异常");
+        }
+        return new Result(false, StatusCode.ERROR, errors.get(0).getDefaultMessage());
     }
 }

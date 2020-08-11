@@ -97,6 +97,15 @@ public class IndexController {
     }
 
     /**
+     * 课程管理页面
+     * @return
+     */
+    @GetMapping("/index/teach/course")
+    public String courseView() {
+        return "course/course_list";
+    }
+
+    /**
      * 未授权的页面
      *
      * @return

@@ -40,7 +40,7 @@ public class CodeGenerator {
         gc.setAuthor("George Chan");
         gc.setOpen(false);
         gc.setSwagger2(false);
-        gc.setIdType(IdType.AUTO);
+        gc.setIdType(IdType.ASSIGN_ID);
         gc.setBaseResultMap(true);
         gc.setFileOverride(false);
         gc.setOutputDir(projectPath + "/" + baseModuleName + "/src/main/java");
@@ -94,7 +94,7 @@ public class CodeGenerator {
         // 此处可以修改为您的表前缀
         strategy.setTablePrefix(new String[]{"sys_"});
         // 需要生成的表
-        strategy.setInclude(new String[] {"sys_organization"});
+        strategy.setInclude(new String[] {"sys_user_course"});
         strategy.setSuperEntityColumns(null);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setEntityTableFieldAnnotationEnable(true);

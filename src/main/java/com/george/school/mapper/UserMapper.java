@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.george.school.entity.User;
 import com.george.school.model.dto.LoginUserDto;
 import com.george.school.model.query.UserListQuery;
+import com.george.school.model.vo.TeacherTreeVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -52,4 +53,10 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     int findByUserName(@Param("username") String username);
+
+    /**
+     * 获取所有是教师的用户
+     * @return
+     */
+    List<TeacherTreeVo> findAllTeacherData();
 }

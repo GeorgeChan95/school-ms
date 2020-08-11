@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.george.school.mapper.CourseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.george.school.entity.Course">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="code" property="code" />
+        <result column="publish_flag" property="publishFlag" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="delete_flag" property="deleteFlag" />
+    </resultMap>
+
+    <select id="getTeacherCourseTableList" resultType="com.george.school.model.dto.CourseListTableDTO">
+        SELECT
+            c.id,
+            c.`name`,
+            c.`code`,
+            c.publish_flag AS publishFlag,
+            c.start_time AS startTime,
+            c.end_time AS endTime,
+            c.remark,
+            c.create_time AS createTime,
+            c.update_time AS updateTime,
+            su.nickname AS teacherName,
+            su.id AS teacherId,
+            suc.id AS userCourseId
+        FROM
+            sys_course c
+            LEFT JOIN sys_user_course suc ON c.id = suc.course_id AND suc.delete_flag = 0 AND suc.is_teacher = 1
+            LEFT JOIN sys_user su ON su.id = suc.user_id AND su.delete_flag = 0
+        WHERE
+            c.delete_flag = 0
+            <if test="query != null">
+                <if test="query.code != null and query.code != '' ">
+                    AND (c.`name` LIKE #{query.codeLike} OR c.`code` LIKE #{query.codeLike} )
+                </if>
+                <if test="query.publishFlag != null ">
+                    AND c.publish_flag = #{query.publishFlag}
+                </if>
+                <if test="query.startTime != null and query.startTime != '' ">
+                    AND c.end_time BETWEEN #{query.startTime} AND #{query.endTime}
+                </if>
+            </if>
+    </select>
+
+    <select id="getCourseStudentNums" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM sys_user_course WHERE delete_flag = 0 AND is_teacher = 0 AND course_id = #{id}
+    </select>
+
+    <select id="getStudentCourseTableList" resultType="com.george.school.model.dto.CourseListTableDTO">
+        SELECT
+            c.id,
+            c.`name`,
+            c.`code`,
+            c.publish_flag AS publishFlag,
+            c.start_time AS startTime,
+            c.end_time AS endTime,
+            c.remark,
+            c.create_time AS createTime,
+            c.update_time AS updateTime,
+            su.nickname AS teacherName,
+            su.id AS teacherId,
+            stuc.user_id AS studentId
+        FROM
+            sys_course c
+            LEFT JOIN sys_user_course suc ON c.id = suc.course_id AND suc.delete_flag = 0 AND suc.is_teacher = 1
+            LEFT JOIN sys_user su ON su.id = suc.user_id AND su.delete_flag = 0
+            LEFT JOIN sys_user_course stuc ON c.id = stuc.course_id AND stuc.delete_flag = 0 AND stuc.is_teacher = 0 AND c.publish_flag = 1 AND stuc.user_id = #{query.userId}
+        WHERE
+            c.delete_flag = 0 AND c.publish_flag = 1
+            <if test="query != null">
+                <if test="query.code != null and query.code != '' ">
+                    AND (c.`name` LIKE #{query.codeLike} OR c.`code` LIKE #{query.codeLike} )
+                </if>
+                <if test="query.startTime != null and query.startTime != '' ">
+                    AND c.end_time BETWEEN #{query.startTime} AND #{query.endTime}
+                </if>
+                <if test="query.chooseFlag != null and query.chooseFlag > 0">
+                    AND c.id IN ( SELECT course_id FROM sys_user_course uc WHERE uc.user_id = #{query.userId} AND uc.delete_flag = 0 )
+                </if>
+            </if>
+    </select>
+
+    <select id="findPublishCourseByIds" resultType="java.lang.Integer">
+        SELECT
+            count( 1 )
+        FROM
+            sys_course
+        WHERE
+            publish_flag = 1 AND delete_flag = 0
+        <if test="ids != null and ids.length > 0">
+            AND id IN
+            <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+</mapper>

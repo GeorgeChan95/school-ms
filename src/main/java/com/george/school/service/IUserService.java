@@ -5,8 +5,11 @@ import com.george.school.entity.User;
 import com.george.school.model.dto.LoginUserDto;
 import com.george.school.model.dto.UserRoleDTO;
 import com.george.school.model.query.UserListQuery;
+import com.george.school.model.vo.TeacherTreeVo;
 import com.george.school.util.Result;
 import com.github.pagehelper.PageInfo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -65,4 +68,11 @@ public interface IUserService extends IService<User> {
      * @return
      */
     boolean saveUserRoles(String[] roleIds, String userId);
+
+    /**
+     * 获取教师树
+     * @param id 教师ID
+     * @return
+     */
+    List<TeacherTreeVo> findTeacherTreeVo(String id);
 }
