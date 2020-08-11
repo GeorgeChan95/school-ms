@@ -416,7 +416,7 @@
             layer.confirm('确认删除课程数据么？', function (index) {
                 loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
                 $.ajax({
-                    type: "post",
+                    type: "delete",
                     url: "/api/course/delete",
                     data: {ids: ids},
                     traditional: true,
