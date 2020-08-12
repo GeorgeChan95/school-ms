@@ -149,6 +149,6 @@
             AND sp.delete_flag = 0
         WHERE
             sr.delete_flag = 0
-            order by sr.id asc
+            order by sr.sort asc
     </select>
 </mapper>
