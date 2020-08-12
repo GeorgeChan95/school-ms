@@ -20,4 +20,19 @@ public interface UserCourseMapper extends BaseMapper<UserCourse> {
      * @return
      */
     int deleteByCourseIds(@Param("ids") String[] ids);
+
+    /**
+     * 获取选择某课程的学生数
+     * @param id 课程id
+     * @return
+     */
+    int findChooseCountByCourseId(@Param("id") String id);
+
+    /**
+     * 获取用户课程关联
+     * @param userId 用户ID
+     * @param courseId 课程ID
+     * @return
+     */
+    UserCourse getDataByUserAndCourseId(@Param("userId") String userId, @Param("courseId") String courseId);
 }

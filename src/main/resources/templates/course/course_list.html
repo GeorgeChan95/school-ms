@@ -125,32 +125,37 @@
     <!-- 头部工具栏 -->
     <script type="text/html" id="toolbar">
         <div class="layui-btn-group">
-            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius" lay-event="add">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius" shiro:hasPermission="sys:course:add" lay-event="add">
                 <i class="layui-icon layui-icon-add-circle"></i>
             </button>
         </div>
         <div class="layui-btn-group">
             <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger"
-                    lay-event="batchDel">
+                    shiro:hasPermission="sys:course:del" lay-event="batchDel">
                 <i class="layui-icon layui-icon-delete"></i>
             </button>
         </div>
     </script>
     <!-- 行工具栏 -->
     <script type="text/html" id="bar">
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="role">分配角色</a>
-        {{# if(d.avatar != undefined && d.avatar != '' && d.avatar != null){ }}
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="picture" disabled="">查看图片</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit" shiro:hasPermission="sys:course:del">编辑</a>
+        {{# if(d.studentId != undefined && d.studentId != '' && d.studentId != null){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="unselect" shiro:hasPermission="sys:course:unselect">退课</a>
         {{# } else { }}
-        <a class="layui-btn layui-btn-xs layui-btn-disabled" lay-event="picture">查看图片</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="select" shiro:hasPermission="sys:course:select">选课</a>
         {{# } }}
-        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="reset">重置密码</a>
-        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+
+        {{# if(d.publishFlag != null && d.publishFlag != undefined && d.publishFlag > 0){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="cancel" shiro:hasPermission="sys:course:unpublish">取消发布</a>
+        {{# } else { }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="publish" shiro:hasPermission="sys:course:publish">发布课程</a>
+        {{# } }}
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="sys:course:del">删除</a>
     </script>
 </div>
 <!-- 教师选择树 -->
 <div id="teacherTree" style="display: none"></div>
+<script type="text/javascript" th:src="@{/assets/js/moment.min.js}"></script>
 <script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
 <script type="text/javascript" th:inline="none">
     let table = layui.table;
@@ -204,7 +209,7 @@
             }
         }
         , {field: 'remark', title: '课程备注', align: 'center', width: 220}
-        , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar', width: 340}
+        , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar'}
     ]];
 
     // 老师等其它角色表头
@@ -245,7 +250,7 @@
         , {field: 'teacherName', title: '任课老师', align: 'center', width: 120}
         , {field: 'studentNums', title: '选课人数', align: 'center', width: 120}
         , {field: 'remark', title: '课程备注', align: 'center', width: 220}
-        , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar', width: 340}
+        , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar'}
     ]];
 
     layui.use(['table', 'layer', 'laydate', 'tree', 'form'], function () {
@@ -568,30 +573,119 @@
                     form.render(); //更新全部
                     initTree(data.id);
                     break;
-                case 'picture':
-                    let picture = data.avatar;
-                    if (picture != null && picture != undefined && picture != '') {
-                        let json = {
-                            "title": "用户头像", //相册标题
-                            "id": 'user_head_img', //相册id
-                            "start": 0, //初始显示的图片序号，默认0
-                            "data": [   //相册包含的图片，数组格式
-                                {
-                                    "alt": "用户头像",
-                                    "pid": data.id, //图片id
-                                    "src": picture, //原图地址
-                                    "thumb": picture //缩略图地址
+                case 'select':
+                    console.log('选课');
+                    // 当课程时间在选课时间范围内可以选择
+                    // 否则提示： 不在有效时间范围内。
+                    let current = moment();
+                    let startTime = moment(data.startTime);
+                    let endTime = moment(data.endTime);
+                    if (current >= startTime && current <= endTime) {
+                        $.ajax({
+                            type: "get",
+                            url: "/api/course/select",
+                            data: {id: data.id},
+                            success: function (data) {
+                                if (data.flag) {
+                                    renderTable();
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 5, time: 2000});
                                 }
-                            ]
-                        };
-                        layer.photos({
-                            photos: json
-                            , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                            },
+                            error: function (data) {
+                                console.log(data);
+                            }
                         });
+                    } else {
+                        layer.msg("不在有效的选课时间范围内");
+                        return;
                     }
                     break;
-                case 'reset':
-                    resetUser(data.id);
+                case 'unselect':
+                    console.log('退课');
+                    // 当课程时间在选课时间范围内可以退课
+                    // 否则提示： 不在有效时间范围内。
+                    let curr = moment();
+                    let start = moment(data.startTime);
+                    let end = moment(data.endTime);
+                    if (curr >= start && curr <= end) {
+                        $.ajax({
+                            type: "get",
+                            url: "/api/course/unselect",
+                            data: {id: data.id},
+                            success: function (data) {
+                                if (data.flag) {
+                                    renderTable();
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 5, time: 2000});
+                                }
+                            },
+                            error: function (data) {
+                                console.log(data);
+                            }
+                        });
+                    } else {
+                        layer.msg("不在有效的选课时间范围内");
+                        return;
+                    }
+                    break;
+                case  'publish':
+                    console.log("发布课程");
+                    layer.confirm('确认发布该课程？', function (index) {
+                        loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+                        $.ajax({
+                            type: "get",
+                            url: "/api/course/publish",
+                            data: {id: data.id},
+                            success: function (data) {
+                                if (data.flag) {
+                                    renderTable();
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 5, time: 2000});
+                                }
+                                top.layer.close(loading);
+                            },
+                            error: function (data) {
+                                top.layer.close(loading);
+                                console.log(data);
+                            }
+                        });
+                        layer.close(index);
+                    });
+                    break;
+                case  'cancel':
+                    console.log("取消发布课程")
+                    // 当课程选课人数为0时，可以取消发布课程
+                    // 否则提示：已有学生选择该课程，无法取消
+                    if (data.studentNums > 0) {
+                        layer.msg("已有学生选择该课程，无法取消");
+                        return;
+                    }
+                    layer.confirm('确认取消发布该课程？', function (index) {
+                        loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+                        $.ajax({
+                            type: "get",
+                            url: "/api/course/cancel",
+                            data: {id: data.id},
+                            success: function (data) {
+                                if (data.flag) {
+                                    renderTable();
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 5, time: 2000});
+                                }
+                                top.layer.close(loading);
+                            },
+                            error: function (data) {
+                                top.layer.close(loading);
+                                console.log(data);
+                            }
+                        });
+                        layer.close(index);
+                    });
                     break;
             }
         });

@@ -1,6 +1,8 @@
 package com.george.school.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.george.school.entity.Course;
 import com.george.school.entity.UserCourse;
 import com.george.school.mapper.CourseMapper;
@@ -127,5 +129,54 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
             throw new RuntimeException("删除失败");
         }
         return new Result(true, StatusCode.OK, "删除成功");
+    }
+
+    @Override
+    public boolean publishCourseData(String id) {
+        Course course = this.baseMapper.selectById(id);
+        course.setPublishFlag(1);
+        this.updateById(course);
+        return this.updateById(course);
+    }
+
+    @Override
+    public Result cancelCourseData(String id) {
+        // 若课程已有学生选择，则不能取消发布
+        boolean res = userCourseService.findByCourseId(id);
+        if (!res) {
+            return new Result(false, StatusCode.ERROR, "已有学生选择该课程，无法取消");
+        }
+        Course course = this.baseMapper.selectById(id);
+        course.setPublishFlag(0);
+        res = this.updateById(course);
+        if (!res) {
+            return new Result(false, StatusCode.ERROR, "操作失败");
+        }
+        return new Result(true, StatusCode.OK, "操作成功");
+    }
+
+    @Override
+    public boolean selectCourse(String id, String courseId) {
+        UserCourse course = userCourseService.findDataByUserIdAndCourseId(id, courseId);
+        if (ObjectUtil.isNotNull(course)) {
+            return false;
+        }
+
+        UserCourse userCourse = UserCourse.builder()
+                .userId(id)
+                .courseId(courseId)
+                .isTeacher(0)
+                .score(0d)
+                .build();
+        return userCourseService.save(userCourse);
+    }
+
+    @Override
+    public boolean unselectCourse(String id, String courseId) {
+        UserCourse course = userCourseService.findDataByUserIdAndCourseId(id, courseId);
+        if (ObjectUtil.isNull(course)) {
+            return true;
+        }
+        return userCourseService.removeById(course.getId());
     }
 }

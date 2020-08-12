@@ -19,4 +19,19 @@ public interface IUserCourseService extends IService<UserCourse> {
      * @return
      */
     boolean removeByCourseIds(String[] ids);
+
+    /**
+     * 获取该课程的选课人数
+     * @param id 课程id
+     * @return
+     */
+    boolean findByCourseId(String id);
+
+    /**
+     * 根据用户id和课程id获取数据
+     * @param userId 用户id
+     * @param courseId 课程ID
+     * @return
+     */
+    UserCourse findDataByUserIdAndCourseId(String userId, String courseId);
 }

@@ -84,6 +84,9 @@
                 <if test="query.chooseFlag != null and query.chooseFlag > 0">
                     AND c.id IN ( SELECT course_id FROM sys_user_course uc WHERE uc.user_id = #{query.userId} AND uc.delete_flag = 0 )
                 </if>
+                <if test="query.chooseFlag == 0">
+                    AND c.id NOT IN ( SELECT course_id FROM sys_user_course uc WHERE uc.user_id = #{query.userId} AND uc.delete_flag = 0 )
+                </if>
             </if>
     </select>
 

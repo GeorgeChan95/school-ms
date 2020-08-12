@@ -20,4 +20,12 @@
             #{id}
         </foreach>
     </delete>
+
+    <select id="findChooseCountByCourseId" resultType="java.lang.Integer">
+        SELECT count(1) FROM sys_user_course WHERE delete_flag = 0 AND is_teacher = 0 AND course_id = #{id}
+    </select>
+
+    <select id="getDataByUserAndCourseId" resultMap="BaseResultMap">
+        SELECT * FROM sys_user_course WHERE delete_flag = 0 AND is_teacher = 0 AND user_id = #{userId} AND course_id = #{courseId}  limit 1
+    </select>
 </mapper>

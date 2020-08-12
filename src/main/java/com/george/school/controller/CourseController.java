@@ -15,6 +15,7 @@ import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,5 +142,80 @@ public class CourseController {
         }
         Result result = courseService.deleteCourseByIds(ids);
         return result;
+    }
+
+    /**
+     * 课程发布
+     * @param id 课程id
+     * @return
+     */
+    @ApiOperation("课程发布")
+    @GetMapping("/publish")
+    public Result publishCourse(@RequestParam(value = "id", required = false) String id) {
+        if (StringUtils.isEmpty(id)) {
+            return new Result(false, StatusCode.ERROR, "参数异常");
+        }
+        boolean res = courseService.publishCourseData(id);
+        if (!res) {
+            return new Result(false, StatusCode.ERROR, "操作失败");
+        }
+        return new Result(true, StatusCode.OK, "操作成功");
+    }
+
+    /**
+     * 课程取消发布
+     * @param id 课程id
+     * @return
+     */
+    @ApiOperation("课程取消发布")
+    @GetMapping("/cancel")
+    public Result cancelCourse(@RequestParam(value = "id", required = false) String id) {
+        if (StringUtils.isEmpty(id)) {
+            return new Result(false, StatusCode.ERROR, "参数异常");
+        }
+        Result result = courseService.cancelCourseData(id);
+        return result;
+    }
+
+    /**
+     * 课程选择
+     * @param id 课程id
+     * @return
+     */
+    @ApiOperation("课程选择")
+    @GetMapping("/select")
+    public Result selectCourse(@RequestParam(value = "id", required = false) String id) {
+        if (StringUtils.isEmpty(id)) {
+            return new Result(false, StatusCode.ERROR, "参数异常");
+        }
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getPrincipal();
+
+        boolean res = courseService.selectCourse(user.getId(), id);
+        if (!res) {
+            return new Result(false, StatusCode.ERROR, "操作失败");
+        }
+        return new Result(true, StatusCode.OK, "操作成功");
+    }
+
+    /**
+     * 取消课程选择
+     * @param id 课程id
+     * @return
+     */
+    @ApiOperation("取消课程选择")
+    @GetMapping("/unselect")
+    public Result unselectCourse(@RequestParam(value = "id", required = false) String id) {
+        if (StringUtils.isEmpty(id)) {
+            return new Result(false, StatusCode.ERROR, "参数异常");
+        }
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getPrincipal();
+
+        boolean res = courseService.unselectCourse(user.getId(), id);
+        if (!res) {
+            return new Result(false, StatusCode.ERROR, "操作失败");
+        }
+        return new Result(true, StatusCode.OK, "操作成功");
     }
 }

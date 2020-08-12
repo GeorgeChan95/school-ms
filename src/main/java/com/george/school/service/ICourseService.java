@@ -44,4 +44,34 @@ public interface ICourseService extends IService<Course> {
      * @param ids 课程id集合
      */
     Result deleteCourseByIds(String[] ids);
+
+    /**
+     * 课程发布
+     * @param id 课程id
+     * @return
+     */
+    boolean publishCourseData(String id);
+
+    /**
+     * 取消课程发布
+     * @param id 课程id
+     * @return
+     */
+    Result cancelCourseData(String id);
+
+    /**
+     * 课程选择
+     * @param id 当前用户id
+     * @param courseId 课程ID
+     * @return
+     */
+    boolean selectCourse(String id, String courseId);
+
+    /**
+     * 取消课程选择
+     * @param id 当前用户id
+     * @param courseId 课程ID
+     * @return
+     */
+    boolean unselectCourse(String id, String courseId);
 }

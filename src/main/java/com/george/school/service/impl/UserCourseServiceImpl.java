@@ -22,4 +22,16 @@ public class UserCourseServiceImpl extends ServiceImpl<UserCourseMapper, UserCou
         boolean res = this.baseMapper.deleteByCourseIds(ids) >= 0 ? true : false;
         return res;
     }
+
+    @Override
+    public boolean findByCourseId(String id) {
+        int count = this.baseMapper.findChooseCountByCourseId(id);
+        return count <= 0;
+    }
+
+    @Override
+    public UserCourse findDataByUserIdAndCourseId(String userId, String courseId) {
+        UserCourse userCourse = this.baseMapper.getDataByUserAndCourseId(userId, courseId);
+        return userCourse;
+    }
 }
