@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.george.school.entity.User;
 import com.george.school.model.dto.LoginUserDto;
 import com.george.school.model.dto.UserRoleDTO;
+import com.george.school.model.dto.UserTableDTO;
 import com.george.school.model.query.UserListQuery;
 import com.george.school.model.vo.TeacherTreeVo;
+import com.george.school.model.vo.UserOrgTreeVO;
 import com.george.school.util.Result;
 import com.github.pagehelper.PageInfo;
 
@@ -46,7 +48,7 @@ public interface IUserService extends IService<User> {
      * @param query 查询条件
      * @return
      */
-    PageInfo<User> pageUserList(UserListQuery query);
+    PageInfo<UserTableDTO> pageUserList(UserListQuery query);
 
     /**
      * 用户数据保存

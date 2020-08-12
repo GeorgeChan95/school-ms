@@ -3,6 +3,7 @@ package com.george.school.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.george.school.entity.User;
 import com.george.school.model.dto.LoginUserDto;
+import com.george.school.model.dto.UserTableDTO;
 import com.george.school.model.query.UserListQuery;
 import com.george.school.model.vo.TeacherTreeVo;
 import org.apache.ibatis.annotations.Param;
@@ -38,7 +39,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param query 查询条件
      * @return
      */
-    List<User> getUserPageList(@Param("query") UserListQuery query);
+    List<UserTableDTO> getUserPageList(@Param("query") UserListQuery query);
 
     /**
      * 根据手机号判断用户是否存在

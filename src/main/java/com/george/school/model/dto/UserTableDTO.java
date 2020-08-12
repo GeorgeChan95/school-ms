@@ -1,9 +1,10 @@
-package com.george.school.entity;
+package com.george.school.model.dto;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.*;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -11,147 +12,143 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 系统用户表
  * </p>
  *
  * @author George Chan
- * @since 2020-07-21
+ * @version 1.0
+ * @date 2020/8/12 22:19
+ * @since JDK 1.8
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@TableName("sys_user")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements Serializable {
-
+public class UserTableDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
      * 主键
      */
-    @TableId(value = "id")
+    @ApiModelProperty(value = "主键")
     private String id;
 
     /**
      * 登录用户名
      */
-    @TableField("username")
+    @ApiModelProperty(value = "登录用户名")
     private String username;
 
     /**
      * 登录密码
      */
-    @TableField("password")
+    @ApiModelProperty(value = "登录密码")
     private String password;
 
     /**
      * 昵称
      */
-    @TableField("nickname")
+    @ApiModelProperty(value = "昵称")
     private String nickname;
 
     /**
      * 手机号
      */
-    @TableField("mobile")
+    @ApiModelProperty(value = "手机号")
     private String mobile;
 
     /**
      * 邮箱地址
      */
-    @TableField("email")
+    @ApiModelProperty(value = "邮箱地址")
     private String email;
 
     /**
      * QQ
      */
-    @TableField("qq")
+    @ApiModelProperty(value = "QQ")
     private String qq;
 
     /**
      * 生日
      */
-    @TableField("birthday")
+    @ApiModelProperty(value = "生日")
     private LocalDate birthday;
 
     /**
      * 性别（1-男  2-女）
      */
-    @TableField("gender")
+    @ApiModelProperty(value = "性别（1-男  2-女）")
     private Integer gender;
 
     /**
      * 头像地址
      */
-    @TableField("avatar")
+    @ApiModelProperty(value = "头像地址")
     private String avatar;
 
     /**
      * 用户类型（0-学生 1-老师 3-管理员 4-系统管理员）
      */
-    @TableField("user_type")
+    @ApiModelProperty(value = "用户类型（0-学生 1-老师 3-管理员 4-系统管理员）")
     private Integer userType;
 
     /**
      * 注册IP
      */
-    @TableField("reg_ip")
+    @ApiModelProperty(value = "注册IP")
     private String regIp;
 
     /**
      * 最近登录IP
      */
-    @TableField("last_login_ip")
+    @ApiModelProperty(value = "最近登录IP")
     private String lastLoginIp;
 
     /**
      * 最近登录时间
      */
-    @TableField("last_login_time")
+    @ApiModelProperty(value = "最近登录时间")
     private LocalDateTime lastLoginTime;
 
     /**
      * 登录次数
      */
-    @TableField("login_count")
+    @ApiModelProperty(value = "登录次数")
     private Integer loginCount;
 
     /**
      * 用户备注
      */
-    @TableField("remark")
+    @ApiModelProperty(value = "用户备注")
     private String remark;
-
-    /**
-     * 用户状态(0-正常 1-锁定)
-     */
-    @TableField("status")
-    private Integer status;
 
     /**
      * 所在组织id
      */
-    @TableField("org_id")
+    @ApiModelProperty(value = "所在组织id")
     private String orgId;
+
+    /**
+     * 所在组织名称
+     */
+    @ApiModelProperty(value = "所在组织名称")
+    private String orgName;
+
+    /**
+     * 用户状态(0-正常 1-锁定)
+     */
+    @ApiModelProperty(value = "用户状态(0-正常 1-锁定)")
+    private Integer status;
 
     /**
      * 注册时间
      */
-    @TableField("create_time")
+    @ApiModelProperty(value = "注册时间")
     private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
-    @TableField("update_time")
+    @ApiModelProperty(value = "更新时间")
     private LocalDateTime updateTime;
-
-    /**
-     * 删除标记
-     */
-    @TableField("delete_flag")
-    private Integer deleteFlag;
-
-
 }

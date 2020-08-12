@@ -27,7 +27,7 @@
             <div class="layui-row layui-col-space5">
                 <div class="layui-col-md4">
                     <input name="id" hidden/>
-                    <input name="deptId" hidden/>
+                    <input name="orgId" hidden/>
                     <input name="avatar" hidden>
 
                     <div class="layui-form-item">
@@ -48,7 +48,7 @@
                     <div class="layui-form-item">
                         <div class="layui-form-label ">所属部门</div>
                         <div class="layui-input-block">
-                            <input type="deptName" name="deptName" placeholder="请选择所属部门" autocomplete="off"
+                            <input type="orgName" name="orgName" placeholder="请选择所属部门" autocomplete="off"
                                    class="layui-input" readonly="readonly" style="background:#eeeeee!important">
                         </div>
                     </div>
@@ -373,6 +373,38 @@
             })
         }
 
+        // 新增面板点击选择父级菜单
+        $(".operation_user input[name=orgName]").click(function () {
+            layer.open({
+                type: 1,
+                offset: '50px',
+                skin: 'layui-layer-molv',
+                title: "选择所在组织",
+                area: ['400px', '550px'],
+                shade: 0,
+                shadeClose: false,
+                content: jQuery("#deptTree"),
+                btn: ['确定', '取消'],
+                yes: function (index) {
+                    if (selectNode.data != null) {
+                        // 老师等其它类型可在院、系、专业
+                        // 学生只能选择专业
+                        let userType = $("input[name='userType']:checked").val();
+                        let orgType = selectNode.data.type;
+                        if (userType == "0" && orgType != 3) {
+                            layer.msg("请重新选择所在专业", {icon: 5});
+                            return;
+                        }
+                        form.val('userInfo', {
+                            "orgId": selectNode.data.id
+                            , "orgName": selectNode.data.title
+                        });
+                    }
+                    layer.close(index);
+                }
+            });
+        });
+
         // 监听表格头部工具栏
         table.on('toolbar(user_table)', function (obj) {
             switch (obj.event) {
@@ -396,7 +428,7 @@
                     form.val('userInfo', {
                         "username": ""
                         , "nickname": ""
-                        , "deptName": ""
+                        , "orgName": ""
                         , "mobile": ""
                         , "email": ""
                         , "qq": ""
@@ -405,7 +437,7 @@
                         , "userType": "0"
                         , "remark": ""
                         , "status": "0"
-                        , "deptId": ""
+                        , "orgId": ""
                         , "id": ""
                         , "avatar": ""
                     });
@@ -440,7 +472,7 @@
                     form.val('userInfo', {
                         "username": data.username
                         , "nickname": data.nickname
-                        , "deptName": ""
+                        , "orgName": data.orgName
                         , "mobile": data.mobile
                         , "email": data.email
                         , "qq": data.qq
@@ -449,11 +481,13 @@
                         , "userType": data.userType
                         , "remark": data.remark
                         , "status": data.status
-                        , "deptId": ""
-                        , "id": data.id + ''
+                        , "orgId": data.orgId
+                        , "id": data.id
                         , "avatar": avatar
                     });
                     $("#img_head").attr("src", avatar);
+                    // 更新组织树
+                    _initTree("");
                     break;
                 case 'picture':
                     let picture = data.avatar;
@@ -709,12 +743,38 @@
     }
 
     /**
-     * 初始化部门树
-     * @param id 部门id
+     * 初始化组织树
+     * @param id 组织id
      * @private
      */
     function _initTree(id) {
+        $.ajax({
+            type: "post",
+            url: "/api/user/org/tree",
+            async: false,
+            success: function (res) {
+                console.log(res.data)
+                loadTree(res.data);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
 
+    /**
+     * 加载渲染树数据
+     */
+    function loadTree(data) {
+        tree.render({
+            elem: '#deptTree'
+            , data: data
+            , onlyIconControl: true  //是否仅允许节点左侧图标控制展开收缩
+            , click: function (obj) {
+                selectNode = obj;
+                layer.msg(JSON.stringify(selectNode.data.title));
+            }
+        });
     }
 
     /**

@@ -21,9 +21,34 @@
         <result column="login_count" property="loginCount" />
         <result column="remark" property="remark" />
         <result column="status" property="status" />
+        <result column="org_id" property="orgId"/>
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
         <result column="delete_flag" property="deleteFlag" />
+    </resultMap>
+
+    <resultMap id="UserTableDTOMap" type="com.george.school.model.dto.UserTableDTO">
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="nickname" property="nickname" />
+        <result column="mobile" property="mobile" />
+        <result column="email" property="email" />
+        <result column="qq" property="qq" />
+        <result column="birthday" property="birthday" />
+        <result column="gender" property="gender" />
+        <result column="avatar" property="avatar" />
+        <result column="user_type" property="userType"/>
+        <result column="reg_ip" property="regIp" />
+        <result column="last_login_ip" property="lastLoginIp" />
+        <result column="last_login_time" property="lastLoginTime" />
+        <result column="login_count" property="loginCount" />
+        <result column="remark" property="remark" />
+        <result column="status" property="status" />
+        <result column="org_id" property="orgId"/>
+        <result column="orgName" property="orgName"/>
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
     </resultMap>
 
     <select id="selectUserByUserName" resultType="com.george.school.model.dto.LoginUserDto">
@@ -71,11 +96,13 @@
             LIMIT 1
     </select>
 
-    <select id="getUserPageList" resultMap="BaseResultMap">
+    <select id="getUserPageList" resultMap="UserTableDTOMap">
         SELECT
-            su.*
+            su.*,
+            o.name AS orgName
         FROM
             sys_user su
+            LEFT JOIN sys_organization o ON o.id = su.org_id AND o.delete_flag = 0
         WHERE su.delete_flag = 0
             <if test="query != null">
                 <if test="query.username != null and query.username != '' ">

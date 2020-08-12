@@ -31,6 +31,12 @@ public interface OrganizationMapper extends BaseMapper<Organization> {
     List<OrganizationTreeVO> findAllOrgTreeData();
 
     /**
+     * 获取用户组织结构树
+     * @return
+     */
+    List<OrganizationTreeVO> findAllUserOrgTreeData();
+
+    /**
      * 根据院系代码查询是否存在
      * @param code 代码
      * @return

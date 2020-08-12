@@ -3,10 +3,15 @@ package com.george.school.controller;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
+import com.alibaba.fastjson.JSON;
 import com.george.school.config.ConfigProperties;
 import com.george.school.entity.User;
 import com.george.school.model.dto.UserRoleDTO;
+import com.george.school.model.dto.UserTableDTO;
 import com.george.school.model.query.UserListQuery;
+import com.george.school.model.vo.OrganizationTreeVO;
+import com.george.school.model.vo.UserOrgTreeVO;
+import com.george.school.service.IOrganizationService;
 import com.george.school.service.IUserService;
 import com.george.school.util.Md5Util;
 import com.george.school.util.Result;
@@ -29,6 +34,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -45,20 +51,22 @@ public class UserController {
     private final RedisTemplate<String, Object> redisTemplate;
     private final IUserService userService;
     private final ConfigProperties configProperties;
+    private final IOrganizationService organizationService;
 
 
     @Autowired
-    public UserController(RedisTemplate redisTemplate, IUserService userService, ConfigProperties configProperties) {
+    public UserController(RedisTemplate redisTemplate, IUserService userService, ConfigProperties configProperties, IOrganizationService organizationService) {
         this.redisTemplate = redisTemplate;
         this.userService = userService;
         this.configProperties = configProperties;
+        this.organizationService = organizationService;
     }
 
     @ApiOperation("用户列表")
     @PostMapping("/list")
     @RequiresPermissions("sys:user")
     public Result userList(@RequestBody UserListQuery query) {
-        PageInfo<User> pageInfo = userService.pageUserList(query);
+        PageInfo<UserTableDTO> pageInfo = userService.pageUserList(query);
         return new Result(Boolean.TRUE, StatusCode.OK, "操作成功！", (int) pageInfo.getTotal(), pageInfo.getList());
     }
 
@@ -151,4 +159,15 @@ public class UserController {
         return new Result(true, StatusCode.OK, "操作成功");
     }
 
+    /**
+     * 获取用户组织树
+     * @return
+     */
+    @ApiOperation("用户组织树")
+    @PostMapping("/org/tree")
+    public Result getUserOrgTree() {
+        List<OrganizationTreeVO> list = organizationService.findUserOrgTree();
+        log.info("用户组织树 ===> {}", JSON.toJSONString(list));
+        return new Result(true, StatusCode.OK, "操作成功", list);
+    }
 }

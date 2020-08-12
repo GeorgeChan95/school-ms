@@ -8,9 +8,11 @@ import com.george.school.entity.UserRole;
 import com.george.school.mapper.UserMapper;
 import com.george.school.model.dto.LoginUserDto;
 import com.george.school.model.dto.UserRoleDTO;
+import com.george.school.model.dto.UserTableDTO;
 import com.george.school.model.query.UserListQuery;
 import com.george.school.model.vo.MenuTreeVO;
 import com.george.school.model.vo.TeacherTreeVo;
+import com.george.school.model.vo.UserOrgTreeVO;
 import com.george.school.service.IRoleService;
 import com.george.school.service.IUserRoleService;
 import com.george.school.service.IUserService;
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -73,12 +77,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public PageInfo<User> pageUserList(UserListQuery query) {
+    public PageInfo<UserTableDTO> pageUserList(UserListQuery query) {
         int pageNum = query.getPage() > 0 ? query.getPage() : 1;
         int pageSize = query.getLimit() > 0 ? query.getLimit() : 10;
         PageHelper.startPage(pageNum, pageSize, Boolean.TRUE);
-        List<User> list = this.baseMapper.getUserPageList(query);
-        PageInfo<User> pageInfo = new PageInfo<>(list);
+        List<UserTableDTO> list = this.baseMapper.getUserPageList(query);
+        PageInfo<UserTableDTO> pageInfo = new PageInfo<>(list);
 
         list.stream().forEach(n -> {
             String avatar = n.getAvatar();
@@ -122,16 +126,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             user.setAvatar(StringPool.EMPTY);
         }
 
+        // 设置头像路径
+        if (StringUtils.isNotEmpty(user.getAvatar())) {
+            try {
+                URI uri = new URI(user.getAvatar());
+                String path = uri.getPath();
+                user.setAvatar(path);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
 
-        // 设置组织关系
-
-//        int res;
-//        if (StringUtils.isEmpty(user.getId())) {
-//            res = this.baseMapper.updateById(user);
-//        } else {
-//            res = this.baseMapper.insert(user);
-//        }
-//        return res > 0 ? new Result(true, StatusCode.OK, "保存成功") : new Result(false, StatusCode.ERROR, "操作失败");
         this.saveOrUpdate(user);
         return new Result(true, StatusCode.OK, "保存成功");
     }

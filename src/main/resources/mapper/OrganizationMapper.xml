@@ -44,6 +44,23 @@
             o.delete_flag = 0 AND o.type != 3
     </select>
 
+    <select id="findAllUserOrgTreeData" resultType="com.george.school.model.vo.OrganizationTreeVO">
+        SELECT
+            o.id,
+            o.`name` AS title,
+            o.`code`,
+            o.type,
+            o.sort,
+            o.parent_id AS parentId,
+            op.`name` AS parentName,
+            o.create_time AS createTime
+        FROM
+            sys_organization o
+            LEFT JOIN sys_organization op ON op.id = o.parent_id
+        WHERE
+            o.delete_flag = 0
+    </select>
+
     <select id="findOrgByCode" resultType="java.lang.Integer">
         SELECT COUNT(1) FROM sys_organization WHERE delete_flag = 0 AND `code` = #{code}
     </select>

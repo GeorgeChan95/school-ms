@@ -62,6 +62,18 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         return resouceVOTree;
     }
 
+    @Override
+    public List<OrganizationTreeVO> findUserOrgTree() {
+        List<OrganizationTreeVO> organizations = this.baseMapper.findAllUserOrgTreeData();
+        if (CollectionUtils.isEmpty(organizations)) {
+            organizations = Collections.EMPTY_LIST;
+        }
+
+        // 返回的树
+        List<OrganizationTreeVO> resouceVOTree = buildOrgTree(organizations);
+
+        return resouceVOTree;
+    }
 
     /**
      * 组件组织结构树形结构
@@ -130,4 +142,6 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         }
         return new Result(true, StatusCode.OK, "保存成功");
     }
+
+
 }

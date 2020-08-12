@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.george.school.model.dto.OrganizationTableDTO;
 import com.george.school.model.vo.MenuTreeVO;
 import com.george.school.model.vo.OrganizationTreeVO;
+import com.george.school.model.vo.UserOrgTreeVO;
 import com.george.school.util.Result;
 
 import java.util.List;
@@ -31,6 +32,12 @@ public interface IOrganizationService extends IService<Organization> {
      * @return
      */
     List<OrganizationTreeVO> findOrgTree(String orgId);
+
+    /**
+     * 用户组织树
+     * @return
+     */
+    List<OrganizationTreeVO> findUserOrgTree();
 
     /**
      * 组织结构保存
