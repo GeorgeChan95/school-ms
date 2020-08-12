@@ -46,9 +46,9 @@
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <div class="layui-form-label ">所属部门</div>
+                        <div class="layui-form-label ">院/系/专业</div>
                         <div class="layui-input-block">
-                            <input type="orgName" name="orgName" placeholder="请选择所属部门" autocomplete="off"
+                            <input type="orgName" name="orgName" lay-verify="required" lay-reqtext="院/系/专业不能为空" placeholder="请选择所在的院/系/专业" autocomplete="off"
                                    class="layui-input" readonly="readonly" style="background:#eeeeee!important">
                         </div>
                     </div>
@@ -379,7 +379,7 @@
                 type: 1,
                 offset: '50px',
                 skin: 'layui-layer-molv',
-                title: "选择所在组织",
+                title: "选择所在专业",
                 area: ['400px', '550px'],
                 shade: 0,
                 shadeClose: false,
@@ -710,11 +710,13 @@
                         }
                     }
                 }
+                , {field: 'orgName', title: '院/系/专业', align: 'center', width: 180}
                 , {
                     field: 'createTime',
                     title: '创建时间',
                     align: 'center',
                     width: 180,
+                    hide: true,
                     sort: true,
                     templet: function (res) {
                         if (res.createTime != undefined && res.createTime != null) {
