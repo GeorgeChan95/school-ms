@@ -172,7 +172,7 @@
             });
         };
 
-        //监听省下拉框
+        //监听学院下拉框
         form.on('select(college)', function(dataObj){
             //移除城市下拉框所有选项
             $("#department").empty();
@@ -185,7 +185,7 @@
             getOrgData(value, 2);
         });
 
-        //监听省下拉框
+        //监听系下拉框
         form.on('select(department)', function(dataObj){
             //移除城市下拉框所有选项
             $("#major").empty();

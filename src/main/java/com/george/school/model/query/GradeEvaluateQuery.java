@@ -48,6 +48,18 @@ public class GradeEvaluateQuery {
     private String majorId;
 
     /**
+     * 课程开始时间
+     */
+    @ApiModelProperty(value = "课程开始时间")
+    private String startTime;
+
+    /**
+     * 课程结束时间
+     */
+    @ApiModelProperty(value = "课程结束时间")
+    private String endTime;
+
+    /**
      * 教师 user_id
      */
     @ApiModelProperty(value = "教师user_id")

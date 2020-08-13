@@ -115,6 +115,15 @@ public class IndexController {
     }
 
     /**
+     * 成绩查询页面
+     * @return
+     */
+    @GetMapping("/index/record/view")
+    public String recordView() {
+        return "record/record_list";
+    }
+
+    /**
      * 未授权的页面
      *
      * @return
