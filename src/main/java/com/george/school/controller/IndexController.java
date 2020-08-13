@@ -124,6 +124,15 @@ public class IndexController {
     }
 
     /**
+     * 学生列表页面
+     * @return
+     */
+    @GetMapping("/index/student/list")
+    public String studentView() {
+        return "student/student_list";
+    }
+
+    /**
      * 未授权的页面
      *
      * @return

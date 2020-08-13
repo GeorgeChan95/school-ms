@@ -14,7 +14,6 @@
     </style>
 </head>
 <body>
-
 <div class="score_table_div">
     <!-- 搜索区域 -->
     <div id="searchParam">
@@ -37,8 +36,8 @@
                     <option value="" selected="">请选择专业</option>
                 </select>
             </div>
-            <div class="layui-input-inline layui-form">
-                <input type="text" class="layui-input" id="startTime" placeholder="请选择课程时间">
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="createTime" placeholder="请选择创建时间">
             </div>
             <div class="layui-input-inline ">
                 <button class="layui-btn" id="search">
@@ -51,6 +50,19 @@
         </div>
     </div>
     <table class="layui-hide" id="score_table" lay-filter="score_table"></table>
+
+    <!-- 头部工具栏 -->
+    <script type="text/html" id="toolbar">
+    </script>
+    <!-- 行工具栏 -->
+    <script type="text/html" id="bar">
+        {{# if(d.avatar != undefined && d.avatar != '' && d.avatar != null){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="picture" disabled="">查看头像</a>
+        {{# } else { }}
+        <a class="layui-btn layui-btn-xs layui-btn-disabled" lay-event="picture">查看头像</a>
+        {{# } }}
+        <a class="layui-btn layui-btn-xs" lay-event="detail">成绩列表</a>
+    </script>
 </div>
 <script type="text/javascript" th:src="@{/assets/js/moment.min.js}"></script>
 <script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
@@ -74,12 +86,12 @@
             departmentId: null, // 系ID
             majorId: null, // 专业ID
             startTime: null,
-            endTime: null
+            endTime: null,
         }
 
         // 初始化创建时间选择框
         laydate.render({
-            elem: '#startTime'
+            elem: '#createTime'
             , type: 'datetime'
             , range: '~'
             , done: function (value, date, endDate) {
@@ -92,62 +104,6 @@
                 }
             }
         });
-
-        /**
-         * 数据列表
-         */
-        let renderTable = function () {
-            table.render({
-                elem: '#score_table'
-                , url: '/api/record/list'
-                , method: 'post'
-                , where: searchParam //设定异步数据接口的额外参数
-                , contentType: 'application/json'
-                , defaultToolbar: []
-                , page: true
-                , autoSort: false
-                , parseData: function (res) { //res 即为原始返回的数据
-                    return {
-                        "code": res.code, //解析接口状态
-                        "msg": res.message, //解析提示文本
-                        "count": res.count, //解析数据长度
-                        "data": res.data //解析数据列表
-                    };
-                }
-                , response: {
-                    statusName: 'code' //规定数据状态的字段名称，默认：code
-                    , statusCode: 20000 //规定成功的状态码，默认：0
-                    , msgName: 'message' //规定状态信息的字段名称，默认：msg
-                    , countName: 'count' //规定数据总数的字段名称，默认：count
-                    , dataName: 'data' //规定数据列表的字段名称，默认：data
-                }
-                , title: '学生成绩表'
-                , height: 'full-80'
-                , cols: [[
-                    {type: 'checkbox', fixed: 'left'}
-                    , {field: 'id', title: 'ID', width: 80, fixed: 'left', hide: true}
-                    , {field: 'nickName', title: '姓名', align: 'center', width: 120}
-                    , {field: 'username', title: '学号', align: 'center', width: 120}
-                    , {field: 'email', title: '邮箱', align: 'center', width: 180}
-                    , {field: 'courseName', title: '课程', align: 'center', width: 120}
-                    , {field: 'score', title: '分数', align: 'center', width: 120}
-                    , {field: 'collegeName', title: '院', align: 'center'}
-                    , {field: 'departmentName', title: '系', align: 'center'}
-                    , {field: 'majorName', title: '专业', align: 'center'}
-                    , {
-                        field: 'startTime', title: '课程时间', align: 'center', width: 320,
-                        templet: function (res) {
-                            if (res.startTime != undefined && res.startTime != null && res.endTime != undefined && res.endTime != null) {
-                                let time = res.startTime + " ~ " + res.endTime
-                                return time;
-                            } else {
-                                return "";
-                            }
-                        }
-                    }
-                ]]
-            });
-        }
 
         /**
          * 初始化学院数据
@@ -207,6 +163,19 @@
             getOrgData(value, 3);
         });
 
+        // 监听table的行工具栏
+        table.on('tool(score_table)', function (obj) {
+            let data = obj.data;
+            switch (obj.event) {
+                case'detail':
+                    console.log("成绩查看");
+                    break;
+                case 'picture':
+                    layer.msg("查看图片");
+                    break;
+            }
+        });
+
         // 点击查询
         $("#search").click(function () {
             searchParam.nickName = $("#nickName").val();
@@ -224,7 +193,7 @@
             $("#college").val("");
             $("#department").val("");
             $("#major").val("");
-            $("#startTime").val("");
+            $("#createTime").val("");
             // 重置页面渲染内容（layui需要的）
             form.render();
 
@@ -235,9 +204,66 @@
             searchParam.major = null;
             searchParam.startTime = null;
             searchParam.endTime = null;
-            searchParam.page = 1;
             renderTable();
         });
+
+        /**
+         * 数据列表
+         */
+        let renderTable = function () {
+            table.render({
+                elem: '#score_table'
+                , url: '/api/score/list'
+                , method: 'post'
+                , where: searchParam //设定异步数据接口的额外参数
+                , contentType: 'application/json'
+                , toolbar: '#toolbar' //开启头部工具栏，并为其绑定左侧模板
+                , defaultToolbar: ['filter', 'exports', 'print']
+                , page: true
+                , autoSort: false
+                , parseData: function (res) { //res 即为原始返回的数据
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.message, //解析提示文本
+                        "count": res.count, //解析数据长度
+                        "data": res.data //解析数据列表
+                    };
+                }
+                , response: {
+                    statusName: 'code' //规定数据状态的字段名称，默认：code
+                    , statusCode: 20000 //规定成功的状态码，默认：0
+                    , msgName: 'message' //规定状态信息的字段名称，默认：msg
+                    , countName: 'count' //规定数据总数的字段名称，默认：count
+                    , dataName: 'data' //规定数据列表的字段名称，默认：data
+                }
+                , title: '学生成绩表'
+                , height: 'full-80'
+                , cols: [[
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'id', title: 'ID', width: 80, fixed: 'left', hide: true}
+                    , {field: 'nickName', title: '姓名', align: 'center', width: 120}
+                    , {field: 'username', title: '学号', align: 'center', width: 120}
+                    , {field: 'email', title: '邮箱', align: 'center', width: 180}
+                    , {field: 'courseName', title: '课程', align: 'center', width: 120}
+                    , {field: 'score', title: '分数', align: 'center', width: 120}
+                    , {field: 'collegeName', title: '院', align: 'center'}
+                    , {field: 'departmentName', title: '系', align: 'center'}
+                    , {field: 'majorName', title: '专业', align: 'center'}
+                    , {
+                        field: 'startTime', title: '课程时间', align: 'center', width: 320,
+                        templet: function (res) {
+                            if (res.startTime != undefined && res.startTime != null && res.endTime != undefined && res.endTime != null) {
+                                let time = res.startTime + " ~ " + res.endTime
+                                return time;
+                            } else {
+                                return "";
+                            }
+                        }
+                    }
+                    , {fixed: 'right', title: '操作', align: 'center', width: 180, toolbar: '#bar'}
+                ]]
+            });
+        }
 
         // 初始化院选择框
         getOrgData("", 1);
