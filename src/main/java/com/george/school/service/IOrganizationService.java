@@ -45,4 +45,12 @@ public interface IOrganizationService extends IService<Organization> {
      * @return
      */
     Result saveOrganization(Organization organization);
+
+    /**
+     * 获取组织数据
+     * @param type 类型 1院  2系  3专业
+     * @param id 父级id
+     * @return
+     */
+    List<Organization> findByType(Integer type, String id);
 }

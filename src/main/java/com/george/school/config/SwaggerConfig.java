@@ -70,7 +70,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("School Management System Api Doc")
                 .description("后端接口SwaggerAPI文档")
-                .contact(new Contact("George", "https://github.com/GeorgeChan95/cloud-learning-code", "george_95@126.com"))
+                .contact(new Contact("George Chan", "https://github.com/GeorgeChan95/cloud-learning-code", "george_95@126.com"))
                 .termsOfServiceUrl("http://localhost:9999/index/home")
                 .version("v1.0")
                 .license("Apache 2.0")

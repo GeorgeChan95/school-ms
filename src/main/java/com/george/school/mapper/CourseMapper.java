@@ -3,7 +3,9 @@ package com.george.school.mapper;
 import com.george.school.entity.Course;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.george.school.model.dto.CourseListTableDTO;
+import com.george.school.model.dto.GradeEvaluateDTO;
 import com.george.school.model.query.CourseListQuery;
+import com.george.school.model.query.GradeEvaluateQuery;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -45,4 +47,11 @@ public interface CourseMapper extends BaseMapper<Course> {
      * @return
      */
     int findPublishCourseByIds(@Param("ids") String[] ids);
+
+    /**
+     * 获取学生的成绩列表
+     * @param query 查询条件
+     * @return
+     */
+    List<GradeEvaluateDTO> getGradeEvaluateList(@Param("query") GradeEvaluateQuery query);
 }

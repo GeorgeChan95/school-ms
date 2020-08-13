@@ -92,4 +92,17 @@ public class OrganizationController {
         organizationService.removeByIds(Arrays.asList(ids));
         return new Result(true, StatusCode.OK, "删除成功");
     }
+
+    /**
+     * 获取组织数据
+     * @param type 类型 1院  2系  3专业
+     * @return
+     */
+    @ApiOperation("获取组织数据")
+    @GetMapping("/get")
+    public Result getOrgData(@RequestParam(value = "type", required = false, defaultValue = "1") Integer type,
+                             @RequestParam(value = "id", required = false) String id) {
+        List<Organization> list = organizationService.findByType(type, id);
+        return new Result(true, StatusCode.OK, "操作成功", list);
+    }
 }

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <title>中国石油大学-成绩管理系统</title>
+    <link rel="icon" th:href="@{/assets/ico/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/custome.css}"/>
+    <style>
+
+    </style>
+</head>
+<body>
+
+<div class="score_table_div">
+    <!-- 搜索区域 -->
+    <div id="searchParam">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" id="nickName" class="layui-input" autocomplete="off" placeholder="请输入学生姓名">
+            </div>
+            <div class="layui-input-inline layui-form">
+                <select id="college" lay-filter="college">
+                    <option value="" selected="">请选择学院</option>
+                </select>
+            </div>
+            <div class="layui-input-inline layui-form">
+                <select id="department" lay-filter="department">
+                    <option value="" selected="">请选择系</option>
+                </select>
+            </div>
+            <div class="layui-input-inline layui-form">
+                <select id="major" lay-filter="major">
+                    <option value="" selected="">请选择专业</option>
+                </select>
+            </div>
+            <div class="layui-input-inline ">
+                <button class="layui-btn" id="search">
+                    <i class="layui-icon layui-icon-search"></i>
+                </button>
+                <button class="layui-btn layui-btn-normal" id="reset">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <table class="layui-hide" id="score_table" lay-filter="score_table"></table>
+
+    <!-- 头部工具栏 -->
+    <script type="text/html" id="toolbar">
+    </script>
+    <!-- 行工具栏 -->
+    <script type="text/html" id="bar">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">评分</a>
+    </script>
+</div>
+<script type="text/javascript" th:src="@{/assets/js/moment.min.js}"></script>
+<script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
+<script type="text/javascript" th:inline="none">
+    let table = layui.table;
+    let form = layui.form;
+    let layer = layui.layer;
+    let $ = jQuery = layui.jquery;
+    let laydate = layui.laydate;
+    let tree = layui.tree;
+    let searchParam;
+    let loading;
+    let collegeText = "";
+    let departmentText = "";
+    let majorText = "";
+
+    layui.use(['table', 'layer', 'laydate', 'tree', 'form'], function () {
+        searchParam = {
+            nickName: null, // 学生姓名
+            collegeId: null, // 学院ID
+            departmentId: null, // 系ID
+            majorId: null // 专业ID
+        }
+
+        // 监听table的行工具栏
+        table.on('tool(score_table)', function (obj) {
+            let data = obj.data;
+            switch (obj.event) {
+                case'edit':
+                    form.val('courseScoreInfo', {
+                        "studentName": data.nickName
+                        , "courseName": data.courseName
+                        , "courseScore": data.score
+                        , "studentId": data.id
+                        , "courseId": data.courseId
+                        , "userCourseId": data.userCourseId
+                    });
+                    let index = layer.open({
+                        type: 1
+                        , title: '成绩评定'
+                        , area: ['350px', '300px']
+                        , content: $("#courseScoreInfo")
+                        , btn: ['保存', '取消']
+                        , btnAlign: 'c'
+                        , anim: 1
+                        , resize: false
+                        , yes: function (index, layero) {
+                            let scoreData = form.val("courseScoreInfo");
+                            if (scoreData.courseScore == null || scoreData.courseScore == ''
+                                || scoreData.courseScore == undefined || scoreData.courseScore < 0) {
+                                layer.msg("成绩输入不合法, 请重新输入");
+                                return;
+                            }
+                            $.ajax({
+                                type: "post",
+                                url: "/api/score/save",
+                                data: scoreData,
+                                async: false,
+                                success: function (data) {
+                                    if (data.flag) {
+                                        renderTable();
+                                        layer.msg(data.message, {icon: 1});
+                                    } else {
+                                        layer.msg(data.message, {icon: 5, time: 2000});
+                                    }
+                                    layer.close(index);
+                                },
+                                error: function (data) {
+                                    console.log(data);
+                                }
+                            });
+                        }
+                        , btn2: function (index, layero) {
+                            layer.close(index);
+                        }
+                        , cancel: function () {
+                            layer.close(index);
+                        }
+                    });
+                    break;
+            }
+        });
+
+        /**
+         * 初始化学院数据
+         */
+        let getOrgData = function(id, type) {
+            $.ajax({
+                type: "get",
+                url: "/api/org/get",
+                data: {type: type, id: id},
+                success: function (data) {
+                    if (data.flag) {
+                        let $html = "";
+                        $.each(data.data, function (index, item) {
+                            $html += "<option value='" + item.id + "'>" + item.name + "</option>";
+                        });
+                        if (type == 1) {
+                            $("#college").append($html);
+                        }
+                        if (type == 2) {
+                            $("#department").append($html);
+                        }
+                        if (type == 3) {
+                            $("#major").append($html);
+                        }
+                        //append后必须从新渲染
+                        form.render('select');
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        };
+
+        //监听省下拉框
+        form.on('select(college)', function(dataObj){
+            //移除城市下拉框所有选项
+            $("#department").empty();
+            let departmentHtml = '<option value="">请选择系</option>';
+            $("#department").html(departmentHtml);
+            let majorHtml = '<option value="">请选择专业</option>';
+            $("#major").html(majorHtml);
+            collegeText = $("#college").find("option:selected").text();
+            let value = $("#college").val();
+            getOrgData(value, 2);
+        });
+
+        //监听省下拉框
+        form.on('select(department)', function(dataObj){
+            //移除城市下拉框所有选项
+            $("#major").empty();
+            let majorHtml = '<option value="">请选择专业</option>';
+            $("#major").html(majorHtml);
+            departmentText = $("#department").find("option:selected").text();
+            let value = $("#department").val();
+
+            getOrgData(value, 3);
+        });
+
+        // 点击查询
+        $("#search").click(function () {
+            searchParam.nickName = $("#nickName").val();
+            searchParam.collegeId = $("#college").val();
+            searchParam.departmentId = $("#department").val();
+            searchParam.majorId = $("#major").val();
+            searchParam.page = 1;
+            renderTable();
+        });
+
+        // 重置搜索
+        $("#reset").click(function () {
+            // 清空搜索条件内容
+            $("#nickName").val("");
+            $("#college").val("");
+            $("#department").val("");
+            $("#major").val("");
+            // 重置页面渲染内容（layui需要的）
+            form.render();
+
+            // 清空搜索条件，重新触发表格查询和渲染
+            searchParam.nickName = null;
+            searchParam.college = null;
+            searchParam.department = null;
+            searchParam.major = null;
+            searchParam.page = 1;
+            renderTable();
+        });
+
+        /**
+         * 数据列表
+         */
+        let renderTable = function () {
+            table.render({
+                elem: '#score_table'
+                , url: '/api/score/list'
+                , method: 'post'
+                , where: searchParam //设定异步数据接口的额外参数
+                , contentType: 'application/json'
+                , toolbar: '#toolbar' //开启头部工具栏，并为其绑定左侧模板
+                , defaultToolbar: ['filter', 'exports', 'print']
+                , page: true
+                , autoSort: false
+                , parseData: function (res) { //res 即为原始返回的数据
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.message, //解析提示文本
+                        "count": res.count, //解析数据长度
+                        "data": res.data //解析数据列表
+                    };
+                }
+                , response: {
+                    statusName: 'code' //规定数据状态的字段名称，默认：code
+                    , statusCode: 20000 //规定成功的状态码，默认：0
+                    , msgName: 'message' //规定状态信息的字段名称，默认：msg
+                    , countName: 'count' //规定数据总数的字段名称，默认：count
+                    , dataName: 'data' //规定数据列表的字段名称，默认：data
+                }
+                , title: '学生成绩表'
+                , height: 'full-80'
+                , cols: [[
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'id', title: 'ID', width: 80, fixed: 'left', hide: true}
+                    , {field: 'nickName', title: '姓名', align: 'center', width: 120}
+                    , {field: 'username', title: '学号', align: 'center', width: 120}
+                    , {field: 'email', title: '邮箱', align: 'center', width: 180}
+                    , {field: 'courseName', title: '课程', align: 'center', width: 120}
+                    , {field: 'score', title: '分数', align: 'center', width: 120}
+                    , {field: 'collegeName', title: '院', align: 'center'}
+                    , {field: 'departmentName', title: '系', align: 'center'}
+                    , {field: 'majorName', title: '专业', align: 'center'}
+                    , {
+                        field: 'startTime', title: '课程时间', align: 'center', width: 320,
+                        templet: function (res) {
+                            if (res.startTime != undefined && res.startTime != null && res.endTime != undefined && res.endTime != null) {
+                                let time = res.startTime + " ~ " + res.endTime
+                                return time;
+                            } else {
+                                return "";
+                            }
+                        }
+                    }
+                    , {fixed: 'right', title: '操作', align: 'center', width: 120, toolbar: '#bar'}
+                ]]
+            });
+        }
+
+        // 初始化院选择框
+        getOrgData("", 1);
+        // 调用表格渲染方法
+        renderTable();
+    });
+
+    /**
+     * 分数正则校验
+     * @param value
+     * @returns {number|*}
+     */
+    function scoreValue(value) {
+        let re = /^[0-9]+([.][0-9]{1}){0,1}$/
+        if (!re.test(value)) {
+            return "";
+        } else if (value > 100) {
+            layer.msg("分数不能超过最大值");
+            return "";
+        } else {
+            return value;
+        }
+    }
+</script>
+</body>
+
+<form class="layui-form " action="" id="courseScoreInfo" lay-filter="courseScoreInfo"
+      style="margin-top: 10px; width: 95%" hidden>
+    <input name="studentId" hidden>
+    <input name="courseId" hidden>
+    <input name="userCourseId" hidden>
+    <div class="layui-row layui-col-space5">
+        <div class="layui-form-item" style="width: 300px !important;">
+            <label class="layui-form-label">学生姓名</label>
+            <div class="layui-input-block">
+                <input type="studentName" name="studentName" readonly="readonly" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" style="width: 300px !important;">
+            <label class="layui-form-label">课程名称</label>
+            <div class="layui-input-block">
+                <input type="courseName" name="courseName" readonly="readonly" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" style="width: 300px !important;">
+            <label class="layui-form-label">课程分数</label>
+            <div class="layui-input-block">
+                <input type="courseScorename" name="courseScore" onkeyup="value=scoreValue(this.value)"
+                       placeholder="请输入课程分数" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+</form>
+</html>

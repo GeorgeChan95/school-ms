@@ -106,6 +106,15 @@ public class IndexController {
     }
 
     /**
+     * 成绩评定页面
+     * @return
+     */
+    @GetMapping("/index/score/list")
+    public String scoreView() {
+        return "score/score_list";
+    }
+
+    /**
      * 未授权的页面
      *
      * @return

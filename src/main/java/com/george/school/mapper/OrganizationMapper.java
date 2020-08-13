@@ -42,4 +42,11 @@ public interface OrganizationMapper extends BaseMapper<Organization> {
      * @return
      */
     int findOrgByCode(@Param("code") String code);
+
+    /**
+     * 获取组织数据
+     * @param type
+     * @return
+     */
+    List<Organization> getByType(@Param("type") Integer type, @Param("id") String id);
 }

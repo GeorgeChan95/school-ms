@@ -143,5 +143,12 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         return new Result(true, StatusCode.OK, "保存成功");
     }
 
-
+    @Override
+    public List<Organization> findByType(Integer type, String id) {
+        List<Organization> list = this.baseMapper.getByType(type, id);
+        if (CollectionUtils.isEmpty(list)) {
+            list = Lists.newArrayList();
+        }
+        return list;
+    }
 }

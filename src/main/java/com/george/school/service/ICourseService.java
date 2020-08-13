@@ -4,7 +4,9 @@ import com.george.school.entity.Course;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.george.school.model.dto.CourseListTableDTO;
 import com.george.school.model.dto.CourseSaveDto;
+import com.george.school.model.dto.GradeEvaluateDTO;
 import com.george.school.model.query.CourseListQuery;
+import com.george.school.model.query.GradeEvaluateQuery;
 import com.george.school.util.Result;
 import com.github.pagehelper.PageInfo;
 
@@ -74,4 +76,12 @@ public interface ICourseService extends IService<Course> {
      * @return
      */
     boolean unselectCourse(String id, String courseId);
+
+    /**
+     * 获取学生的成绩列表
+     * @param id 老师ID
+     * @param query 查询条件
+     * @return
+     */
+    PageInfo<GradeEvaluateDTO> pageGradeEvaluate(String id, GradeEvaluateQuery query);
 }

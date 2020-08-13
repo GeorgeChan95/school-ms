@@ -8,7 +8,9 @@ import com.george.school.entity.UserCourse;
 import com.george.school.mapper.CourseMapper;
 import com.george.school.model.dto.CourseListTableDTO;
 import com.george.school.model.dto.CourseSaveDto;
+import com.george.school.model.dto.GradeEvaluateDTO;
 import com.george.school.model.query.CourseListQuery;
+import com.george.school.model.query.GradeEvaluateQuery;
 import com.george.school.service.ICourseService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.george.school.service.IUserCourseService;
@@ -17,6 +19,7 @@ import com.george.school.util.StatusCode;
 import com.george.school.util.StringPool;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -178,5 +181,18 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
             return true;
         }
         return userCourseService.removeById(course.getId());
+    }
+
+    @Override
+    public PageInfo<GradeEvaluateDTO> pageGradeEvaluate(String teacherId, GradeEvaluateQuery query) {
+        int pageNum = query.getPage() > 0 ? query.getPage() : 1;
+        int pageSize = query.getLimit() > 0 ? query.getLimit() : 10;
+        if (StringUtils.isNotEmpty(teacherId)) {
+            query.setTeacherId(teacherId);
+        }
+        PageHelper.startPage(pageNum, pageSize, Boolean.TRUE);
+        List<GradeEvaluateDTO> list = this.baseMapper.getGradeEvaluateList(query);
+        PageInfo<GradeEvaluateDTO> pageInfo = new PageInfo<>(list);
+        return pageInfo;
     }
 }

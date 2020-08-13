@@ -64,4 +64,21 @@
     <select id="findOrgByCode" resultType="java.lang.Integer">
         SELECT COUNT(1) FROM sys_organization WHERE delete_flag = 0 AND `code` = #{code}
     </select>
+
+    <select id="getByType" resultMap="BaseResultMap">
+        SELECT
+            *
+        FROM
+            sys_organization
+        WHERE
+            delete_flag = 0
+            <if test="type != null and type > 0">
+                AND type = #{type}
+            </if>
+            <if test="id != null and id != '' ">
+                AND parent_id = #{id}
+            </if>
+        ORDER BY
+            sort
+    </select>
 </mapper>
