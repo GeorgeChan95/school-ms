@@ -2,3 +2,5 @@
 /school-ms.iml
 *.class
 /src/main/resources/rebel-remote.xml
+/target/
+/src/main/resources/rebel.xml
