@@ -135,6 +135,24 @@ public class IndexController {
     }
 
     /**
+     * 用户信息页面
+     * @return
+     */
+    @GetMapping("/index/users/info")
+    public String userInfoView() {
+        return "user/user_edit";
+    }
+
+    /**
+     * 用户更新密码页面
+     * @return
+     */
+    @GetMapping("/index/users/password")
+    public String userPassword() {
+        return "user/password";
+    }
+
+    /**
      * 未授权的页面
      *
      * @return

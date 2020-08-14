@@ -23,7 +23,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -171,5 +173,50 @@ public class UserController {
         List<OrganizationTreeVO> list = organizationService.findUserOrgTree();
         log.info("用户组织树 ===> {}", JSON.toJSONString(list));
         return new Result(true, StatusCode.OK, "操作成功", list);
+    }
+
+    @ApiOperation("个人信息")
+    @GetMapping("/info")
+    public Result userInfo() {
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getPrincipal();
+        UserTableDTO userDTO = userService.findUserInfo(user.getId());
+        return new Result(true, StatusCode.OK, "获取个人信息成功", userDTO);
+    }
+
+    /**
+     * 用户密码更新
+     * @param oldPwd
+     * @param newPwd
+     * @return
+     */
+    @ApiOperation("密码更新")
+    @PostMapping("/password")
+    public Result changePassword(@RequestParam (value = "oldPwd", required = false) String oldPwd,
+                                 @RequestParam (value = "newPwd", required = false) String newPwd) {
+        // 参数校验
+        if (StringUtils.isEmpty(oldPwd) || StringUtils.isEmpty(newPwd)) {
+            return new Result(false, StatusCode.ERROR, "操作失败");
+        }
+
+        // 获取当前登录用户信息
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getPrincipal();
+
+        // 校验旧密码输入是否正确
+        String oldPassword = user.getPassword();
+        oldPwd = Md5Util.encrypt(user.getUsername().toLowerCase(), oldPwd);
+        if (!StringUtils.equalsIgnoreCase(oldPassword, oldPwd)) {
+            return new Result(false, StatusCode.ERROR, "旧密码输入错误");
+        }
+
+        // 新密码更新
+        newPwd = Md5Util.encrypt(user.getUsername().toLowerCase(), newPwd);
+        user.setPassword(newPwd);
+        boolean res = userService.updateById(user);
+        if (!res) {
+            return new Result(false, StatusCode.ERROR, "操作失败");
+        }
+        return new Result(true, StatusCode.OK, "更新成功");
     }
 }

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <title>中国石油大学-成绩管理系统</title>
+    <link rel="icon" th:href="@{/assets/ico/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/custome.css}"/>
+    <style>
+        .layui-upload-img {
+            width: 200px;
+            height: 200px;
+            margin: 0 10px 10px 0;
+        }
+
+    </style>
+</head>
+<body>
+<!-- 用户添加面板 开始-->
+<div class="panel panel-default operation_user">
+    <div class="panel-heading title"></div>
+    <div class="layui-card-body">
+        <form class="layui-form " action="" lay-filter="userInfo" style="margin-top: 10px">
+            <div class="layui-row layui-col-space5">
+                <div class="layui-col-md4">
+                    <input name="id" hidden/>
+                    <input name="orgId" hidden/>
+                    <input name="avatar" hidden>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">账号</label>
+                        <div class="layui-input-block">
+                            <input type="username" name="username" lay-verify="required" lay-reqtext="登录账号不能为空"
+                                   onkeyup="this.value=this.value.replace(/[\W]/g, '')" placeholder="请输入账号"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">姓名</label>
+                        <div class="layui-input-block">
+                            <input type="nickname" name="nickname" placeholder="请输入姓名" lay-verify="required"
+                                   lay-reqtext="姓名不能为空" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-form-label ">院/系/专业</div>
+                        <div class="layui-input-block">
+                            <input type="orgName" name="orgName" lay-verify="required" lay-reqtext="院/系/专业不能为空" placeholder="请选择所在的院/系/专业" autocomplete="off"
+                                   class="layui-input" readonly="readonly" style="background:#eeeeee!important">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">手机号</label>
+                        <div class="layui-input-block">
+                            <input type="mobile" name="mobile" placeholder="请输入手机号" lay-verify="required|phone"
+                                   lay-reqtext="手机号不能为空" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">邮箱地址</label>
+                        <div class="layui-input-block">
+                            <input type="email" name="email" placeholder="请输入邮箱地址" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">QQ号</label>
+                        <div class="layui-input-block">
+                            <input type="qq" name="qq" placeholder="请输入QQ号" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-col-md4">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="gender" value="1" title="男" checked="">
+                            <input type="radio" name="gender" value="2" title="女">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">生日</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="birthday" id="birthday" lay-verify="date" placeholder="yyyy-MM-dd"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户类型</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="userType" value="0" title="学生" checked="">
+                            <input type="radio" name="userType" value="1" title="老师">
+                            <input type="radio" name="userType" value="2" title="管理员">
+                            <input type="radio" name="userType" value="3" title="系统管理员">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-block">
+                            <input type="qq" name="remark" placeholder="请输入备注内容" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="status" value="0" title="正常" checked="checked">
+                            <input type="radio" name="status" value="1" title="锁定">
+                        </div>
+                    </div>
+                </div>
+
+                <!--上传用户头像-->
+                <div class="layui-col-md4">
+                    <div class="layui-form-item">
+                        <div class="layui-upload">
+                            <button type="button" class="layui-btn" id="user_image">上传头像</button>
+                            <div class="layui-upload-list">
+                                <img class="layui-upload-img" id="img_head" th:src="@{/assets/images/head_default.jpg}">
+                                <p id="headText"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 提交保存和返回-->
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 45% !important;">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">保存</button>
+                    <button class="layui-btn layui-btn-primary" id="btn_cancel">返回首页</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- 用户添加面板 结束-->
+<div id="deptTree" style="display: none"></div>
+<script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
+<script type="text/javascript" th:inline="none">
+    let form = layui.form;
+    let layer = layui.layer;
+    let $ = jQuery = layui.jquery;
+    let laydate = layui.laydate;
+    let tree = layui.tree;
+    let loading;
+    layui.use(['table', 'laypage', 'layer', 'laydate', 'tree', 'transfer', 'upload'], function () {
+        // 初始化表单区域-生日选择
+        laydate.render({
+            elem: '#birthday'
+        });
+        $(".title").html("个人信息");
+
+        loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+        $.ajax({
+            type: "get",
+            url: "/api/user/info",
+            success: function (res) {
+                if (res.flag) {
+                    let data = res.data;
+                    let avatar = data.avatar;
+                    if (avatar == null || avatar == undefined || avatar == '') {
+                        avatar = "/assets/images/head_default.jpg";
+                    }
+                    form.val('userInfo', {
+                        "username": data.username
+                        , "nickname": data.nickname
+                        , "orgName": data.orgName
+                        , "mobile": data.mobile
+                        , "email": data.email
+                        , "qq": data.qq
+                        , "gender": data.gender
+                        , "birthday": data.birthday
+                        , "userType": data.userType
+                        , "remark": data.remark
+                        , "status": data.status
+                        , "orgId": data.orgId
+                        , "id": data.id
+                        , "avatar": avatar
+                    });
+                    $("#img_head").attr("src", avatar);
+                    form.render(); //更新全部
+                } else {
+                    layer.msg(data.message, {icon: 5, time: 2000});
+                }
+                top.layer.close(loading);
+            },
+            error: function (data) {
+                top.layer.close(loading);
+                console.log(data);
+            }
+        });
+
+        form.on('submit(submit)', function (data) {
+            loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+            $.ajax({
+                type: "post",
+                url: "/api/user/save",
+                data: JSON.stringify(data.field),
+                dataType: "json",
+                contentType: 'application/json;charset=utf-8',
+                async: false,
+                success: function (data) {
+                    if (data.flag) {
+                        layer.msg(data.message, {icon: 1});
+                    } else {
+                        layer.msg(data.message, {icon: 5, time: 2000});
+                    }
+                    top.layer.close(loading);
+                },
+                error: function (data) {
+                    top.layer.close(loading);
+                    console.log(data);
+                }
+            });
+            return false;
+        });
+
+        // 取消用户保存
+        $("#btn_cancel").click(function () {
+            top.location.href = '/index/home';
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

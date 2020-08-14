@@ -1,5 +1,6 @@
 package com.george.school.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.george.school.config.ConfigProperties;
 import com.george.school.entity.Role;
@@ -233,5 +234,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<StudentScoreVO> list = this.baseMapper.getStudentScoreList(studentId);
         PageInfo<StudentScoreVO> pageInfo = new PageInfo<>(list);
         return pageInfo;
+    }
+
+    @Override
+    public UserTableDTO findUserInfo(String id) {
+        UserTableDTO userDTO = this.baseMapper.findUserTableInfo(id);
+        if (ObjectUtil.isNull(userDTO)) {
+            userDTO = new UserTableDTO();
+        }
+        String avatar = userDTO.getAvatar();
+        if (StringUtils.isNotEmpty(avatar)) {
+            avatar = configProperties.getFileServerAddr() + avatar;
+            userDTO.setAvatar(avatar);
+        }
+        return userDTO;
     }
 }

@@ -96,4 +96,11 @@ public interface IUserService extends IService<User> {
      * @return
      */
     PageInfo<StudentScoreVO> findStudentScorePage(Integer page, Integer limit, String studentId);
+
+    /**
+     * 获取用户的个人信息
+     * @param id 用户id
+     * @return
+     */
+    UserTableDTO findUserInfo(String id);
 }

@@ -221,4 +221,14 @@
             AND su.delete_flag = 0
             AND su.id = #{studentId}
     </select>
+
+    <select id="findUserTableInfo" resultMap="UserTableDTOMap">
+        SELECT
+            su.*,
+            o.name AS orgName
+        FROM
+            sys_user su
+            LEFT JOIN sys_organization o ON o.id = su.org_id AND o.delete_flag = 0
+        WHERE su.delete_flag = 0 and su.id = #{id} limit 1
+    </select>
 </mapper>

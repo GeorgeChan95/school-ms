@@ -77,4 +77,11 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     List<StudentScoreVO> getStudentScoreList(@Param("studentId") String studentId);
+
+    /**
+     * 获取用户的个人信息
+     * @param id 用户id
+     * @return
+     */
+    UserTableDTO findUserTableInfo(@Param("id") String id);
 }
