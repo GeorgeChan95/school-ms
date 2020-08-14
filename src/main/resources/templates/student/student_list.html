@@ -239,6 +239,7 @@
                         },
                         end: function (layero, index) {
                             table.init('student_score');
+                            // 移除表格元素，不对后面的操作产生影响
                             let $div = $("div[lay-id$='student_score']");
                             $div.remove()
                         }
