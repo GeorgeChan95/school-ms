@@ -153,6 +153,15 @@ public class IndexController {
     }
 
     /**
+     * 公告管理
+     * @return
+     */
+    @GetMapping("/index/notice/view")
+    public String noticeView() {
+        return "notice/notice_list";
+    }
+
+    /**
      * 未授权的页面
      *
      * @return
