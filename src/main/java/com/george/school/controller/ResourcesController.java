@@ -10,6 +10,7 @@ import com.george.school.model.vo.MenuVO;
 import com.george.school.service.IResourcesService;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/menu")
+@Api(value = "Resources", tags = "菜单资源管理模块")
 public class ResourcesController {
     private final IResourcesService resourcesService;
 

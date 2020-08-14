@@ -4,6 +4,7 @@ import com.george.school.util.Md5Util;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
 import com.george.school.util.ValidateCodeService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@Api(value = "login", tags = "登录模块")
 public class LoginController {
     private final RedisTemplate redisTemplate;
     /**

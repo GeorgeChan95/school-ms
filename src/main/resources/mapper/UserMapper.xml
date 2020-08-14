@@ -142,4 +142,83 @@
     <select id="findAllTeacherData" resultType="com.george.school.model.vo.TeacherTreeVo">
         SELECT id, nickname AS title, '0' AS parentId FROM sys_user WHERE user_type = 1 AND delete_flag = 0
     </select>
+
+    <select id="getStudentPageList" resultType="com.george.school.model.vo.StudentTableVO">
+        SELECT
+            su.id,
+            su.nickname,
+            su.gender,
+            su.username,
+            su.mobile,
+            su.email,
+            su.remark,
+            su.avatar,
+            su.create_time AS createTime,
+            su.`status`,
+            su.last_login_time AS lastLoginTime,
+            so.id AS majorId,
+            so.`name` AS majorName,
+            sop.id AS departmentId,
+            sop.`name` AS departmentName,
+            sopp.id AS collegeId,
+            sopp.`name` AS collegeName
+        FROM
+            sys_user su
+            LEFT JOIN sys_organization so ON so.id = su.org_id
+            AND so.delete_flag = 0
+            AND so.type = 3
+            LEFT JOIN sys_organization sop ON sop.id = so.parent_id
+            AND sop.delete_flag = 0
+            AND sop.type = 2
+            LEFT JOIN sys_organization sopp ON sopp.id = sop.parent_id
+            AND sopp.delete_flag = 0
+            AND sopp.type = 1
+        WHERE
+            su.user_type = 0 AND su.delete_flag = 0
+        <if test="query != null">
+            <if test="query.nickName != null and query.nickName != '' ">
+                AND su.username LIKE #{query.nickNameLike}
+            </if>
+            <if test="query.mobile != null and query.mobile != '' ">
+                AND su.mobile = #{query.mobile}
+            </if>
+            <if test="query.majorId != null and query.majorId != '' ">
+                AND so.id = #{query.majorId}
+            </if>
+            <if test="query.departmentId != null and query.departmentId != '' ">
+                AND sop.id = #{query.departmentId}
+            </if>
+            <if test="query.collegeId != null and query.collegeId != '' ">
+                AND sopp.id = #{query.collegeId}
+            </if>
+            <if test="query.startTime != null and query.endTime != null">
+                AND su.create_time BETWEEN #{query.startTime} AND #{query.endTime}
+            </if>
+        </if>
+        ORDER BY su.create_time DESC
+    </select>
+
+    <select id="getStudentScoreList" resultType="com.george.school.model.vo.StudentScoreVO">
+        SELECT
+            su.id,
+            su.nickname,
+            sc.`name` AS courseName,
+            sc.id AS courseId,
+            sc.start_time AS startTime,
+            sc.end_time AS endTime,
+            suc.id AS userCourseId,
+            suc.score
+        FROM
+            sys_user su
+            INNER JOIN sys_user_course suc ON su.id = suc.user_id
+            AND su.delete_flag = 0
+            AND suc.delete_flag = 0
+            AND suc.is_teacher = 0
+            LEFT JOIN sys_course sc ON sc.id = suc.course_id
+            AND sc.delete_flag = 0
+        WHERE
+            su.user_type = 0
+            AND su.delete_flag = 0
+            AND su.id = #{studentId}
+    </select>
 </mapper>

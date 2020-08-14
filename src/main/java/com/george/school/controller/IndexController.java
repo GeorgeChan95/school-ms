@@ -2,6 +2,7 @@ package com.george.school.controller;
 
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @since JDK 1.8
  */
 @Controller
+@Api(value = "index", tags = "请求跳转模块")
 public class IndexController {
     /**
      * 首页

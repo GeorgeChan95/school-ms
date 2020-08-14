@@ -5,7 +5,10 @@ import com.george.school.entity.User;
 import com.george.school.model.dto.LoginUserDto;
 import com.george.school.model.dto.UserRoleDTO;
 import com.george.school.model.dto.UserTableDTO;
+import com.george.school.model.query.StudentQuery;
 import com.george.school.model.query.UserListQuery;
+import com.george.school.model.vo.StudentScoreVO;
+import com.george.school.model.vo.StudentTableVO;
 import com.george.school.model.vo.TeacherTreeVo;
 import com.george.school.model.vo.UserOrgTreeVO;
 import com.george.school.util.Result;
@@ -77,4 +80,20 @@ public interface IUserService extends IService<User> {
      * @return
      */
     List<TeacherTreeVo> findTeacherTreeVo(String id);
+
+    /**
+     * 学生分页列表
+     * @param query 查询条件
+     * @return
+     */
+    PageInfo<StudentTableVO> findStudentPageList(StudentQuery query);
+
+    /**
+     * 根据学生id，分页获取学生的成绩列表数据
+     * @param page 当前页
+     * @param limit 页大小
+     * @param studentId 学生ID
+     * @return
+     */
+    PageInfo<StudentScoreVO> findStudentScorePage(Integer page, Integer limit, String studentId);
 }

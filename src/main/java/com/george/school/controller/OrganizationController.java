@@ -11,6 +11,7 @@ import com.george.school.model.vo.OrganizationTreeVO;
 import com.george.school.service.IOrganizationService;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/org")
+@Api(value = "Organization", tags = "组织结构管理模块")
 public class OrganizationController {
     private final IOrganizationService organizationService;
 

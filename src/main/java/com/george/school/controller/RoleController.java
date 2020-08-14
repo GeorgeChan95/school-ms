@@ -11,6 +11,7 @@ import com.george.school.service.IRoleService;
 import com.george.school.util.Result;
 import com.george.school.util.StatusCode;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/role")
+@Api(value = "Role", tags = "角色管理模块")
 public class RoleController {
     private final IRoleService roleService;
     private final IResourcesService resourcesService;

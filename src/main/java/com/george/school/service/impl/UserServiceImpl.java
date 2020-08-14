@@ -9,10 +9,9 @@ import com.george.school.mapper.UserMapper;
 import com.george.school.model.dto.LoginUserDto;
 import com.george.school.model.dto.UserRoleDTO;
 import com.george.school.model.dto.UserTableDTO;
+import com.george.school.model.query.StudentQuery;
 import com.george.school.model.query.UserListQuery;
-import com.george.school.model.vo.MenuTreeVO;
-import com.george.school.model.vo.TeacherTreeVo;
-import com.george.school.model.vo.UserOrgTreeVO;
+import com.george.school.model.vo.*;
 import com.george.school.service.IRoleService;
 import com.george.school.service.IUserRoleService;
 import com.george.school.service.IUserService;
@@ -209,5 +208,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<TeacherTreeVo> list = new ArrayList<>();
         list.add(rootVo);
         return list;
+    }
+
+    @Override
+    public PageInfo<StudentTableVO> findStudentPageList(StudentQuery query) {
+        int pageNum = query.getPage() > 0 ? query.getPage() : 1;
+        int pageSize = query.getLimit() > 0 ? query.getLimit() : 10;
+        PageHelper.startPage(pageNum, pageSize, Boolean.TRUE);
+        List<StudentTableVO> list = this.baseMapper.getStudentPageList(query);
+        PageInfo<StudentTableVO> pageInfo = new PageInfo<>(list);
+        list.stream().forEach(n -> {
+            String avatar = n.getAvatar();
+            if (StringUtils.isNotEmpty(avatar)) {
+                avatar = configProperties.getFileServerAddr() + avatar;
+                n.setAvatar(avatar);
+            }
+        });
+        return pageInfo;
+    }
+
+    @Override
+    public PageInfo<StudentScoreVO> findStudentScorePage(Integer page, Integer limit, String studentId) {
+        PageHelper.startPage(page, limit, Boolean.TRUE);
+        List<StudentScoreVO> list = this.baseMapper.getStudentScoreList(studentId);
+        PageInfo<StudentScoreVO> pageInfo = new PageInfo<>(list);
+        return pageInfo;
     }
 }

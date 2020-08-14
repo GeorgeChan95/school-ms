@@ -113,6 +113,17 @@
         <appender-ref ref="infoAppender" />
         <appender-ref ref="errorAppender" />
     </logger>
+    <!-- 打印sql语句 start -->
+    <logger name="com.ibatis" level="DEBUG" />
+    <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG" />
+    <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG" />
+    <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG" />
+    <logger name="java.sql.Connection" level="DEBUG" />
+    <logger name="java.sql.Statement" level="DEBUG" />
+    <logger name="java.sql.PreparedStatement" level="DEBUG" />
+    <logger name="java.sql.ResultSet" level="DEBUG" />
+    <logger name="com.george.school.mapper" level="DEBUG" />
+    <!-- 打印sql语句 end -->
     <!-- 特殊的logger，根logger -->
     <root level="info">
         <!-- 指定默认的日志输出 -->
