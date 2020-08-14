@@ -55,6 +55,12 @@ public class Notice implements Serializable {
     private Integer status;
 
     /**
+     * 发布时间
+     */
+    @TableField("release_time")
+    private LocalDateTime releaseTime;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")

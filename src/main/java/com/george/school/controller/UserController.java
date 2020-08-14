@@ -138,7 +138,7 @@ public class UserController {
         return new Result(true, StatusCode.OK, "重置用户密码成功");
     }
 
-    @ApiOperation("用户重置密码")
+    @ApiOperation("获取用户角色")
     @GetMapping("/roles/{id}")
     public Result userRoles(@ApiParam("用户id") @PathVariable(value = "id")String id) {
         if (StringUtils.isEmpty(id)) {
@@ -153,7 +153,7 @@ public class UserController {
      * @param roleIds
      * @return
      */
-    @ApiOperation("报错用户角色数据信息")
+    @ApiOperation("保存用户角色数据信息")
     @PostMapping("/roles/{userId}")
     public Result saveRoles(@ApiParam("用户角色id数组") @RequestParam(value = "roleIds", required = false) String[] roleIds, @ApiParam("用户id") @PathVariable(value = "userId")String userId) {
         boolean res = userService.saveUserRoles(roleIds, userId);

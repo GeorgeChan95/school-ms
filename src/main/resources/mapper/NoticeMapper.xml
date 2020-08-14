@@ -9,9 +9,30 @@
         <result column="content" property="content" />
         <result column="target" property="target" />
         <result column="status" property="status" />
+        <result column="release_time" property="releaseTime"/>
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
         <result column="delete_flag" property="deleteFlag" />
     </resultMap>
 
+    <select id="getNoticePage" resultMap="BaseResultMap">
+        SELECT
+            *
+        FROM
+            sys_notice
+        WHERE
+            delete_flag = 0
+        <if test="query != null">
+            <if test="query.target != null">
+                AND target = #{query.target}
+            </if>
+            <if test="query.status != null">
+                AND `status` = #{query.status}
+            </if>
+            <if test="query.startTime != null and query.startTime != '' and query.endTime != null and query.endTime != ''">
+                AND release_time BETWEEN #{query.startTime} AND #{query.endTime}
+            </if>
+        </if>
+        ORDER BY create_time DESC
+    </select>
 </mapper>

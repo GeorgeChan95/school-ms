@@ -1,10 +1,572 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8"/>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <title>中国石油大学-成绩管理系统</title>
+    <link rel="icon" th:href="@{/assets/ico/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/custome.css}"/>
+    <style>
+
+    </style>
 </head>
 <body>
+<!-- 课程添加面板 开始-->
+<div class="panel panel-default operation_course" hidden>
+    <div class="panel-heading title"></div>
+    <div class="layui-card-body">
+        <form class="layui-form " action="" lay-filter="courseInfo" style="margin-top: 10px">
+            <div class="layui-row layui-col-space5">
+                <div class="layui-col-md4">
+                    <input name="id" hidden/>
+                    <input name="teacherId" hidden>
+                    <input name="userCourseId" hidden>
 
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">课程名称</label>
+                        <div class="layui-input-block">
+                            <input type="name" name="name" lay-verify="required" lay-reqtext="课程名称不能为空"
+                                   onkeyup="this.value=this.value.replace(/\s+/g, '')" placeholder="请输入课程名称"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">课程代号</label>
+                        <div class="layui-input-block">
+                            <input type="code" name="code" placeholder="请输入课程代号（数字和字母组成）" lay-verify="required"
+                                   lay-reqtext="课程代号不能为空" onkeyup="value=courseValue(this.value)" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-form-label ">任课老师</div>
+                        <div class="layui-input-block">
+                            <input type="teacherName" name="teacherName" placeholder="请选择任课老师" autocomplete="off"
+                                   lay-verify="required"
+                                   lay-reqtext="任课老师不能为空" class="layui-input" readonly="readonly"
+                                   style="background:#eeeeee!important">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">课程状态</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="publishFlag" value="0" title="未发布" checked="">
+                            <input type="radio" name="publishFlag" value="1" title="已发布">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">选课时间</label>
+                        <div class="layui-input-inline" style="width: 55% !important;">
+                            <input type="text" name="courseTime" id="courseTime" placeholder="yyyy-MM-dd"
+                                   lay-verify="required" lay-reqtext="课程时间不能为空" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">课程备注</label>
+                        <div class="layui-input-block">
+                            <input type="qq" name="remark" placeholder="请输入备注内容" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 提交保存和返回-->
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 25% !important;">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">保存</button>
+                    <button class="layui-btn layui-btn-primary" id="btn_cancel">返回</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- 课程添加面板 结束-->
+
+<div class="course_table_div">
+    <!-- 搜索区域 -->
+    <div id="searchParam">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" id="code" class="layui-input" autocomplete="off" placeholder="请输入课程名称|代号">
+            </div>
+            <div class="layui-input-inline layui-form" id="publishFlagForm">
+                <select id="publishFlag">
+                    <option value="" selected="">请选择课程状态</option>
+                    <option value="0">未发布</option>
+                    <option value="1">已发布</option>
+                </select>
+            </div>
+            <div class="layui-input-inline layui-form" id="chooseFlagForm">
+                <select id="chooseFlag">
+                    <option value="" selected="">请选择选课状态</option>
+                    <option value="1">已选</option>
+                    <option value="0">未选</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="endTime" placeholder="课程截止时间">
+            </div>
+            <div class="layui-input-inline ">
+                <button class="layui-btn" id="search">
+                    <i class="layui-icon layui-icon-search"></i>
+                </button>
+                <button class="layui-btn layui-btn-normal" id="reset">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <table class="layui-hide" id="course_table" lay-filter="course_table"></table>
+
+    <!-- 头部工具栏 -->
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-group">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius" shiro:hasPermission="sys:course:add" lay-event="add">
+                <i class="layui-icon layui-icon-add-circle"></i>
+            </button>
+        </div>
+        <div class="layui-btn-group">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger"
+                    shiro:hasPermission="sys:course:del" lay-event="batchDel">
+                <i class="layui-icon layui-icon-delete"></i>
+            </button>
+        </div>
+    </script>
+    <!-- 行工具栏 -->
+    <script type="text/html" id="bar">
+        <a class="layui-btn layui-btn-xs" lay-event="edit" shiro:hasPermission="sys:course:del">编辑</a>
+        {{# if(d.studentId != undefined && d.studentId != '' && d.studentId != null){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="unselect" shiro:hasPermission="sys:course:unselect">退课</a>
+        {{# } else { }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="select" shiro:hasPermission="sys:course:select">选课</a>
+        {{# } }}
+
+        {{# if(d.publishFlag != null && d.publishFlag != undefined && d.publishFlag > 0){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="cancel" shiro:hasPermission="sys:course:unpublish">取消发布</a>
+        {{# } else { }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="publish" shiro:hasPermission="sys:course:publish">发布课程</a>
+        {{# } }}
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="sys:course:del">删除</a>
+    </script>
+</div>
+<script type="text/javascript" th:src="@{/assets/js/moment.min.js}"></script>
+<script type="text/javascript" th:src="@{/layui/layui.all.js}"></script>
+<script type="text/javascript" th:inline="none">
+    let table = layui.table;
+    let form = layui.form;
+    let layer = layui.layer;
+    let $ = jQuery = layui.jquery;
+    let laydate = layui.laydate;
+    let tree = layui.tree;
+    let searchParam;
+    let loading;
+
+    layui.use(['table', 'layer', 'laydate', 'tree', 'form'], function () {
+        searchParam = {
+            code: null, // 课程名称、编码
+            publishFlag: null, // 课程状态是否发布
+            startTime: null, // 选课截止时间
+            endTime: null, // 选课截止时间
+            chooseFlag: null // 课程已选、未选
+        }
+
+        // 初始化截止时间选择框
+        laydate.render({
+            elem: '#endTime'
+            , type: 'datetime'
+            , range: '~'
+            , done: function (value, date, endDate) {
+                if (value != null && value != undefined && value != "") {
+                    searchParam.startTime = value.split("~")[0];
+                    searchParam.endTime = value.split("~")[1];
+                } else {
+                    searchParam.startTime = null;
+                    searchParam.endTime = null;
+                }
+            }
+        });
+
+        // 初始化表单区域-生日选择
+        courseTimeObj = laydate.render({
+            elem: '#courseTime'
+            , type: 'datetime'
+            , range: '~'
+            , done: function (value, date, endDate) {
+                if (value != null && value != undefined && value != "") {
+                    return value;
+                }
+            }
+        });
+
+        // 新增面板点击选择父级菜单
+        $(".operation_course input[name=teacherName]").click(function () {
+            layer.open({
+                type: 1,
+                offset: '50px',
+                skin: 'layui-layer-molv',
+                title: "选择任课老师",
+                area: ['400px', '550px'],
+                shade: 0,
+                shadeClose: false,
+                content: jQuery("#teacherTree"),
+                btn: ['确定', '取消'],
+                yes: function (index) {
+                    if (selectNode.data != null) {
+                        if ('0' == selectNode.data.id || selectNode.data.id == undefined) {
+                            layer.msg("请重新选择任课老师！", {icon: 5});
+                            return;
+                        }
+                        form.val('courseInfo', {
+                            "teacherId": selectNode.data.id
+                            , "teacherName": selectNode.data.title
+                        });
+                    }
+                    layer.close(index);
+                }
+            });
+        });
+
+
+        /**
+         * 数据列表
+         */
+        let renderTable = function () {
+            table.render({
+                elem: '#course_table'
+                , url: '/api/course/list'
+                , method: 'post'
+                , where: searchParam //设定异步数据接口的额外参数
+                , contentType: 'application/json'
+                , toolbar: '#toolbar' //开启头部工具栏，并为其绑定左侧模板
+                , defaultToolbar: ['filter', 'exports', 'print']
+                , page: true
+                , autoSort: false
+                , parseData: function (res) { //res 即为原始返回的数据
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.message, //解析提示文本
+                        "count": res.count, //解析数据长度
+                        "data": res.data //解析数据列表
+                    };
+                }
+                , response: {
+                    statusName: 'code' //规定数据状态的字段名称，默认：code
+                    , statusCode: 20000 //规定成功的状态码，默认：0
+                    , msgName: 'message' //规定状态信息的字段名称，默认：msg
+                    , countName: 'count' //规定数据总数的字段名称，默认：count
+                    , dataName: 'data' //规定数据列表的字段名称，默认：data
+                }
+                , title: '课程数据表'
+                , height: 'full-80'
+                , cols: [[
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'id', title: 'ID', width: 80, fixed: 'left', hide: true}
+                    , {field: 'name', title: '名称', align: 'center'}
+                    , {field: 'code', title: '代码', align: 'center', width: 120}
+                    , {field: 'publishFlag', title: '状态', align: 'center', width: 120,
+                        templet: function (res) {
+                            if (res.publishFlag == 1) {
+                                return '<span class="layui-badge layui-bg-green">已发布</span>';
+                            } else if (res.publishFlag == 0) {
+                                return '<span class="layui-badge layui-bg-black">未发布</span>';
+                            }
+                        }
+                    }
+                    , {field: 'startTime', title: '选课开始时间', align: 'center', width: 180,
+                        templet: function (res) {
+                            if (res.startTime != undefined && res.startTime != null) {
+                                let timeArr = res.startTime.split("T");
+                                return timeArr[0] + " " + timeArr[1]
+                            } else {
+                                return "";
+                            }
+                        }
+                    }
+                    , {field: 'endTime',title: '选课截止时间',align: 'center',width: 180,
+                        templet: function (res) {
+                            if (res.endTime != undefined && res.endTime != null) {
+                                let timeArr = res.endTime.split("T");
+                                return timeArr[0] + " " + timeArr[1]
+                            } else {
+                                return "";
+                            }
+                        }
+                    }
+                    , {field: 'teacherName', title: '任课老师', align: 'center', width: 120}
+                    , {field: 'studentNums', title: '选课人数', align: 'center', width: 120}
+                    , {field: 'remark', title: '课程备注', align: 'center', width: 220}
+                    , {fixed: 'right', title: '操作', align: 'center', toolbar: '#bar'}
+                ]]
+            });
+        }
+
+        // 监听表格头部工具栏
+        table.on('toolbar(course_table)', function (obj) {
+            switch (obj.event) {
+                case 'batchDel':
+                    let checkData = table.checkStatus('course_table').data;
+                    if (checkData.length == 0) {
+                        layer.msg("请选择要删除的数据");
+                    } else {
+                        let ids = [];
+                        let pubCount = 0;
+
+                        $(checkData).each(function (index, item) {
+                            if (item.publishFlag == 1) {
+                                pubCount++;
+                            }
+                            ids.push(item.id);
+                        });
+
+                        if (pubCount > 0) {
+                            layer.msg("已发布的课程无法删除", {icon: 5, time: 1500});
+                            return false;
+                        } else {
+                            deleteCourse(ids);
+                        }
+                    }
+                    break;
+                case 'add':
+                    $(".title").html("新增课程");
+                    $(".course_table_div").hide();
+                    $(".operation_course").show();
+                    // 新增面板清空
+                    form.val('courseInfo', {
+                        "id": ""
+                        , "name": ""
+                        , "code": ""
+                        , "publishFlag": 0
+                        , "courseTime": ""
+                        , "remark": ""
+                        , "teacherId": ""
+                        , "teacherName": ""
+                        , "userCourseId": ""
+                    });
+                    form.render(); //更新全部
+                    initTree("")
+                    break;
+            }
+            ;
+        });
+
+        // 监听table的行工具栏
+        table.on('tool(course_table)', function (obj) {
+            let data = obj.data;
+            let startTime = data.startTime;
+            let endTime = data.endTime;
+            let time = startTime.split("T")[0] + " 00:00:00" + " ~ " + endTime.split("T")[0] + " 00:00:00";
+            switch (obj.event) {
+                case'del':
+                    if (data.publishFlag == 1) {
+                        layer.msg("已发布的课程无法删除", {icon: 5, time: 1500});
+                        return;
+                    }
+                    let id = [];
+                    id.push(data.id);
+                    deleteCourse(id);
+                    break;
+                case 'edit':
+                    $(".course_table_div").hide();
+                    $(".operation_course").show();
+                    $(".title").html("编辑课程");
+                    $("input[name=courseTime]").val(time);
+                    courseTimeObj.config.value = time;
+                    form.val('courseInfo', {
+                        "id": data.id
+                        , "name": data.name
+                        , "code": data.code
+                        , "publishFlag": data.publishFlag
+                        , "remark": data.remark
+                        , "teacherId": data.teacherId
+                        , "teacherName": data.teacherName
+                        , "userCourseId": data.userCourseId
+                    });
+                    if (data.publishFlag == 1) {
+                        $("input[name=publishFlag]").attr("disabled", "disabled");
+                    }
+                    form.render(); //更新全部
+                    initTree(data.id);
+                    break;
+                case 'select':
+                    console.log('选课');
+                    // 当课程时间在选课时间范围内可以选择
+                    // 否则提示： 不在有效时间范围内。
+                    let current = moment();
+                    let startTime = moment(data.startTime);
+                    let endTime = moment(data.endTime);
+                    if (current >= startTime && current <= endTime) {
+                        $.ajax({
+                            type: "get",
+                            url: "/api/course/select",
+                            data: {id: data.id},
+                            success: function (data) {
+                                if (data.flag) {
+                                    renderTable();
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 5, time: 2000});
+                                }
+                            },
+                            error: function (data) {
+                                console.log(data);
+                            }
+                        });
+                    } else {
+                        layer.msg("不在有效的选课时间范围内");
+                        return;
+                    }
+                    break;
+                case 'unselect':
+                    console.log('退课');
+                    // 当课程时间在选课时间范围内可以退课
+                    // 否则提示： 不在有效时间范围内。
+                    let curr = moment();
+                    let start = moment(data.startTime);
+                    let end = moment(data.endTime);
+                    if (curr >= start && curr <= end) {
+                        $.ajax({
+                            type: "get",
+                            url: "/api/course/unselect",
+                            data: {id: data.id},
+                            success: function (data) {
+                                if (data.flag) {
+                                    renderTable();
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 5, time: 2000});
+                                }
+                            },
+                            error: function (data) {
+                                console.log(data);
+                            }
+                        });
+                    } else {
+                        layer.msg("不在有效的选课时间范围内");
+                        return;
+                    }
+                    break;
+                case  'publish':
+                    console.log("发布课程");
+                    layer.confirm('确认发布该课程？', function (index) {
+                        loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+                        $.ajax({
+                            type: "get",
+                            url: "/api/course/publish",
+                            data: {id: data.id},
+                            success: function (data) {
+                                if (data.flag) {
+                                    renderTable();
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 5, time: 2000});
+                                }
+                                top.layer.close(loading);
+                            },
+                            error: function (data) {
+                                top.layer.close(loading);
+                                console.log(data);
+                            }
+                        });
+                        layer.close(index);
+                    });
+                    break;
+                case  'cancel':
+                    console.log("取消发布课程")
+                    // 当课程选课人数为0时，可以取消发布课程
+                    // 否则提示：已有学生选择该课程，无法取消
+                    if (data.studentNums > 0) {
+                        layer.msg("已有学生选择该课程，无法取消");
+                        return;
+                    }
+                    layer.confirm('确认取消发布该课程？', function (index) {
+                        loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+                        $.ajax({
+                            type: "get",
+                            url: "/api/course/cancel",
+                            data: {id: data.id},
+                            success: function (data) {
+                                if (data.flag) {
+                                    renderTable();
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 5, time: 2000});
+                                }
+                                top.layer.close(loading);
+                            },
+                            error: function (data) {
+                                top.layer.close(loading);
+                                console.log(data);
+                            }
+                        });
+                        layer.close(index);
+                    });
+                    break;
+            }
+        });
+
+        // 重置搜索
+        $("#reset").click(function () {
+            // 清空搜索条件内容
+            $("#code").val("");
+            $("#publishFlag").val("");
+            $("#chooseFlag").val("");
+            $("#endTime").val("");
+            // 重置页面渲染内容（layui需要的）
+            form.render();
+
+            // 清空搜索条件，重新触发表格查询和渲染
+            searchParam.code = null;
+            searchParam.publishFlag = null;
+            searchParam.chooseFlag = null;
+            searchParam.startTime = null;
+            searchParam.endTime = null;
+            searchParam.page = 1;
+            renderTable();
+        });
+
+        // 取消课程保存
+        $("#btn_cancel").click(function () {
+            $(".course_table_div").show();
+            $(".operation_course").hide();
+            return false;
+        });
+
+
+        // 提交保存
+        form.on('submit(submit)', function (data) {
+            loading = top.layer.msg('请稍等...', {icon: 16, time: false, shade: 0.8});
+            $.ajax({
+                type: "post",
+                url: "/api/course/save",
+                data: JSON.stringify(data.field),
+                dataType: "json",
+                contentType: 'application/json;charset=utf-8',
+                async: false,
+                success: function (data) {
+                    if (data.flag) {
+                        renderTable();
+                        $(".course_table_div").show();
+                        $(".operation_course").hide();
+                        layer.msg(data.message, {icon: 1});
+                    } else {
+                        layer.msg(data.message, {icon: 5, time: 2000});
+                    }
+                    top.layer.close(loading);
+                },
+                error: function (data) {
+                    top.layer.close(loading);
+                    console.log(data);
+                }
+            });
+            return false;
+        });
+
+        // 调用表格渲染方法
+        renderTable();
+    })
+</script>
 </body>
 </html>
