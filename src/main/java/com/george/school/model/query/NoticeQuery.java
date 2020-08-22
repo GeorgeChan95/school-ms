@@ -3,13 +3,17 @@ package com.george.school.model.query;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.enums.SqlLike;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.george.school.entity.Notice;
+import com.george.school.util.StringPool;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -31,6 +35,8 @@ import java.time.LocalDateTime;
 public class NoticeQuery implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty(value = "公告名称")
+    private String name;
 
     /**
      * 公告对象  1-学生  2-老师  3-全体人员
@@ -61,4 +67,11 @@ public class NoticeQuery implements Serializable {
 
     @ApiModelProperty(value = "每页数据量")
     private int limit;
+
+    public String getNameLike() {
+        if (StringUtils.isEmpty(this.name)) {
+            return StringPool.EMPTY;
+        }
+        return SqlUtils.concatLike(this.name, SqlLike.DEFAULT);
+    }
 }

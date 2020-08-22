@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,13 +60,15 @@ public class NoticeController {
     }
 
     @ApiOperation("公告发布")
-    @PostMapping("/release")
-    public Result releaseNotice(@RequestBody Notice notice) {
-        if (ObjectUtil.isNull(notice)) {
+    @GetMapping("/release")
+    public Result releaseNotice(@RequestParam(value = "id", required = false) String id) {
+        if (StringUtils.isEmpty(id)) {
             return new Result(false, StatusCode.ERROR, "参数异常，公告发布失败");
         }
+        Notice notice = noticeService.getById(id);
         notice.setReleaseTime(LocalDateTime.now());
-        boolean res = noticeService.saveOrUpdate(notice);
+        notice.setStatus(1);
+        boolean res = noticeService.updateById(notice);
         if (!res) {
             return new Result(false, StatusCode.ERROR, "公告保存失败");
         }
@@ -78,7 +81,7 @@ public class NoticeController {
      * @return
      */
     @ApiOperation("公告删除")
-    @PostMapping("/delNotice")
+    @DeleteMapping("/del")
     public Result delNotice(@ApiParam("id数组") @RequestParam(value = "ids", required = false) String[] ids) {
         if (ids == null || ids.length == 0) {
             return new Result(false, StatusCode.ERROR, "参数异常！");

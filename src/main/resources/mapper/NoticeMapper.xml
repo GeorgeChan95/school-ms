@@ -32,6 +32,9 @@
             <if test="query.startTime != null and query.startTime != '' and query.endTime != null and query.endTime != ''">
                 AND release_time BETWEEN #{query.startTime} AND #{query.endTime}
             </if>
+            <if test="query.name != null and query.name != '' ">
+                AND `name` LIKE #{query.nameLike}
+            </if>
         </if>
         ORDER BY create_time DESC
     </select>
