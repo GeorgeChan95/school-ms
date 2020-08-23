@@ -38,4 +38,16 @@
         </if>
         ORDER BY create_time DESC
     </select>
+    
+    <select id="findStudentNoticeInfo" resultMap="BaseResultMap">
+        SELECT * FROM sys_notice WHERE delete_flag = 0 AND `status` = 1 AND target IN (1, 3) ORDER BY release_time DESC LIMIT 2
+    </select>
+
+    <select id="findTeacherNoticeInfo" resultMap="BaseResultMap">
+        SELECT * FROM sys_notice WHERE delete_flag = 0 AND `status` = 1 AND target IN (2, 3) ORDER BY release_time DESC LIMIT 2
+    </select>
+
+    <select id="findManagerNoticeInfo" resultMap="BaseResultMap">
+        SELECT * FROM sys_notice WHERE delete_flag = 0 AND `status` = 1 ORDER BY release_time DESC LIMIT 2
+    </select>
 </mapper>

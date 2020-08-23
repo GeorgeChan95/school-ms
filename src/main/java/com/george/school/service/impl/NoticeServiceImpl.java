@@ -1,13 +1,16 @@
 package com.george.school.service.impl;
 
 import com.george.school.entity.Notice;
+import com.george.school.entity.User;
 import com.george.school.mapper.NoticeMapper;
 import com.george.school.model.query.NoticeQuery;
+import com.george.school.model.vo.MainInfoVO;
 import com.george.school.service.INoticeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.george.school.service.IUserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +25,12 @@ import java.util.List;
  */
 @Service
 public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> implements INoticeService {
+    private final IUserService userService;
+
+    @Autowired
+    public NoticeServiceImpl(IUserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public PageInfo<Notice> pageNoticeData(NoticeQuery query) {
@@ -31,5 +40,36 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         List<Notice> list = this.baseMapper.getNoticePage(query);
         PageInfo<Notice> pageInfo = new PageInfo<>(list);
         return pageInfo;
+    }
+
+    @Override
+    public MainInfoVO getUserNoticeInfo(User principal) {
+        User user = userService.getById(principal.getId());
+
+        List<Notice> notices;
+        MainInfoVO infoVO = new MainInfoVO();
+        switch (user.getUserType()) {
+            case 0://学生
+                notices = this.baseMapper.findStudentNoticeInfo();
+                break;
+            case 1:// 老师
+                notices = this.baseMapper.findTeacherNoticeInfo();
+                break;
+            default:
+                notices = this.baseMapper.findManagerNoticeInfo();
+                break;
+        }
+        for (int i = 0; i < notices.size(); i++) {
+            Notice notice = notices.get(i);
+            if (i == 0) {
+                infoVO.setLastNoticeTitle(notice.getName());
+                infoVO.setLastNoticeContent(notice.getContent());
+            }
+            if (i == 1) {
+                infoVO.setBeforeNoticeTitle(notice.getName());
+                infoVO.setLastNoticeContent(notice.getContent());
+            }
+        }
+        return infoVO;
     }
 }

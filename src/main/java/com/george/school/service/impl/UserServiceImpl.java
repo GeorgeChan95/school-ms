@@ -249,4 +249,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return userDTO;
     }
+
+    @Override
+    public String getUserImage(String id) {
+        String imageurl = this.baseMapper.getUserImage(id);
+        if (StringUtils.isNotEmpty(imageurl)) {
+            imageurl = configProperties.getFileServerAddr() + imageurl;
+        }
+        return imageurl;
+    }
+
+    @Override
+    public String getUserOrgInfo(String id) {
+        String orgName = this.baseMapper.findUserOrgName(id);
+        if (StringUtils.isEmpty(orgName)) {
+            orgName = StringPool.EMPTY;
+        }
+        return orgName;
+    }
 }

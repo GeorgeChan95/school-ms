@@ -103,4 +103,18 @@ public interface IUserService extends IService<User> {
      * @return
      */
     UserTableDTO findUserInfo(String id);
+
+    /**
+     * 获取用户头像
+     * @param id 用户id
+     * @return
+     */
+    String getUserImage(String id);
+
+    /**
+     * 获取用户所属组织名称
+     * @param id 用户id
+     * @return
+     */
+    String getUserOrgInfo(String id);
 }

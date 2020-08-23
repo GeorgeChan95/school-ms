@@ -2,7 +2,9 @@ package com.george.school.service;
 
 import com.george.school.entity.Notice;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.george.school.entity.User;
 import com.george.school.model.query.NoticeQuery;
+import com.george.school.model.vo.MainInfoVO;
 import com.github.pagehelper.PageInfo;
 
 /**
@@ -21,4 +23,11 @@ public interface INoticeService extends IService<Notice> {
      * @return
      */
     PageInfo<Notice> pageNoticeData(NoticeQuery query);
+
+    /**
+     * 获取公告信息
+     * @param principal
+     * @return
+     */
+    MainInfoVO getUserNoticeInfo(User principal);
 }

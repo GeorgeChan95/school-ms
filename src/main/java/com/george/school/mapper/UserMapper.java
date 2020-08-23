@@ -84,4 +84,18 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     UserTableDTO findUserTableInfo(@Param("id") String id);
+
+    /**
+     * 获取用户头像地址
+     * @param id
+     * @return
+     */
+    String getUserImage(@Param("id") String id);
+
+    /**
+     * 获取用户所属组织
+     * @param id 用户id
+     * @return
+     */
+    String findUserOrgName(String id);
 }

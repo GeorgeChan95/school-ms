@@ -231,4 +231,14 @@
             LEFT JOIN sys_organization o ON o.id = su.org_id AND o.delete_flag = 0
         WHERE su.delete_flag = 0 and su.id = #{id} limit 1
     </select>
+
+    <select id="getUserImage" resultType="java.lang.String">
+        SELECT avatar FROM sys_user WHERE delete_flag = 0 AND id = #{id} limit 1
+    </select>
+
+    <select id="findUserOrgName" resultType="java.lang.String">
+        SELECT so.`name` FROM sys_organization so
+        INNER JOIN sys_user su ON so.id = su.org_id AND su.delete_flag = 0
+        WHERE so.delete_flag = 0 AND su.id = #{id} LIMIT 1
+    </select>
 </mapper>
