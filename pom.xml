@@ -32,7 +32,7 @@
         <hutool-all.version>5.3.9</hutool-all.version>
         <pagehelper-spring-boot-starter.version>1.2.13</pagehelper-spring-boot-starter.version>
         <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
-        <shiro-spring.version>1.5.3</shiro-spring.version>
+        <shiro-spring.version>1.7.0</shiro-spring.version>
         <shiro-redis.version>3.2.3</shiro-redis.version>
         <jedis.version>2.9.0</jedis.version>
         <thymeleaf-extras-shiro.version>2.0.0</thymeleaf-extras-shiro.version>
