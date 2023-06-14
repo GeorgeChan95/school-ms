@@ -28,7 +28,7 @@
         <mybatis-plus-boot-starter.version>3.3.2</mybatis-plus-boot-starter.version>
         <mybatis-plus-generator.version>3.3.2</mybatis-plus-generator.version>
         <fastjson.version>1.2.72</fastjson.version>
-        <guava.version>29.0-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <hutool-all.version>5.3.9</hutool-all.version>
         <pagehelper-spring-boot-starter.version>1.2.13</pagehelper-spring-boot-starter.version>
         <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
